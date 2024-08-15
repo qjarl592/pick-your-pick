@@ -1,8 +1,12 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TabInfo from "./TabInfo";
+import api from "@/lib/axios";
 
 export type TabInfo = {
+  id: string;
   title: string;
   artist: string;
   thumbnailUrl: string;
@@ -10,33 +14,41 @@ export type TabInfo = {
 
 type Props = { keyword: String };
 
-const sampleTabs: TabInfo[] = [
-  {
-    title: "Wake Me Up When September Ends",
-    artist: "green day",
-    thumbnailUrl: "https://i.ytimg.com/vi/ulRXvH8VOl8/mqdefault.jpg",
-  },
-  {
-    title: "Wake Me Up When September Ends",
-    artist: "green day",
-    thumbnailUrl: "https://i.ytimg.com/vi/ulRXvH8VOl8/mqdefault.jpg",
-  },
-  {
-    title: "Wake Me Up When September Ends",
-    artist: "green day",
-    thumbnailUrl: "https://i.ytimg.com/vi/ulRXvH8VOl8/mqdefault.jpg",
-  },
-];
-
 export default function TabSearchResult(props: Props) {
   const { keyword } = props;
+  const [tabInfos, setTabInfos] = useState<TabInfo[]>([]);
+
+  useEffect(() => {
+    if (tabInfos.length) return;
+    (async () => {
+      await getSearchTabs();
+    })();
+  }, []);
+
+  const getSearchTabs = async () => {
+    const response = await api.get("/search", {
+      params: {
+        keyword: keyword,
+      },
+    });
+    const data = response.data.result;
+    const tabInfos: TabInfo[] = data.map((item: any) => {
+      return {
+        id: item.id,
+        title: item.title,
+        artist: item.artist,
+        thumbnailUrl: item.thumbnail_url,
+      };
+    });
+    setTabInfos(tabInfos);
+  };
 
   return (
     <ScrollArea className="h-[50vh] w-full rounded-xl border border-gray-200 shadow-md">
       <div className="p-4">
-        <h4 className="mb-4 text-lg">검색 결과</h4>
-        {sampleTabs.map((tabInfo, key) => (
-          <TabInfo key={key} tabInfo={tabInfo} />
+        {!keyword.length && <h4 className="mb-4 text-lg">Sample Tabs</h4>}
+        {tabInfos.map((tabInfo) => (
+          <TabInfo key={tabInfo.id} tabInfo={tabInfo} />
         ))}
       </div>
     </ScrollArea>

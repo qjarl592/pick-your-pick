@@ -1,6 +1,6 @@
 "use client";
 
-import TabInfoCard from "@/components/TabInfoCard";
+import TabSearchResult from "@/components/TabSearchResult";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -25,7 +25,7 @@ export default function TabSearch({}: Props) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="flex w-[500px] items-center px-4 py-0.5  rounded-full border border-gray-200 shadow-md">
+      <div className="flex w-[560px] items-center px-4 py-0.5  rounded-full border border-gray-200 shadow-md">
         <Button
           className="rounded-full p-2 "
           asChild
@@ -42,7 +42,7 @@ export default function TabSearch({}: Props) {
           onKeyDown={onKeyDownHandler}
         />
       </div>
-      <TabInfoCard />
+      <TabSearchResult keyword={keyword} />
     </div>
   );
 }

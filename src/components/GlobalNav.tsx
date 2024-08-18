@@ -8,15 +8,13 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { CircleUserIcon, LogOut, Plus, Search, Star } from "lucide-react";
-// import ProfileMenu from "./ProfileMenu";
-import Link from "next/link";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
-import { Separator } from "@radix-ui/react-separator";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import { signOut, useSession } from "next-auth/react";
 import LoginModal from "./LoginModal";
+import IconLink from "./IconLink";
 
 export default function GlobalNav() {
   const { data: session, status } = useSession();
@@ -33,22 +31,21 @@ export default function GlobalNav() {
       <NavigationMenu className="absolute right-3 top-3">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                <Search />
-              </NavigationMenuLink>
-            </Link>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                <Plus />
-              </NavigationMenuLink>
-            </Link>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                <Star />
-              </NavigationMenuLink>
-            </Link>
-            {/* <ProfileMenu /> */}{" "}
+            <IconLink
+              href="/search"
+              icon={<Search className="w-5 h-5" />}
+              label="search"
+            />
+            <IconLink
+              href="/add"
+              icon={<Plus className="w-5 h-5" />}
+              label="add"
+            />
+            <IconLink
+              href="/favorites"
+              icon={<Star className="w-5 h-5" />}
+              label="favorites"
+            />
             {status === "authenticated" && session?.user ? (
               <>
                 <NavigationMenuTrigger>
@@ -58,11 +55,16 @@ export default function GlobalNav() {
                   <div className="w-[240px] p-1">
                     <div className="flex flex-col space-y-2 justify-center items-center p-2">
                       <Avatar className="w-[70%] h-[70%]">
-                        <AvatarImage src={session.user.image} alt="@shadcn" />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarImage
+                          src={session.user.image ?? undefined}
+                          alt="User avatar"
+                        />
+                        <AvatarFallback>
+                          {session.user.name?.[0] ?? "U"}
+                        </AvatarFallback>
                       </Avatar>
                       <span className="text-sm font-medium">
-                        `안녕하세요. {session.user.name}님`
+                        {`안녕하세요. ${session.user.name ?? "사용자"}님`}
                       </span>
                     </div>
                     <Separator className="my-1" />

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { navigationMenuTriggerStyle } from "./ui/navigation-menu";
+import { navigationMenuTriggerStyleWithoutFocus } from "./ui/navigation-menu";
 import { CircleUserIcon, LogOut } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import LoginModal from "./LoginModal";
@@ -21,7 +21,7 @@ export default function ProfileModal() {
       {status === "authenticated" && session?.user ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className={navigationMenuTriggerStyle()}>
+            <button className={navigationMenuTriggerStyleWithoutFocus()}>
               <CircleUserIcon className="w-5 h-5" />
             </button>
           </DropdownMenuTrigger>

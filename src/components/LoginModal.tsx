@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Dialog,
@@ -9,8 +11,14 @@ import {
 } from "@/components/ui/dialog";
 import { LogIn } from "lucide-react";
 import { navigationMenuTriggerStyle } from "./ui/navigation-menu";
+import { signIn } from "next-auth/react";
+import { Button } from "./ui/button";
 
 export default function LoginModal() {
+  const handleLogin = async () => {
+    await signIn("google", { callbackUrl: "/" });
+  };
+  
   return (
     <Dialog>
       <DialogTrigger className={navigationMenuTriggerStyle()}>
@@ -21,7 +29,7 @@ export default function LoginModal() {
           <DialogTitle>로그인</DialogTitle>
           <DialogDescription>~~~~~</DialogDescription>
         </DialogHeader>
-        <div>여기에 로그인 폼</div>
+        <Button variant="outline" onClick={handleLogin}>Sign in with Google</Button>
       </DialogContent>
     </Dialog>
   );

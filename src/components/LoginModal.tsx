@@ -32,10 +32,10 @@ export default function LoginModal() {
         </DialogHeader>
         <Button
           onClick={handleLogin}
-          className="w-full flex items-center justify-center gap-2 bg-white text-black border border-gray-300 hover:bg-gray-100"
+          className="mt-6 w-full flex items-center justify-center gap-2 bg-white text-black border border-gray-300 hover:bg-gray-100"
         >
           <Image
-            src="/google_login_logo.svg"
+            src="/logos/google_login_logo.svg"
             alt="Google logo"
             width={18}
             height={18}

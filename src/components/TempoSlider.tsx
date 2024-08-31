@@ -50,7 +50,7 @@ export default function TempoSlider(props: Props) {
         >
           <div className="flex justify-center items-center space-x-1">
             <DrumIcon />
-            <span className="font-bold text-xl">{tempo}</span>
+            <span className="text-xl">{tempo}</span>
           </div>
           <span className="text-xs text-muted-foreground">Tempo</span>
         </Button>
@@ -82,6 +82,7 @@ export default function TempoSlider(props: Props) {
         <DropdownMenuLabel className="flex justify-center items-center h-16">
           <Slider
             defaultValue={[tempoPercent]}
+            min={10}
             max={200}
             step={1}
             onValueChange={handleSliderChange}

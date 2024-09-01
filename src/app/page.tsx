@@ -1,6 +1,6 @@
 import GlobalNav from "@/components/GlobalNav";
-import Image from "next/image";
 import TabSearch from "./TabSearch";
+import Tab from "@/components/Tab";
 
 export default function Home() {
   return (

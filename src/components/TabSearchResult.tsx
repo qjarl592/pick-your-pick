@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import TabInfo from "./TabInfo";
 import api from "@/lib/axios";
 
-export type TabInfo = {
+export type TabInfoType = {
   id: string;
   title: string;
   artist: string;
@@ -16,7 +16,7 @@ type Props = { keyword: String };
 
 export default function TabSearchResult(props: Props) {
   const { keyword } = props;
-  const [tabInfos, setTabInfos] = useState<TabInfo[]>([]);
+  const [tabInfos, setTabInfos] = useState<Array<TabInfoType>>([]);
 
   useEffect(() => {
     if (tabInfos.length) return;
@@ -32,7 +32,7 @@ export default function TabSearchResult(props: Props) {
       },
     });
     const data = response.data.result;
-    const tabInfos: TabInfo[] = data.map((item: any) => {
+    const tabInfos: TabInfoType[] = data.map((item: any) => {
       return {
         id: item.id,
         title: item.title,

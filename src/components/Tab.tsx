@@ -52,7 +52,7 @@ export default function Tab({ file }: Props) {
           "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
       });
 
-      newApi.playerStateChanged.on((args) => {
+      newApi.playerStateChanged.on((args: any) => {
         setIsPlaying(args.state === 1); // 1 corresponds to the Playing state
       });
 

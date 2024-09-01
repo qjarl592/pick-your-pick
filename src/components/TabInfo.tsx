@@ -2,10 +2,10 @@ import React from "react";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { TabInfo } from "./TabSearchResult";
+import { TabInfoType } from "./TabSearchResult";
 
 type Props = {
-  tabInfo: TabInfo;
+  tabInfo: TabInfoType;
 };
 
 export default function TabInfo(props: Props) {

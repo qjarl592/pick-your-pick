@@ -1,5 +1,4 @@
 import GlobalNav from "@/components/GlobalNav";
-import Image from "next/image";
 import TabSearch from "./TabSearch";
 
 export default function Home() {

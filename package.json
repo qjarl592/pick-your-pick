@@ -2,9 +2,6 @@
   "name": "pick-your-pick",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "pnpm": "^9.7.1"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

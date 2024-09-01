@@ -153,7 +153,7 @@ export default function AudioRecorder({}: Props) {
         >
           <div
             className={cn(
-              "bg-red-600 transition-all duration-700 ease-in-out",
+              "bg-red-600 transition-all duration-1000 ease-in-out",
               {
                 "h-8 w-8 rounded-md": isRecording,
                 "h-16 w-16 rounded-full": !isRecording,

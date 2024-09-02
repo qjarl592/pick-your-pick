@@ -2,16 +2,25 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PauseIcon, PlayIcon, RepeatIcon } from "lucide-react";
+import {
+  PauseIcon,
+  PlayIcon,
+  RepeatIcon,
+  Square,
+  SquareIcon,
+} from "lucide-react";
 import TempoSlider from "./TempoSlider";
 
 type Props = {
   defaultTempo: number;
   audioUrl: string;
+  togglePlayPauseTab: () => void;
+  stopWithResetTab: () => void;
 };
 
 export default function MusicController(props: Props) {
-  const { defaultTempo, audioUrl } = props;
+  const { defaultTempo, audioUrl, togglePlayPauseTab, stopWithResetTab } =
+    props;
   const [isPlay, setIsPlay] = useState(false);
   const [tempo, setTempo] = useState(defaultTempo);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -26,6 +35,7 @@ export default function MusicController(props: Props) {
   const togglePlay = () => {
     if (!audioRef.current) return;
     setIsPlay(!isPlay);
+    togglePlayPauseTab();
     if (isPlay) {
       audioRef.current.pause();
     } else {
@@ -34,11 +44,21 @@ export default function MusicController(props: Props) {
     }
   };
 
+  const stopWithReset = () => {
+    if (!audioRef.current) return;
+    setIsPlay(false);
+    stopWithResetTab();
+    audioRef.current.currentTime = 0;
+  };
+
   return (
     <div className="flex space-x-2 p-2 border-2 rounded-xl">
       <audio ref={audioRef} src={audioUrl} />
       <Button variant="outline" className="h-16 w-16" onClick={togglePlay}>
         {isPlay ? <PauseIcon /> : <PlayIcon />}
+      </Button>
+      <Button variant="outline" className="h-16 w-16" onClick={stopWithReset}>
+        <SquareIcon />
       </Button>
       <TempoSlider
         defaultTempo={defaultTempo}

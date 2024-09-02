@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
-
-type AlphaTab = typeof window.alphaTab.AlphaTabApi;
+import React, { useRef, useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import useTabStore from "@/store/tabStore";
+import TabUtilBar from "./TabUtilBar";
 
 declare global {
   interface Window {
@@ -12,57 +13,69 @@ declare global {
   }
 }
 
-interface Props {
+type AlphaTab = typeof window.alphaTab.AlphaTabApi;
+
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
   file: string;
+  audioUrl: string;
 }
 
-export default function Tab({ file }: Props) {
+export default function Tab({ file, audioUrl, className, ...props }: Props) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { originTempo, setTempo, setMinTempo, setMaxTempo, setOriginTempo } =
+    useTabStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<AlphaTab | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const initializeAlphaTab = useCallback(() => {
-    if (window.alphaTab && containerRef.current && !apiRef.current) {
-      const newApi = new window.alphaTab.AlphaTabApi(containerRef.current, {
-        file: file,
-        player: {
-          enablePlayer: true,
-          soundFont:
-            "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
-          scrollElement: containerRef.current,
-          enableCursor: true,
-          enableAnimatedBeatCursor: true,
-        },
-        display: {
-          layoutMode: "page",
-          staveProfile: "tab",
-        },
-        notation: {
-          elements: {
-            scoreTitle: true,
-            scoreSubTitle: true,
-            scoreArtist: true,
-            scoreAlbum: true,
-            scoreWords: false,
-            scoreMusic: false,
-            scoreWordsAndMusic: false,
-            scoreCopyright: false,
-          },
-        },
-        fontDirectory:
-          "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
-      });
 
-      newApi.playerStateChanged.on((args: any) => {
-        setIsPlaying(args.state === 1); // 1 corresponds to the Playing state
-      });
+  const initializeAlphaTab = () => {
+    if (!containerRef.current || apiRef.current) return;
 
-      apiRef.current = newApi;
-    }
-  }, [file]);
+    const newApi = new window.alphaTab.AlphaTabApi(containerRef.current, {
+      file: file,
+      player: {
+        enablePlayer: true,
+        soundFont:
+          "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
+      },
+      enableCursor: true,
+      enableAnimatedBeatCursor: true,
+      display: {
+        layoutMode: "page",
+        staveProfile: "tab",
+      },
+      notation: {
+        elements: {
+          scoreWords: false,
+          scoreMusic: false,
+          scoreWordsAndMusic: false,
+        },
+      },
+      fontDirectory:
+        "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
+    });
+
+    newApi.playerStateChanged.on((args: any) => {
+      setIsPlaying(args.state === 1);
+    });
+
+    newApi.renderFinished.on(() => {
+      if (originTempo !== null) return;
+      const originalTempo = newApi.score.tempo;
+      const minSpeed = 0.125;
+      const maxSpeed = 8;
+      const minTempo = Math.ceil(originalTempo * minSpeed);
+      const maxTempo = Math.floor(originalTempo * maxSpeed);
+      setTempo(originalTempo);
+      setMinTempo(minTempo);
+      setMaxTempo(maxTempo);
+      setOriginTempo(originalTempo);
+    });
+
+    apiRef.current = newApi;
+  };
 
   useEffect(() => {
     initializeAlphaTab();
-    addCursorStyle();
 
     return () => {
       if (apiRef.current) {
@@ -70,20 +83,9 @@ export default function Tab({ file }: Props) {
         apiRef.current = null;
       }
     };
-  }, [initializeAlphaTab]);
+  }, []);
 
-  const addCursorStyle = () => {
-    const style = document.createElement("style");
-    style.textContent = `
-      .at-cursor-beat {
-        background: rgba(64, 64, 255, 0.75);
-        width: 3px;
-      }
-    `;
-    document.head.appendChild(style);
-  };
-
-  const handlePlayPause = () => {
+  const togglePlayPause = () => {
     if (apiRef.current) {
       if (isPlaying) {
         apiRef.current.pause();
@@ -93,21 +95,23 @@ export default function Tab({ file }: Props) {
     }
   };
 
-  const handleStop = () => {
+  const stopWithReset = () => {
     if (apiRef.current) {
       apiRef.current.stop();
     }
   };
 
   return (
-    <div>
-      <div>
-        <button onClick={handlePlayPause}>
-          {isPlaying ? "Pause" : "Play"}
-        </button>
-        <button onClick={handleStop}>Stop</button>
-      </div>
+    <div className={cn("w-full", className)} {...props}>
       <div ref={containerRef} />
+      {originTempo !== null && (
+        <TabUtilBar
+          audioUrl={audioUrl}
+          defaultTempo={originTempo}
+          togglePlayPauseTab={togglePlayPause}
+          stopWithResetTab={stopWithReset}
+        />
+      )}
     </div>
   );
 }

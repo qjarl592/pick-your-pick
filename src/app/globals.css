@@ -67,3 +67,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .at-cursor-beat {
+    @apply bg-blue-500 opacity-70 w-1;
+  }
+}

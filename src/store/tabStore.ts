@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
 interface tabStore {
-  tempo: number | null;
-  minTempo: number | null;
-  maxTempo: number | null;
-  originTempo: number | null;
+  tempo: number;
+  minTempo: number;
+  maxTempo: number;
+  originTempo: number;
   setTempo: (param: number) => void;
   setMinTempo: (param: number) => void;
   setMaxTempo: (param: number) => void;
@@ -12,13 +12,13 @@ interface tabStore {
 }
 
 const useTabStore = create<tabStore>((set) => ({
-  tempo: null,
-  minTempo: null,
-  maxTempo: null,
-  originTempo: null,
-  setTempo: (tempo: number) => set({ tempo: tempo }),
-  setMinTempo: (minTempo: number) => set({ minTempo: minTempo }),
-  setMaxTempo: (maxTempo: number) => set({ maxTempo: maxTempo }),
-  setOriginTempo: (originTempo: number) => set({ originTempo: originTempo }),
+  tempo: 0,
+  minTempo: 0,
+  maxTempo: 0,
+  originTempo: 10,
+  setTempo: (tempo: number) => set({ tempo }),
+  setMinTempo: (minTempo: number) => set({ minTempo }),
+  setMaxTempo: (maxTempo: number) => set({ maxTempo }),
+  setOriginTempo: (originTempo: number) => set({ originTempo }),
 }));
 export default useTabStore;

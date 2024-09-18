@@ -31,7 +31,7 @@ export default function AudioRecorder({}: Props) {
     (async () => {
       await getInputSources();
     })();
-  }, []);
+  }, [inputDevices.length]);
 
   const getInputSources = async () => {
     try {
@@ -54,7 +54,6 @@ export default function AudioRecorder({}: Props) {
   };
 
   const startRecording = async () => {
-    console.log(selectedDevice);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {

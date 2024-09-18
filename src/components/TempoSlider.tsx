@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DrumIcon, Minus, Plus } from "lucide-react";
 import {
@@ -11,33 +11,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "./ui/slider";
-
+import useTabStore from "@/store/tabStore";
 type Props = {
-  defaultTempo: number;
   tempo: number;
-  setTempo: React.Dispatch<React.SetStateAction<number>>;
+  setTempo: Dispatch<SetStateAction<number>>;
 };
 
 export default function TempoSlider(props: Props) {
-  const { defaultTempo, tempo, setTempo } = props;
+  const { tempo, setTempo } = props;
+  const { originTempo } = useTabStore();
   const [tempoPercent, setTempoPercent] = useState(100);
+
+  const min = 0;
+  const max = originTempo * 2;
 
   const handleSliderChange = (value: number[]) => {
     const percent = value[0];
     setTempoPercent(percent);
-    const newTempo = Math.round((defaultTempo * percent) / 100);
+    const newTempo = Math.round((originTempo * percent) / 100);
     setTempo(newTempo);
   };
 
   const tempoUp = () => {
-    const min = 0;
-    const max = defaultTempo * 2;
     if (tempo > min && tempo < max) setTempo((prev) => prev + 1);
   };
 
   const tempoDown = () => {
-    const min = 0;
-    const max = defaultTempo * 2;
     if (tempo > min && tempo < max) setTempo((prev) => prev - 1);
   };
 

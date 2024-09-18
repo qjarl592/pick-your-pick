@@ -6,9 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import React, { useRef, useState } from "react";
 
-type Props = {};
-
-export default function TabSearch({}: Props) {
+export default function TabSearch() {
   const [keyword, setKeyword] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 

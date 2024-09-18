@@ -86,6 +86,7 @@
       "files": ["./src/components/ui/**/*.{js,ts,tsx}"],
       "rules": {
         // shadcn UI 컴포넌트에 대해 모든 규칙 비활성화
+        "@typescript-eslint/no-empty-object-type": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-explicit-any": "off",

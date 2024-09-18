@@ -1,0 +1,14 @@
+#!/bin/bash
+
+COMMIT_MESSAGE_FILE_PATH=$1  
+  
+# merge commit에 대해서는 prefix를 생성하지 않는다.  
+MERGE=$(grep -c -i 'merge' < "$COMMIT_MESSAGE_FILE_PATH")  
+if [ "$MERGE" != "0" ] ; then  
+  exit 0  
+fi
+
+BRANCH=$(git symbolic-ref --short HEAD)
+TYPE=$(echo "$BRANCH" | awk -F'/' '{print $1}')
+
+echo "$TYPE:$(cat "$COMMIT_MESSAGE_FILE_PATH")" > "$COMMIT_MESSAGE_FILE_PATH"  

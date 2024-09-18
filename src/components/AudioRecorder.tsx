@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import { PauseIcon, PlayIcon, SquareIcon } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+
 import {
   Select,
   SelectGroup,
@@ -10,13 +12,11 @@ import {
   SelectLabel,
   SelectItem,
 } from "@/components/ui/select";
-import { Button } from "./ui/button";
-import { MicIcon, PauseIcon, PlayIcon, SquareIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Props = {};
+import { Button } from "./ui/button";
 
-export default function AudioRecorder({}: Props) {
+export default function AudioRecorder() {
   const [inputDevices, setInputDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -31,7 +31,7 @@ export default function AudioRecorder({}: Props) {
     (async () => {
       await getInputSources();
     })();
-  }, []);
+  }, [inputDevices]);
 
   const getInputSources = async () => {
     try {
@@ -42,10 +42,7 @@ export default function AudioRecorder({}: Props) {
         .filter((device) => device.kind === "audioinput")
         .filter((device) => device.deviceId !== "default");
       const actualAudioInputDevices = audioInputDevices.filter(
-        (device) =>
-          !virtualDeviceKeywords.some((keyword) =>
-            device.label.toLowerCase().includes(keyword)
-          )
+        (device) => !virtualDeviceKeywords.some((keyword) => device.label.toLowerCase().includes(keyword))
       );
       setInputDevices(actualAudioInputDevices);
     } catch (error) {
@@ -135,11 +132,7 @@ export default function AudioRecorder({}: Props) {
           <SelectGroup>
             <SelectLabel className="px-2">입력 소스</SelectLabel>
             {inputDevices.map((device) => (
-              <SelectItem
-                value={device.deviceId}
-                key={device.deviceId}
-                className="px-2"
-              >
+              <SelectItem value={device.deviceId} key={device.deviceId} className="px-2">
                 {device.label}
               </SelectItem>
             ))}
@@ -152,39 +145,20 @@ export default function AudioRecorder({}: Props) {
           onClick={toggleRecord}
         >
           <div
-            className={cn(
-              "bg-red-600 transition-all duration-1000 ease-in-out",
-              {
-                "h-8 w-8 rounded-md": isRecording,
-                "h-16 w-16 rounded-full": !isRecording,
-              }
-            )}
+            className={cn("bg-red-600 transition-all duration-1000 ease-in-out", {
+              "h-8 w-8 rounded-md": isRecording,
+              "h-16 w-16 rounded-full": !isRecording,
+            })}
           ></div>
         </button>
         <div className="flex space-x-2 flex-1 justify-center items-center">
-          <Button
-            className="flex-1 h-16"
-            variant="outline"
-            disabled={!audioURL}
-            onClick={togglePlayPause}
-          >
+          <Button className="flex-1 h-16" variant="outline" disabled={!audioURL} onClick={togglePlayPause}>
             {isPlay ? <PauseIcon /> : <PlayIcon />}
           </Button>
-          <Button
-            className="flex-1 h-16"
-            variant="outline"
-            disabled={!audioURL}
-            onClick={stopWithReset}
-          >
+          <Button className="flex-1 h-16" variant="outline" disabled={!audioURL} onClick={stopWithReset}>
             <SquareIcon />
           </Button>
-          {audioURL && (
-            <audio
-              ref={audioRef}
-              src={audioURL}
-              onEnded={() => setIsPlay(false)}
-            />
-          )}
+          {audioURL && <audio ref={audioRef} src={audioURL} onEnded={() => setIsPlay(false)} />}
         </div>
       </div>
     </div>

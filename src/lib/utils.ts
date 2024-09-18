@@ -13,9 +13,7 @@ export const bigIntToString = (data: any): any => {
     return data.map(bigIntToString);
   }
   if (typeof data === "object" && data !== null) {
-    return Object.fromEntries(
-      Object.entries(data).map(([key, value]) => [key, bigIntToString(value)])
-    );
+    return Object.fromEntries(Object.entries(data).map(([key, value]) => [key, bigIntToString(value)]));
   }
   return data;
 };

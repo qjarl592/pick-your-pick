@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { DrumIcon, Minus, Plus } from "lucide-react";
+import React, { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { Slider } from "./ui/slider";
 
 type Props = {
@@ -44,10 +46,7 @@ export default function TempoSlider(props: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="flex flex-col justify-center items-center h-16 w-24"
-        >
+        <Button variant="outline" className="flex flex-col justify-center items-center h-16 w-24">
           <div className="flex justify-center items-center space-x-1">
             <DrumIcon />
             <span className="text-xl">{tempo}</span>
@@ -55,26 +54,13 @@ export default function TempoSlider(props: Props) {
           <span className="text-xs text-muted-foreground">Tempo</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        side="top"
-        align="center"
-        sideOffset={5}
-        className="w-52"
-      >
+      <DropdownMenuContent side="top" align="center" sideOffset={5} className="w-52">
         <DropdownMenuLabel className="flex items-center justify-start space-x-2">
-          <Button
-            variant="ghost"
-            className="p-1 h-5 w-5 rounded-full"
-            onClick={tempoDown}
-          >
+          <Button variant="ghost" className="p-1 h-5 w-5 rounded-full" onClick={tempoDown}>
             <Minus size={15} />
           </Button>
           <span>{tempo} bpm</span>
-          <Button
-            variant="ghost"
-            className="p-1 h-5 w-5 rounded-full"
-            onClick={tempoUp}
-          >
+          <Button variant="ghost" className="p-1 h-5 w-5 rounded-full" onClick={tempoUp}>
             <Plus size={15} />
           </Button>
         </DropdownMenuLabel>

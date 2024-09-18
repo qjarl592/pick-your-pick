@@ -1,6 +1,7 @@
-import { bigIntToString } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
+
 import prisma from "@/lib/prisma";
+import { bigIntToString } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,23 +30,14 @@ export async function GET(request: NextRequest) {
       };
       const tabSearch = await prisma.tab.findMany(queryOptions);
       const tabSearchSerialized = bigIntToString(tabSearch);
-      return NextResponse.json(
-        { result: tabSearchSerialized },
-        { status: 200 }
-      );
+      return NextResponse.json({ result: tabSearchSerialized }, { status: 200 });
     } else {
       const tabSample = await prisma.tab_Sample.findMany(queryOptions);
       const tabSampleSerialized = bigIntToString(tabSample);
-      return NextResponse.json(
-        { result: tabSampleSerialized },
-        { status: 200 }
-      );
+      return NextResponse.json({ result: tabSampleSerialized }, { status: 200 });
     }
   } catch (error) {
     console.error("Request error", error);
-    return NextResponse.json(
-      { error: "Error fetching tab samples" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Error fetching tab samples" }, { status: 500 });
   }
 }

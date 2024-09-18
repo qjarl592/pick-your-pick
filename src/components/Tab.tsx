@@ -16,7 +16,8 @@ interface Props {
   file: string;
 }
 
-export default function Tab({ file }: Props) {
+export default function Tab(props: Props) {
+  const { file } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<AlphaTab | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -26,8 +27,7 @@ export default function Tab({ file }: Props) {
         file: file,
         player: {
           enablePlayer: true,
-          soundFont:
-            "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
+          soundFont: "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
           scrollElement: containerRef.current,
           enableCursor: true,
           enableAnimatedBeatCursor: true,
@@ -48,8 +48,7 @@ export default function Tab({ file }: Props) {
             scoreCopyright: false,
           },
         },
-        fontDirectory:
-          "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
+        fontDirectory: "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
       });
 
       newApi.playerStateChanged.on((args: any) => {
@@ -102,9 +101,7 @@ export default function Tab({ file }: Props) {
   return (
     <div>
       <div>
-        <button onClick={handlePlayPause}>
-          {isPlaying ? "Pause" : "Play"}
-        </button>
+        <button onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</button>
         <button onClick={handleStop}>Stop</button>
       </div>
       <div ref={containerRef} />

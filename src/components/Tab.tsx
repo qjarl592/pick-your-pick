@@ -19,11 +19,10 @@ type AlphaTab = typeof window.alphaTab.AlphaTabApi;
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   file: string;
-  fileUrl: string;
 }
 
 export default function Tab(props: Props) {
-  const { file, fileUrl, className, ...rest } = props;
+  const { file, className, ...rest } = props;
   const [isPlaying, setIsPlaying] = useState(false);
   const { originTempo, setTempo, setMinTempo, setMaxTempo, setOriginTempo } = useTabStore();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +107,7 @@ export default function Tab(props: Props) {
       <div ref={containerRef} />
       {originTempo !== null && (
         <div className="fixed z-50 bottom-0 w-screen left-0 bg-white">
-          <MusicController fileUrl={fileUrl} playPauseTab={playPauseTab} stopTab={stopTab} />
+          <MusicController fileUrl={file} playPauseTab={playPauseTab} stopTab={stopTab} />
         </div>
       )}
     </div>

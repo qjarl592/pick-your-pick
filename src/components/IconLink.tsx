@@ -1,9 +1,7 @@
-import React from "react";
 import Link from "next/link";
-import {
-  NavigationMenuLink,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import React from "react";
+
+import { NavigationMenuLink, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 
 interface Props {
   href: string;

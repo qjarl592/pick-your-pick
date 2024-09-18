@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useRef, useState, useEffect, HTMLAttributes } from "react";
+
 import { cn } from "@/lib/utils";
 import useTabStore from "@/store/tabStore";
+
 import MusicController from "./MusicController";
 
 declare global {
@@ -23,8 +25,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 export default function Tab(props: Props) {
   const { file, fileUrl, className, ...rest } = props;
   const [isPlaying, setIsPlaying] = useState(false);
-  const { originTempo, setTempo, setMinTempo, setMaxTempo, setOriginTempo } =
-    useTabStore();
+  const { originTempo, setTempo, setMinTempo, setMaxTempo, setOriginTempo } = useTabStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<AlphaTab>(null);
 
@@ -36,8 +37,7 @@ export default function Tab(props: Props) {
         file: file,
         player: {
           enablePlayer: true,
-          soundFont:
-            "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
+          soundFont: "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2",
         },
         enableCursor: true,
         enableAnimatedBeatCursor: true,
@@ -52,8 +52,7 @@ export default function Tab(props: Props) {
             scoreWordsAndMusic: false,
           },
         },
-        fontDirectory:
-          "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
+        fontDirectory: "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
       });
 
       newApi.playerStateChanged.on((args: any) => {
@@ -109,11 +108,7 @@ export default function Tab(props: Props) {
       <div ref={containerRef} />
       {originTempo !== null && (
         <div className="fixed z-50 bottom-0 w-screen left-0 bg-white">
-          <MusicController
-            fileUrl={fileUrl}
-            playPauseTab={playPauseTab}
-            stopTab={stopTab}
-          />
+          <MusicController fileUrl={fileUrl} playPauseTab={playPauseTab} stopTab={stopTab} />
         </div>
       )}
     </div>

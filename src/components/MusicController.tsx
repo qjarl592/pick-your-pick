@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { PauseIcon, PlayIcon, RepeatIcon, SquareIcon } from "lucide-react";
-import TempoSlider from "./TempoSlider";
+import React, { useEffect, useRef, useState } from "react";
+
+import TempoSlider from "@/components//TempoSlider";
+import { Button } from "@/components/ui/button";
 import useTabStore from "@/store/tabStore";
 
 type Props = {
@@ -55,10 +56,7 @@ export default function MusicController(props: Props) {
         <SquareIcon />
       </Button>
       <TempoSlider tempo={tempo} setTempo={setTempo} />
-      <Button
-        variant="outline"
-        className="flex flex-col justify-center items-center h-16 w-24"
-      >
+      <Button variant="outline" className="flex flex-col justify-center items-center h-16 w-24">
         <RepeatIcon />
         <span className="text-xs text-muted-foreground">Loop</span>
       </Button>

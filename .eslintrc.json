@@ -10,9 +10,9 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended",
     "next",
-    "next/core-web-vitals"
+    "next/core-web-vitals",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -23,7 +23,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["react", "@typescript-eslint", "unused-imports", "import"],
+  "plugins": ["react", "@typescript-eslint", "unused-imports", "import", "prettier"],
   "settings": {
     "react": {
       "version": "detect"
@@ -33,6 +33,12 @@
     }
   },
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "react-hooks/exhaustive-deps": "error",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
@@ -70,17 +76,36 @@
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "jsx-a11y/anchor-is-valid": [
-      "error",
-      {
-        "components": ["Link"],
-        "specialLink": ["hrefLeft", "hrefRight"],
-        "aspects": ["invalidHref", "preferButton"]
-      }
-    ],
     "@next/next/no-img-element": "error",
     "react/no-unescaped-entities": "off",
     "@next/next/no-page-custom-font": "off",
     "react/no-array-index-key": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["./src/components/ui/**/*.{js,ts,tsx}"],
+      "rules": {
+        // shadcn UI 컴포넌트에 대해 모든 규칙 비활성화
+        "@typescript-eslint/no-empty-object-type": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/no-unescaped-entities": "off",
+        "react/no-array-index-key": "off",
+        "no-unused-vars": "off",
+        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-vars": "off",
+        "import/order": "off",
+        "import/first": "off",
+        "import/newline-after-import": "off",
+        "import/no-duplicates": "off",
+        "@next/next/no-img-element": "off",
+        "@next/next/no-page-custom-font": "off",
+        "prettier/prettier": "off"
+      }
+    }
+  ]
 }

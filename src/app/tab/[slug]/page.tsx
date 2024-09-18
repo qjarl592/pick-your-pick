@@ -1,6 +1,7 @@
+import React from "react";
+
 import GlobalNav from "@/components/GlobalNav";
 import Tab from "@/components/Tab";
-import React from "react";
 
 // type Props = {
 //   params: {
@@ -17,11 +18,7 @@ export default function Page() {
   return (
     <main className="flex min-h-screen justify-center items-center">
       <GlobalNav />
-      <Tab
-        file={tabMockData.tabFileUrl}
-        fileUrl={tabMockData.tabFileUrl}
-        className="mt-32 px-10"
-      />
+      <Tab file={tabMockData.tabFileUrl} fileUrl={tabMockData.tabFileUrl} className="mt-32 px-10" />
     </main>
   );
 }

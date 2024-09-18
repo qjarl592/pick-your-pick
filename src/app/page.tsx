@@ -1,4 +1,5 @@
 import GlobalNav from "@/components/GlobalNav";
+
 import TabSearch from "./TabSearch";
 
 export default function Home() {

@@ -1,7 +1,7 @@
 "use client";
 
-import { ReactNode, useState } from "react";
 import Script from "next/script";
+import { ReactNode, useState } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false);

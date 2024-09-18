@@ -1,7 +1,9 @@
-import React from "react";
 import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
+import React from "react";
+
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+
 import { TabInfoType } from "./TabSearchResult";
 
 type Props = {

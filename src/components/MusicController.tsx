@@ -3,9 +3,8 @@
 import { PauseIcon, PlayIcon, RepeatIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/ui/button";
-
 import TempoSlider from "./TempoSlider";
+import { Button } from "./ui/button";
 
 type Props = {
   defaultTempo: number;

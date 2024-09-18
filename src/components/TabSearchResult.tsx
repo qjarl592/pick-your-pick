@@ -14,23 +14,31 @@ export type TabInfoType = {
   thumbnailUrl: string;
 };
 
+type TabApiResponse = {
+  id: string;
+  title: string;
+  artist: string;
+  thumbnail_url: string;
+};
+
 type Props = { keyword: string };
 
 export default function TabSearchResult(props: Props) {
   const { keyword } = props;
   const [tabInfos, setTabInfos] = useState<Array<TabInfoType>>([]);
 
+  //TODO: react query로 변경
   useEffect(() => {
     if (tabInfos.length) return;
 
     const getSearchTabs = async () => {
-      const response = await api.get("/search", {
+      const response = await api.get<{ result: TabApiResponse[] }>("/search", {
         params: {
           keyword: keyword,
         },
       });
       const data = response.data.result;
-      const tabInfos: Array<TabInfoType> = data.map((item: any) => {
+      const tabInfos: Array<TabInfoType> = data.map((item: TabApiResponse) => {
         return {
           id: item.id,
           title: item.title,

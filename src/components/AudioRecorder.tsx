@@ -21,9 +21,9 @@ export default function AudioRecorder() {
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPlay, setIsPlay] = useState(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [audioURL, setAudioURL] = useState<string>("");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  const chunksRef = useRef<Array<Blob>>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -51,7 +51,6 @@ export default function AudioRecorder() {
   };
 
   const startRecording = async () => {
-    console.log(selectedDevice);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {

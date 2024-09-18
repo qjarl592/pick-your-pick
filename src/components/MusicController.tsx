@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import useTabStore from "@/store/tabStore";
-
 import TempoSlider from "./TempoSlider";
 
 type Props = {

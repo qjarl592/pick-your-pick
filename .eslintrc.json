@@ -80,5 +80,31 @@
     "react/no-unescaped-entities": "off",
     "@next/next/no-page-custom-font": "off",
     "react/no-array-index-key": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["./src/components/ui/**/*.{js,ts,tsx}"],
+      "rules": {
+        // shadcn UI 컴포넌트에 대해 모든 규칙 비활성화
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/no-unescaped-entities": "off",
+        "react/no-array-index-key": "off",
+        "no-unused-vars": "off",
+        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-vars": "off",
+        "import/order": "off",
+        "import/first": "off",
+        "import/newline-after-import": "off",
+        "import/no-duplicates": "off",
+        "@next/next/no-img-element": "off",
+        "@next/next/no-page-custom-font": "off",
+        "prettier/prettier": "off"
+      }
+    }
+  ]
 }

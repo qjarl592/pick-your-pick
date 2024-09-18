@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const bigIntToString = (data: any): any => {
+export const bigIntToString = (data: unknown): string | object | unknown => {
   if (typeof data === "bigint") {
     return data.toString();
   }

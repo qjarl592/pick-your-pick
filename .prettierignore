@@ -1,0 +1,15 @@
+dist
+pnpm-lock.yaml
+pnpm-workspace.yaml
+node_modules
+public
+**/node_modules
+**/public
+
+*.log
+*.test.ts
+
+.gitignore
+.prettierignore
+.DS_Store
+.eslintignore

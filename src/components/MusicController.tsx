@@ -3,9 +3,9 @@
 import { PauseIcon, PlayIcon, RepeatIcon, SquareIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
+import TempoSlider from "@/components//TempoSlider";
 import { Button } from "@/components/ui/button";
 import useTabStore from "@/store/tabStore";
-import TempoSlider from "./TempoSlider";
 
 type Props = {
   fileUrl: string;

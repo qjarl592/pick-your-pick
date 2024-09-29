@@ -1,7 +1,6 @@
 import React from "react";
 
-import GlobalNav from "@/components/GlobalNav";
-import Tab from "@/components/Tab";
+import Wrapper from "@/components/tab/composite/Wrappter";
 
 // type Props = {
 //   params: {
@@ -16,9 +15,8 @@ const tabMockData = {
 
 export default function Page() {
   return (
-    <main className="flex min-h-screen justify-center items-center">
-      <GlobalNav />
-      <Tab file={tabMockData.tabFileUrl} fileUrl={tabMockData.tabFileUrl} className="mt-32 px-10" />
+    <main className="flex min-h-screen items-center justify-center">
+      <Wrapper tabData={tabMockData} />
     </main>
   );
 }

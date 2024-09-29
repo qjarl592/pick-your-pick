@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 
+import GlobalNav from "@/components/GlobalNav";
+
 import ClientProvider from "../components/ClientProvider";
 
 interface Props {
@@ -21,7 +23,10 @@ export default function RootLayout(props: Props) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClientProvider>{children}</ClientProvider>
+        <ClientProvider>
+          <GlobalNav />
+          {children}
+        </ClientProvider>
       </body>
     </html>
   );

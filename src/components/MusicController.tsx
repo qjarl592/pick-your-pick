@@ -5,33 +5,28 @@ import React, { useEffect, useRef, useState } from "react";
 
 import TempoSlider from "@/components//TempoSlider";
 import { Button } from "@/components/ui/button";
-import useTabStore from "@/store/tabStore";
+import useTabStore from "@/store/tab/tabStore";
 
 interface Props {
   fileUrl: string;
-  playPauseTab: () => void;
-  stopTab: () => void;
 }
 
 export default function MusicController(props: Props) {
-  const { fileUrl, playPauseTab, stopTab } = props;
-  const { originTempo } = useTabStore();
-  const [isPlay, setIsPlay] = useState(false);
+  const { fileUrl } = props;
+  const { originTempo, isPlaying, setIsPlaying } = useTabStore();
   const [tempo, setTempo] = useState(originTempo);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (!audioRef.current) return;
-    const playbackRate = tempo / originTempo;
     audioRef.current.preservesPitch = true;
-    audioRef.current.playbackRate = playbackRate;
+    audioRef.current.playbackRate = tempo / originTempo;
   }, [originTempo, tempo]);
 
   const handleClickPlay = () => {
     if (!audioRef.current) return;
-    setIsPlay(!isPlay);
-    playPauseTab();
-    if (isPlay) {
+    setIsPlaying(!isPlaying);
+    if (isPlaying) {
       audioRef.current.pause();
     } else {
       audioRef.current.preservesPitch = true;
@@ -41,16 +36,15 @@ export default function MusicController(props: Props) {
 
   const handleClickStop = () => {
     if (!audioRef.current) return;
-    setIsPlay(false);
-    stopTab();
+    setIsPlaying(false);
     audioRef.current.currentTime = 0;
   };
 
   return (
-    <div className="flex space-x-2 rounded-xl border-2 p-2">
+    <div className="fixed bottom-0 left-0 z-50 flex w-screen space-x-2 rounded-xl border-2 bg-white p-2">
       <audio ref={audioRef} src={fileUrl} />
       <Button variant="outline" className="size-16" onClick={handleClickPlay}>
-        {isPlay ? <PauseIcon /> : <PlayIcon />}
+        {isPlaying ? <PauseIcon /> : <PlayIcon />}
       </Button>
       <Button variant="outline" className="size-16" onClick={handleClickStop}>
         <SquareIcon />

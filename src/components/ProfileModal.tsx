@@ -29,12 +29,12 @@ export default function ProfileModal() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={navigationMenuTriggerStyleWithoutFocus()} aria-label="User profile menu">
-              <CircleUserIcon className="w-5 h-5" />
+              <CircleUserIcon className="size-5" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
-            <div className="flex flex-col space-y-2 justify-center items-center p-2">
-              <Avatar className="w-[70%] h-[70%]">
+            <div className="flex flex-col items-center justify-center space-y-2 p-2">
+              <Avatar className="size-[70%]">
                 <AvatarImage src={session.user.image ?? undefined} alt="User avatar" />
                 <AvatarFallback>{session.user.name?.[0] ?? "U"}</AvatarFallback>
               </Avatar>

@@ -24,7 +24,7 @@ export default function TabSearch() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="flex w-[560px] items-center px-4 py-0.5  rounded-full border border-gray-200 shadow-md">
+      <div className="flex w-[560px] items-center rounded-full border  border-gray-200 px-4 py-0.5 shadow-md">
         <Button className="rounded-full p-2 " asChild variant="ghost" size="icon" onClick={handleClickButton}>
           <Search color="#64748B" />
         </Button>

@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import "./globals.css";
 
 import GlobalNav from "@/components/GlobalNav";
+import QueryProvider from "@/components/QueryProvider";
 
 import ClientProvider from "../components/ClientProvider";
 
@@ -24,8 +25,10 @@ export default function RootLayout(props: Props) {
     <html lang="en">
       <body className={inter.className}>
         <ClientProvider>
-          <GlobalNav />
-          {children}
+          <QueryProvider>
+            <GlobalNav />
+            {children}
+          </QueryProvider>
         </ClientProvider>
       </body>
     </html>

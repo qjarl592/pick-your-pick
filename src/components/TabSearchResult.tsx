@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import api from "@/lib/axios";
@@ -25,13 +26,11 @@ type Props = { keyword: string };
 
 export default function TabSearchResult(props: Props) {
   const { keyword } = props;
-  const [tabInfos, setTabInfos] = useState<Array<TabInfoType>>([]);
 
-  //TODO: react query로 변경
-  useEffect(() => {
-    if (tabInfos.length) return;
-
-    const getSearchTabs = async () => {
+  const { data } = useQuery({
+    queryKey: ["searchTabs", keyword],
+    queryFn: async ({ queryKey }) => {
+      const [_, keyword] = queryKey;
       const response = await api.get<{ result: TabApiResponse[] }>("/search", {
         params: {
           keyword: keyword,
@@ -46,21 +45,15 @@ export default function TabSearchResult(props: Props) {
           thumbnailUrl: item.thumbnail_url,
         };
       });
-      setTabInfos(tabInfos);
-    };
-
-    (async () => {
-      await getSearchTabs();
-    })();
-  }, [keyword, tabInfos.length]);
+      return tabInfos;
+    },
+  });
 
   return (
     <ScrollArea className="h-[50vh] w-full rounded-xl border border-gray-200 shadow-md">
       <div className="p-4">
         {!keyword.length && <h4 className="mb-4 text-lg">Sample Tabs</h4>}
-        {tabInfos.map((tabInfo) => (
-          <TabInfo key={tabInfo.id} tabInfo={tabInfo} />
-        ))}
+        {data?.map((tabInfo) => <TabInfo key={tabInfo.id} tabInfo={tabInfo} />)}
       </div>
     </ScrollArea>
   );

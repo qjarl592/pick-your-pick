@@ -16,7 +16,7 @@ const tabMockData = {
 
 export default function Page() {
   return (
-    <main className="flex min-h-screen justify-center items-center">
+    <main className="flex min-h-screen items-center justify-center">
       <GlobalNav />
       <Tab file={tabMockData.tabFileUrl} fileUrl={tabMockData.tabFileUrl} className="mt-32 px-10" />
     </main>

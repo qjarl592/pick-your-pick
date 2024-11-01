@@ -17,7 +17,7 @@ export default function LoginModal() {
   return (
     <Dialog>
       <DialogTrigger className={navigationMenuTriggerStyle()}>
-        <LogIn className="w-5 h-5" />
+        <LogIn className="size-5" />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -26,7 +26,7 @@ export default function LoginModal() {
         </DialogHeader>
         <Button
           onClick={handleLogin}
-          className="mt-6 w-full flex items-center justify-center gap-2 bg-white text-black border border-gray-300 hover:bg-gray-100"
+          className="mt-6 flex w-full items-center justify-center gap-2 border border-gray-300 bg-white text-black hover:bg-gray-100"
         >
           <Image src="/logos/google_login_logo.svg" alt="Google logo" width={18} height={18} />
           Google로 로그인

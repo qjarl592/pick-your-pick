@@ -47,16 +47,16 @@ export default function MusicController(props: Props) {
   };
 
   return (
-    <div className="flex space-x-2 p-2 border-2 rounded-xl">
+    <div className="flex space-x-2 rounded-xl border-2 p-2">
       <audio ref={audioRef} src={fileUrl} />
-      <Button variant="outline" className="h-16 w-16" onClick={handleClickPlay}>
+      <Button variant="outline" className="size-16" onClick={handleClickPlay}>
         {isPlay ? <PauseIcon /> : <PlayIcon />}
       </Button>
-      <Button variant="outline" className="h-16 w-16" onClick={handleClickStop}>
+      <Button variant="outline" className="size-16" onClick={handleClickStop}>
         <SquareIcon />
       </Button>
       <TempoSlider tempo={tempo} setTempo={setTempo} />
-      <Button variant="outline" className="flex flex-col justify-center items-center h-16 w-24">
+      <Button variant="outline" className="flex h-16 w-24 flex-col items-center justify-center">
         <RepeatIcon />
         <span className="text-xs text-muted-foreground">Loop</span>
       </Button>

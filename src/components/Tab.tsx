@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import useTabStore from "@/store/tabStore";
 
 import MusicController from "./MusicController";
+import RecordController from "./RecordController/RecordController";
 
 declare global {
   interface Window {
@@ -107,7 +108,8 @@ export default function Tab(props: Props) {
     <div className={cn("w-full", className)} {...rest}>
       <div ref={containerRef} />
       {originTempo !== null && (
-        <div className="fixed z-50 bottom-0 w-screen left-0 bg-white">
+        <div className="fixed bottom-0 left-0 z-50 w-screen bg-white">
+          <RecordController />
           <MusicController fileUrl={fileUrl} playPauseTab={playPauseTab} stopTab={stopTab} />
         </div>
       )}

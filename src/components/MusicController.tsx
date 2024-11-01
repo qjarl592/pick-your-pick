@@ -45,7 +45,6 @@ export default function MusicController(props: Props) {
       <audio ref={audioRef} src={fileUrl} />
       <Button variant="outline" className="size-16" onClick={handleClickPlay}>
         {isPlaying ? <PauseIcon /> : <PlayIcon />}
-
       </Button>
       <Button variant="outline" className="size-16" onClick={handleClickStop}>
         <SquareIcon />

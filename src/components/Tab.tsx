@@ -6,14 +6,13 @@ import useAlphaTab from "@/hooks/useAlphaTab/useAlphaTab";
 import { cn } from "@/lib/utils";
 import useTabStore from "@/store/tab/tabStore";
 
+import MusicController from "./MusicController";
+import RecordController from "./RecordController/RecordController";
 import { TabData } from "./tab/composite/Wrappter";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   tabData: TabData;
 }
-
-import MusicController from "./MusicController";
-import RecordController from "./RecordController/RecordController";
 
 declare global {
   interface Window {
@@ -41,11 +40,10 @@ export default function Tab(props: Props) {
   return (
     <div className={cn("w-full", className)} {...rest}>
       <div ref={containerRef} />
-        <div className="fixed bottom-0 left-0 z-50 w-screen bg-white">
-          <RecordController />
-          <MusicController fileUrl={fileUrl} playPauseTab={playPauseTab} stopTab={stopTab} />
-        </div>
-      )}
+      <div className="fixed bottom-0 left-0 z-50 w-screen bg-white">
+        <RecordController />
+        <MusicController fileUrl={tabData.tabAudioUrl} />
+      </div>
     </div>
   );
 }

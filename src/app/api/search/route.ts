@@ -8,12 +8,14 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const keyword = searchParams.get("keyword") + "";
 
-    const queryOptions: Prisma.TabFindManyArgs | Prisma.Tab_SampleFindFirstArgs = {
+    const queryOptions: Prisma.TabFindManyArgs = {
       select: {
         id: true,
         title: true,
         artist: true,
         thumbnail_url: true,
+        audio_url: true,
+        tab_url: true,
       },
       where: {
         OR: [

@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useTabStore from "@/store/tabStore";
+import useTabStore from "@/store/tab/tabStore";
 
 import { Slider } from "./ui/slider";
 
@@ -46,8 +46,8 @@ export default function TempoSlider(props: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex flex-col justify-center items-center h-16 w-24">
-          <div className="flex justify-center items-center space-x-1">
+        <Button variant="outline" className="flex h-16 w-24 flex-col items-center justify-center">
+          <div className="flex items-center justify-center space-x-1">
             <DrumIcon />
             <span className="text-xl">{tempo}</span>
           </div>
@@ -56,16 +56,16 @@ export default function TempoSlider(props: Props) {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="center" sideOffset={5} className="w-52">
         <DropdownMenuLabel className="flex items-center justify-start space-x-2">
-          <Button variant="ghost" className="p-1 h-5 w-5 rounded-full" onClick={tempoDown}>
+          <Button variant="ghost" className="size-5 rounded-full p-1" onClick={tempoDown}>
             <Minus size={15} />
           </Button>
           <span>{tempo} bpm</span>
-          <Button variant="ghost" className="p-1 h-5 w-5 rounded-full" onClick={tempoUp}>
+          <Button variant="ghost" className="size-5 rounded-full p-1" onClick={tempoUp}>
             <Plus size={15} />
           </Button>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="flex justify-center items-center h-16">
+        <DropdownMenuLabel className="flex h-16 items-center justify-center">
           <Slider
             defaultValue={[tempoPercent]}
             min={10}

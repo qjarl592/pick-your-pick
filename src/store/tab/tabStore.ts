@@ -1,24 +1,20 @@
 import { create } from "zustand";
 
-interface tabStore {
+interface TabStore {
   tempo: number;
-  minTempo: number;
-  maxTempo: number;
   originTempo: number;
+  isPlaying: boolean;
   setTempo: (param: number) => void;
-  setMinTempo: (param: number) => void;
-  setMaxTempo: (param: number) => void;
   setOriginTempo: (param: number) => void;
+  setIsPlaying: (param: boolean) => void;
 }
 
-const useTabStore = create<tabStore>((set) => ({
+const useTabStore = create<TabStore>((set) => ({
   tempo: 0,
-  minTempo: 0,
-  maxTempo: 0,
   originTempo: 10,
+  isPlaying: false,
   setTempo: (tempo: number) => set({ tempo }),
-  setMinTempo: (minTempo: number) => set({ minTempo }),
-  setMaxTempo: (maxTempo: number) => set({ maxTempo }),
   setOriginTempo: (originTempo: number) => set({ originTempo }),
+  setIsPlaying: (isPlaying: boolean) => set({ isPlaying }),
 }));
 export default useTabStore;

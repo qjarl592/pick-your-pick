@@ -13,9 +13,9 @@ export default function GlobalNav() {
       <NavigationMenu className="absolute right-3 top-3">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <IconLink href="/search" icon={<SearchIcon className="w-5 h-5" />} label="search" />
-            <IconLink href="/add" icon={<PlusIcon className="w-5 h-5" />} label="add" />
-            <IconLink href="/favorites" icon={<StarIcon className="w-5 h-5" />} label="favorites" />
+            <IconLink href="/search" icon={<SearchIcon className="size-5" />} label="search" />
+            <IconLink href="/add" icon={<PlusIcon className="size-5" />} label="add" />
+            <IconLink href="/favorites" icon={<StarIcon className="size-5" />} label="favorites" />
             <ProfileModal />
           </NavigationMenuItem>
         </NavigationMenuList>

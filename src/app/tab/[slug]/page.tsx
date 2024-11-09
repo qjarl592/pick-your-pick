@@ -3,7 +3,7 @@
 import React from "react";
 
 import Wrapper from "@/components/tab/composite/Wrappter";
-import useTab from "@/hooks/useTab/useTab";
+import useSupabase from "@/hooks/useSupabase/useSupabase";
 
 type Props = {
   params: {
@@ -14,7 +14,7 @@ type Props = {
 export default function Page(props: Props) {
   const { params } = props;
   const { slug } = params;
-  const tabData = useTab(slug);
+  const tabData = useSupabase(slug);
   return (
     <main className="flex min-h-screen items-center justify-center">
       <Wrapper tabData={tabData} />

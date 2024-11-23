@@ -8,5 +8,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const getStorageUrl = async (path: string) => {
   const { data } = await supabase.storage.from(storageName).getPublicUrl(path);
+  console.log(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string);
+  console.log(data);
   return data.publicUrl;
 };

@@ -17,8 +17,8 @@ export default function useSupabase(id: string) {
       ]);
 
       setTabData({
-        tabFileUrl: tabFileUrl.trim().replaceAll(/\s+/gi, ""),
-        tabAudioUrl: tabAudioUrl.trim().replaceAll(/\s+/gi, ""),
+        tabFileUrl: tabFileUrl.trim().replaceAll("%0A", ""),
+        tabAudioUrl: tabAudioUrl.trim().replaceAll("%0A", ""),
       });
     }
 

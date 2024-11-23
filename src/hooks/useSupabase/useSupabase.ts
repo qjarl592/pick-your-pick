@@ -16,7 +16,10 @@ export default function useSupabase(id: string) {
         getStorageUrl(`audio/${id}.mp3`),
       ]);
 
-      setTabData({ tabFileUrl, tabAudioUrl });
+      setTabData({
+        tabFileUrl: tabFileUrl.trim().replaceAll(/\s+/gi, ""),
+        tabAudioUrl: tabAudioUrl.trim().replaceAll(/\s+/gi, ""),
+      });
     }
 
     loadUrls();

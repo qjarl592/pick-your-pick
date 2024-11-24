@@ -10,3 +10,8 @@ export const getStorageUrl = (path: string) => {
   const { data } = supabase.storage.from(storageName).getPublicUrl(path);
   return data.publicUrl;
 };
+
+export const uploadFile = async (path: string, file: File) => {
+  const { error } = await supabase.storage.from(storageName).upload(path, file);
+  return error;
+};

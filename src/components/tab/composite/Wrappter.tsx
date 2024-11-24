@@ -3,6 +3,8 @@
 import MusicController from "@/components/MusicController";
 import Tab from "@/components/Tab";
 
+import GuitarProUploader from "./GuitarProUploader";
+
 export interface TabData {
   tabFileUrl: string;
   tabAudioUrl: string;
@@ -17,6 +19,7 @@ export default function Wrapper(props: Props) {
 
   return (
     <>
+      <GuitarProUploader />
       <Tab className="mt-32 px-10" tabData={tabData} />
       <MusicController fileUrl={tabData.tabAudioUrl} />
     </>

@@ -17,7 +17,24 @@ export default function TabSearchResult(props: Props) {
 
   const { data } = useQuery({
     queryKey: ["searchTabs", keyword],
-    queryFn: getTabTableAll,
+    queryFn: async ({ queryKey }) => {
+      const [_, keyword] = queryKey;
+      const response = await api.get<{ result: Array<TabApiResponse> }>("/search", {
+        params: {
+          keyword: keyword,
+        },
+      });
+      const data = response.data.result;
+      const tabInfos: Array<TabInfoType> = data.map((item: TabApiResponse) => {
+        return {
+          id: item.id,
+          title: item.title,
+          artist: item.artist,
+          thumbnailUrl: item.thumbnail_url,
+        };
+      });
+      return tabInfos;
+    },
   });
 
   return (

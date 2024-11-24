@@ -1,20 +1,7 @@
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 import { api } from "@/lib/axios";
-
-export type TabInfoType = {
-  id: string;
-  title: string;
-  artist: string;
-  thumbnailUrl: string;
-};
-
-export interface TabApiResponse {
-  id: string;
-  title: string;
-  artist: string;
-  thumbnail_url: string;
-}
+import { TabApiResponse, TabInfoType } from "@/type/tab";
 
 export const getTabTableAll = async ({ queryKey }: QueryFunctionContext) => {
   const [_, keyword] = queryKey;

@@ -2,7 +2,7 @@ import { UseQueryResult } from "@tanstack/react-query";
 import Image from "next/image";
 import React from "react";
 
-import { YoutubeSearchItem } from "@/api/youtube";
+import { YoutubeSearchItem } from "@/type/youtube";
 
 import { Label } from "../ui/label";
 

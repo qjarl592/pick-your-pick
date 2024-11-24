@@ -2,9 +2,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { TabInfoType } from "@/api/prisma";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { TabInfoType } from "@/type/tab";
 
 type Props = {
   tabInfo: TabInfoType;

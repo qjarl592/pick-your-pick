@@ -10,19 +10,15 @@ export default function useSupabase(id: string) {
   });
 
   useEffect(() => {
-    async function loadUrls() {
-      const [tabFileUrl, tabAudioUrl] = await Promise.all([
-        getStorageUrl(`tab/${id}.gp3`),
-        getStorageUrl(`audio/${id}.mp3`),
-      ]);
+    const tabFileUrl = getStorageUrl(`tab/${id}.gp3`);
+    const tabAudioUrl = getStorageUrl(`audio/${id}.mp3`);
 
-      setTabData({
-        tabFileUrl: tabFileUrl.trim().replaceAll("%0A", ""),
-        tabAudioUrl: tabAudioUrl.trim().replaceAll("%0A", ""),
-      });
-    }
+    console.log(tabAudioUrl, tabFileUrl);
 
-    loadUrls();
+    setTabData({
+      tabFileUrl,
+      tabAudioUrl,
+    });
   }, [id]);
 
   return tabData;

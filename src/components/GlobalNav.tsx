@@ -1,11 +1,12 @@
 "use client";
 
-import { PlusIcon, SearchIcon, StarIcon } from "lucide-react";
+import { SearchIcon, StarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 
+import AddTabModal from "./AddTabModal/AddTabModal";
 import IconLink from "./IconLink";
 import ProfileModal from "./ProfileModal";
 
@@ -25,7 +26,7 @@ export default function GlobalNav() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <IconLink href="/search" icon={<SearchIcon className="size-5" />} label="search" />
-            <IconLink href="/add" icon={<PlusIcon className="size-5" />} label="add" />
+            <AddTabModal />
             <IconLink href="/favorites" icon={<StarIcon className="size-5" />} label="favorites" />
             <ProfileModal />
           </NavigationMenuItem>

@@ -13,8 +13,6 @@ export default function useSupabase(id: string) {
     const tabFileUrl = getStorageUrl(`tab/${id}.gp3`);
     const tabAudioUrl = getStorageUrl(`audio/${id}.mp3`);
 
-    console.log(tabAudioUrl, tabFileUrl);
-
     setTabData({
       tabFileUrl,
       tabAudioUrl,

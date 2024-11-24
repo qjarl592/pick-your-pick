@@ -4,8 +4,7 @@ import React from "react";
 
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-
-import { TabInfoType } from "./TabSearchResult";
+import { TabInfoType } from "@/type/tab";
 
 type Props = {
   tabInfo: TabInfoType;
@@ -27,7 +26,7 @@ export default function TabInfo(props: Props) {
         className="flex space-x-5 rounded-sm px-2 py-1 hover:bg-accent hover:text-accent-foreground"
         onClick={() => handleClick(id)}
       >
-        <Image src={thumbnailUrl} width={100} height={70} alt="" />
+        <Image src={thumbnailUrl} width={100} height={70} alt={title} />
         <div className="flex flex-col">
           <Label className="text-lg">{title}</Label>
           <span className="text-sm">{artist}</span>

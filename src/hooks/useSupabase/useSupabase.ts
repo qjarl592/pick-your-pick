@@ -16,8 +16,8 @@ export default function useSupabase(id: string) {
     console.log(tabAudioUrl, tabFileUrl);
 
     setTabData({
-      tabFileUrl: tabFileUrl.trim().replaceAll("%0A", ""),
-      tabAudioUrl: tabAudioUrl.trim().replaceAll("%0A", ""),
+      tabFileUrl,
+      tabAudioUrl,
     });
   }, [id]);
 

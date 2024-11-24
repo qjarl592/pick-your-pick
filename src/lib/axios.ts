@@ -1,10 +1,15 @@
 import axios from "axios";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export default api;
+export const youtubeApi = axios.create({
+  baseURL: "https://www.googleapis.com/youtube/v3/search",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});

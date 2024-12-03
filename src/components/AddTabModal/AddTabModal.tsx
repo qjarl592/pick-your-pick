@@ -1,6 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 
+import GuitarProUploader from "./GuitarProUploader";
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
 import { Button } from "../ui/button";
 import {
@@ -28,17 +29,18 @@ export default function AddTabModal() {
           <PlusIcon className="size-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>타브 악보 추가</DialogTitle>
-          <DialogDescription>아래 양식을 작성해 새로운 타브 악보를 추가해 주세요.</DialogDescription>
-        </DialogHeader>
-        <div>
+      <DialogContent className="flex min-w-[60vw] justify-between">
+        <div className="flex-1">
+          <DialogHeader>
+            <DialogTitle>타브 악보 추가</DialogTitle>
+            <DialogDescription>아래 양식을 작성해 새로운 타브 악보를 추가해 주세요.</DialogDescription>
+          </DialogHeader>
           <YoutubeSearchWrapper />
+          <DialogFooter>
+            <Button onClick={handleClickAdd}>추가</Button>
+          </DialogFooter>
         </div>
-        <DialogFooter>
-          <Button onClick={handleClickAdd}>추가</Button>
-        </DialogFooter>
+        <GuitarProUploader />
       </DialogContent>
     </Dialog>
   );

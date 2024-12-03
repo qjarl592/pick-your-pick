@@ -4,6 +4,9 @@ import { useState } from "react";
 
 import { uploadFile } from "@/lib/supabase";
 
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+
 export default function GuitarProUploader() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,17 +49,17 @@ export default function GuitarProUploader() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md p-4">
+    <div className="flex-1">
       <div className="mb-4">
-        <label className="mb-2 block text-sm font-medium text-gray-700">Guitar Pro 파일 업로드</label>
-        <input
+        <Label className="mb-2 block text-sm font-medium text-gray-700">Guitar Pro 파일 업로드</Label>
+        <Input
+          id="file"
           type="file"
-          accept=".gp,.gp3,.gp4,.gp5,.gpx"
+          className="cursor-pointer"
           onChange={handleFileUpload}
           disabled={uploading}
         />
       </div>
-
       {uploading && <div className="text-sm text-gray-500">업로드 중...</div>}
     </div>
   );

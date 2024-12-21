@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { TabData } from "@/components/tab/composite/Wrappter";
+import { TabData } from "@/components/tab/composite/Wrapper";
 import { getStorageUrl } from "@/lib/supabase";
 
 export default function useSupabase(id: string) {

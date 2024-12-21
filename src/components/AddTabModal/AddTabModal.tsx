@@ -1,14 +1,13 @@
 import { PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 
-import GuitarProUploader from "./GuitarProUploader";
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
+import { TabForm, TabInputForm } from "../TabForm/TabForm";
 import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,8 +17,15 @@ import { navigationMenuTriggerStyle } from "../ui/navigation-menu";
 export default function AddTabModal() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleClickAdd = () => {
-    setIsOpen(false);
+  const handleSubmit = async (data: TabInputForm & { tabFilePath: string }) => {
+    try {
+      // API 호출이나 데이터 처리
+      console.log("제출된 데이터:", data);
+      // 성공적으로 처리되면 모달 닫기
+      setIsOpen(false);
+    } catch (error) {
+      console.error("에러:", error);
+    }
   };
 
   return (
@@ -36,11 +42,10 @@ export default function AddTabModal() {
             <DialogDescription>아래 양식을 작성해 새로운 타브 악보를 추가해 주세요.</DialogDescription>
           </DialogHeader>
           <YoutubeSearchWrapper />
-          <DialogFooter>
-            <Button onClick={handleClickAdd}>추가</Button>
-          </DialogFooter>
         </div>
-        <GuitarProUploader />
+        <div className="flex-1">
+          <TabForm onSubmit={handleSubmit} />
+        </div>
       </DialogContent>
     </Dialog>
   );

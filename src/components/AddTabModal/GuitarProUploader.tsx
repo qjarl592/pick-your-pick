@@ -7,7 +7,12 @@ import { uploadFile } from "@/lib/supabase";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export default function GuitarProUploader() {
+interface Props {
+  onFileUpload: (filePath: string) => void;
+}
+
+export default function GuitarProUploader(props: Props) {
+  const { onFileUpload } = props;
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +45,9 @@ export default function GuitarProUploader() {
       if (uploadError) {
         throw uploadError;
       }
+
+      // 성공적으로 업로드되면 파일 경로를 부모로 전달
+      onFileUpload(filePath);
     } catch (err) {
       setError(err instanceof Error ? err.message : "파일 업로드 중 오류가 발생했습니다.");
       console.error(error);

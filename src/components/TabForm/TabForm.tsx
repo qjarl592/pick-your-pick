@@ -1,15 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { YoutubeSearchItem } from "@/type/youtube";
 
 import GuitarProUploader from "../AddTabModal/GuitarProUploader";
 
 interface Props {
+  selectedVideo: YoutubeSearchItem;
   onSubmit: (data: TabInputForm & { tabFilePath: string }) => void;
 }
 
@@ -21,20 +23,26 @@ const tabInputFormSchema = z.object({
 
 export type TabInputForm = z.infer<typeof tabInputFormSchema>;
 
-export function TabForm(props: Props) {
-  const { onSubmit } = props;
+export function TabForm({ selectedVideo, onSubmit }: Props) {
   const [tabFilePath, setTabFilePath] = useState("");
 
   const form = useForm<TabInputForm>({
     resolver: zodResolver(tabInputFormSchema),
     defaultValues: {
-      title: "",
-      artist: "",
-      thumbnailUrl: "",
+      title: selectedVideo.snippet.title,
+      artist: selectedVideo.snippet.channelTitle,
+      thumbnailUrl: selectedVideo.snippet.thumbnails.medium.url,
     },
   });
 
-  // 4. 제출 핸들러 추가
+  useEffect(() => {
+    form.reset({
+      title: selectedVideo.snippet.title,
+      artist: selectedVideo.snippet.channelTitle,
+      thumbnailUrl: selectedVideo.snippet.thumbnails.medium.url,
+    });
+  }, [selectedVideo, form]);
+
   const handleSubmit = (values: TabInputForm) => {
     onSubmit({ ...values, tabFilePath });
   };

@@ -1,17 +1,23 @@
-import { UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import React from "react";
 
+import { getYoutubeSearch } from "@/api/youtube";
 import { YoutubeSearchItem } from "@/type/youtube";
 
 import { Label } from "../ui/label";
 
 interface Props {
-  queryResult: UseQueryResult<YoutubeSearchItem[]>;
+  keyword: string;
+  onSelectVideo: (video: YoutubeSearchItem) => void;
 }
 
-export default function YoutubeSearchResult({ queryResult }: Props) {
-  const { data, isLoading, isFetching } = queryResult;
+export default function YoutubeSearchResult({ keyword, onSelectVideo }: Props) {
+  const { data, isLoading, isFetching } = useQuery<YoutubeSearchItem[]>({
+    queryKey: ["youtubeSearch", keyword],
+    queryFn: getYoutubeSearch,
+    enabled: keyword.length > 0,
+  });
 
   const showLoading = isLoading || isFetching;
 
@@ -32,6 +38,7 @@ export default function YoutubeSearchResult({ queryResult }: Props) {
           <div
             key={item.id.videoId}
             className="flex space-x-5 rounded-sm px-2 py-1 hover:bg-accent hover:text-accent-foreground"
+            onClick={() => onSelectVideo(item)}
           >
             <Image src={snippet.thumbnails.medium.url} width={100} height={70} alt={snippet.title} />
             <div className="flex flex-col gap-1">

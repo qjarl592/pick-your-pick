@@ -1,5 +1,6 @@
 export interface YoutubeSearchSnippet {
   title: string;
+  channelTitle: string;
   thumbnails: {
     medium: {
       url: string;

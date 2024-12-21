@@ -1,6 +1,8 @@
 import { PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 
+import { YoutubeSearchItem } from "@/type/youtube";
+
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
 import { TabForm, TabInputForm } from "../TabForm/TabForm";
 import { Button } from "../ui/button";
@@ -15,7 +17,22 @@ import {
 import { navigationMenuTriggerStyle } from "../ui/navigation-menu";
 
 export default function AddTabModal() {
+  const defaultVideo = {
+    id: {
+      videoId: "",
+    },
+    snippet: {
+      title: "",
+      channelTitle: "",
+      thumbnails: {
+        medium: {
+          url: "",
+        },
+      },
+    },
+  };
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<YoutubeSearchItem>(defaultVideo);
 
   const handleSubmit = async (data: TabInputForm & { tabFilePath: string }) => {
     try {
@@ -41,10 +58,10 @@ export default function AddTabModal() {
             <DialogTitle>타브 악보 추가</DialogTitle>
             <DialogDescription>아래 양식을 작성해 새로운 타브 악보를 추가해 주세요.</DialogDescription>
           </DialogHeader>
-          <YoutubeSearchWrapper />
+          <YoutubeSearchWrapper onSelectVideo={setSelectedVideo} />
         </div>
         <div className="flex-1">
-          <TabForm onSubmit={handleSubmit} />
+          <TabForm selectedVideo={selectedVideo} onSubmit={handleSubmit} />
         </div>
       </DialogContent>
     </Dialog>

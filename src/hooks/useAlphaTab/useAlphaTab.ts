@@ -6,15 +6,16 @@ declare global {
   interface Window {
     alphaTab: {
       AlphaTabApi: any;
+      synth: any;
     };
   }
 }
 
-type AlphaTab = typeof window.alphaTab.AlphaTabApi;
+export type AlphaTab = typeof window.alphaTab.AlphaTabApi;
 
 export default function useAlphaTab(containerRef: RefObject<HTMLDivElement>, fileUrl: string) {
   const apiRef = useRef<AlphaTab>();
-  const { originTempo, setTempo, setOriginTempo, setIsPlaying } = useTabStore();
+  const { originTempo, initTab } = useTabStore();
 
   useEffect(() => {
     const initializeAlphaTab = () => {
@@ -42,15 +43,12 @@ export default function useAlphaTab(containerRef: RefObject<HTMLDivElement>, fil
         fontDirectory: "https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/font/",
       });
 
-      newApi.playerStateChanged.on((args: any) => {
-        setIsPlaying(args.state === 1);
-      });
+      newApi.metronomeVolume = 1;
 
       newApi.renderFinished.on(() => {
         if (originTempo) return;
         const originalTempo = newApi.score.tempo;
-        setTempo(originalTempo);
-        setOriginTempo(originalTempo);
+        initTab({ tempo: originalTempo, originTempo: originalTempo });
       });
 
       apiRef.current = newApi;
@@ -64,7 +62,7 @@ export default function useAlphaTab(containerRef: RefObject<HTMLDivElement>, fil
         apiRef.current = null;
       }
     };
-  }, [originTempo, setTempo, setOriginTempo, containerRef, setIsPlaying, fileUrl]);
+  }, [originTempo, containerRef, fileUrl, initTab]);
 
   return { apiRef };
 }

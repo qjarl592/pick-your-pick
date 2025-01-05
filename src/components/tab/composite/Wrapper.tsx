@@ -55,10 +55,10 @@ export default function Wrapper(props: Props) {
       <Tab className="mt-32 px-10" ref={containerRef} />
       {apiRef.current && (
         <ControllerWrapper
-          playTabHandler={playTab}
-          pauseTabHandler={pauseTab}
-          stopTabHandler={stopTab}
-          changeTempoHandler={changeTempo}
+          playTab={playTab}
+          pauseTab={pauseTab}
+          stopTab={stopTab}
+          changeTempo={changeTempo}
         />
       )}
     </>

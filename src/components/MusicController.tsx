@@ -8,26 +8,26 @@ import { Button } from "@/components/ui/button";
 import useTabStore from "@/store/tab/tabStore";
 
 interface Props {
-  playTabHandler: () => void;
-  pauseTabHandler: () => void;
-  stopTabHandler: () => void;
-  changeTempoHandler: (newTempo: number) => void;
+  playTab: () => void;
+  pauseTab: () => void;
+  stopTab: () => void;
+  changeTempo: (newTempo: number) => void;
 }
 
 export default function MusicController(props: Props) {
-  const { playTabHandler, pauseTabHandler, stopTabHandler, changeTempoHandler } = props;
+  const { playTab, pauseTab, stopTab, changeTempo } = props;
   const { tempo, isPlay } = useTabStore();
 
   const handleClickPlayPause = () => {
     if (isPlay) {
-      pauseTabHandler();
+      pauseTab();
     } else {
-      playTabHandler();
+      playTab();
     }
   };
 
   const handleClickStop = () => {
-    stopTabHandler();
+    stopTab();
   };
 
   return (
@@ -38,7 +38,7 @@ export default function MusicController(props: Props) {
       <Button variant="outline" className="size-16" onClick={handleClickStop}>
         <SquareIcon />
       </Button>
-      <TempoSlider tempo={tempo} changeTempoHandler={changeTempoHandler} />
+      <TempoSlider tempo={tempo} changeTempo={changeTempo} />
       <Button variant="outline" className="flex h-16 w-24 flex-col items-center justify-center">
         <RepeatIcon />
         <span className="text-xs text-muted-foreground">Loop</span>

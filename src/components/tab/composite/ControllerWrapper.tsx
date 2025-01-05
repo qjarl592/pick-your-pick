@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   className?: string;
-  playTabHandler: () => void;
-  pauseTabHandler: () => void;
-  stopTabHandler: () => void;
-  changeTempoHandler: (newTempo: number) => void;
+  playTab: () => void;
+  pauseTab: () => void;
+  stopTab: () => void;
+  changeTempo: (newTempo: number) => void;
 }
 
 export default function ControllerWrapper(props: Props) {

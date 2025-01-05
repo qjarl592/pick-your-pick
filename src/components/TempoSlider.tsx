@@ -17,11 +17,11 @@ import { Slider } from "./ui/slider";
 
 type Props = {
   tempo: number;
-  changeTempoHandler: (newTempo: number) => void;
+  changeTempo: (newTempo: number) => void;
 };
 
 export default function TempoSlider(props: Props) {
-  const { tempo, changeTempoHandler } = props;
+  const { tempo, changeTempo } = props;
   const { originTempo } = useTabStore();
   const [tempoPercent, setTempoPercent] = useState(100);
 
@@ -32,15 +32,15 @@ export default function TempoSlider(props: Props) {
     const percent = value[0];
     setTempoPercent(percent);
     const newTempo = Math.round((originTempo * percent) / 100);
-    changeTempoHandler(newTempo);
+    changeTempo(newTempo);
   };
 
   const tempoUp = () => {
-    if (tempo > min && tempo < max) changeTempoHandler(tempo + 1);
+    if (tempo > min && tempo < max) changeTempo(tempo + 1);
   };
 
   const tempoDown = () => {
-    if (tempo > min && tempo < max) changeTempoHandler(tempo - 1);
+    if (tempo > min && tempo < max) changeTempo(tempo - 1);
   };
 
   return (

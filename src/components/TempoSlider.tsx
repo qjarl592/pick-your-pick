@@ -1,7 +1,7 @@
 "use client";
 
 import { DrumIcon, Minus, Plus } from "lucide-react";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,11 +17,11 @@ import { Slider } from "./ui/slider";
 
 type Props = {
   tempo: number;
-  setTempo: Dispatch<SetStateAction<number>>;
+  changeTempo: (newTempo: number) => void;
 };
 
 export default function TempoSlider(props: Props) {
-  const { tempo, setTempo } = props;
+  const { tempo, changeTempo } = props;
   const { originTempo } = useTabStore();
   const [tempoPercent, setTempoPercent] = useState(100);
 
@@ -32,15 +32,15 @@ export default function TempoSlider(props: Props) {
     const percent = value[0];
     setTempoPercent(percent);
     const newTempo = Math.round((originTempo * percent) / 100);
-    setTempo(newTempo);
+    changeTempo(newTempo);
   };
 
   const tempoUp = () => {
-    if (tempo > min && tempo < max) setTempo((prev) => prev + 1);
+    if (tempo > min && tempo < max) changeTempo(tempo + 1);
   };
 
   const tempoDown = () => {
-    if (tempo > min && tempo < max) setTempo((prev) => prev - 1);
+    if (tempo > min && tempo < max) changeTempo(tempo - 1);
   };
 
   return (

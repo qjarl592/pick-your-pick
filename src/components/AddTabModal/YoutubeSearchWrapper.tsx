@@ -1,29 +1,29 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 
-import useDebounce from "@/hooks/useDebounce/useDebounce";
-import { YoutubeSearchItem } from "@/type/youtube";
+// import useDebounce from "@/hooks/useDebounce/useDebounce";
+// import { YoutubeSearchItem } from "@/type/youtube";
 
-import YoutubeSearchResult from "./YoutubeSearchResult";
-import { Input } from "../ui/input";
+// import YoutubeSearchResult from "./YoutubeSearchResult";
+// import { Input } from "../ui/input";
 
-interface Props {
-  onSelectVideo: (video: YoutubeSearchItem) => void;
-}
+// interface Props {
+//   onSelectVideo: (video: YoutubeSearchItem) => void;
+// }
 
-export default function YoutubeSearchWrapper({ onSelectVideo }: Props) {
-  const [keyword, setKeyword] = useState("");
-  const debouncedKeyword = useDebounce(keyword, 1000);
+// export default function YoutubeSearchWrapper({ onSelectVideo }: Props) {
+//   const [keyword, setKeyword] = useState("");
+//   const debouncedKeyword = useDebounce(keyword, 1000);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = e;
-    const { value } = target;
-    setKeyword(value);
-  };
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { target } = e;
+//     const { value } = target;
+//     setKeyword(value);
+//   };
 
-  return (
-    <>
-      <Input placeholder="곡 제목을 입력해주세요" onChange={handleChange} value={keyword} />
-      <YoutubeSearchResult keyword={debouncedKeyword} onSelectVideo={onSelectVideo} />
-    </>
-  );
-}
+//   return (
+//     <>
+//       <Input placeholder="곡 제목을 입력해주세요" onChange={handleChange} value={keyword} />
+//       <YoutubeSearchResult keyword={debouncedKeyword} onSelectVideo={onSelectVideo} />
+//     </>
+//   );
+// }

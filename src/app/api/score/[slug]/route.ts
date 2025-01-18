@@ -17,22 +17,15 @@ function isValidUUID(uuid: string) {
 export async function GET(request: NextRequest, { params }: Props) {
   const { slug: scoreId } = params;
   try {
-    console.log("1. API called with params:", params);
-
     const session = await getServerSession(authOptions);
-    console.log("2. Session:", session);
 
-    // UUID 유효성 검사
     if (!isValidUUID(scoreId)) {
-      console.log("3. ID error:");
-
       return NextResponse.json({ error: "Invalid score ID format" }, { status: 400 });
     }
 
     const score = await prisma.score.findUnique({
       where: { id: scoreId },
-    }); // 먼저 단순 쿼리로 테스트
-    console.log("3. Score:", score);
+    });
 
     if (!session || !session.user) {
       return NextResponse.json({ error: "401 Not Found" }, { status: 401 });
@@ -46,11 +39,8 @@ export async function GET(request: NextRequest, { params }: Props) {
       return NextResponse.json({ error: "403 Forbidden" }, { status: 403 });
     }
 
-    console.log("hrer");
-
     return NextResponse.json(score);
   } catch (error) {
-    console.error("Error:", error);
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

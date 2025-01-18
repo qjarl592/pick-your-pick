@@ -3,9 +3,9 @@ import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 
-import QueryProvider from "@/components/QueryProvider";
+import QueryProvider from "@/components/provider/QueryProvider";
 
-import AuthProvider from "../components/AuthProvider";
+import AuthProvider from "../components/provider/AuthProvider";
 
 interface Props {
   children: ReactNode;

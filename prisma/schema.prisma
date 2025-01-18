@@ -8,13 +8,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Tab {
-  id            Int      @id(map: "Tab_Sample_pkey") @unique(map: "Tab_Sample_id_key") @default(autoincrement())
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  title         String?
-  artist        String?
-  thumbnail_url String?
-  tab_url       String?
-  audio_url     String?
+model Score {
+  id      String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId  String  @map("user_id")
 }

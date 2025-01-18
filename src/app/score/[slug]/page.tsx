@@ -1,3 +1,15 @@
-export default function Page() {
-  return <main className="flex min-h-screen items-center justify-center">detail</main>;
+import ScoreDataWrapper from "@/components/features/score/ScoreDataWrapper";
+
+interface Props {
+  params: { slug: string };
+}
+
+export default function Page({ params }: Props) {
+  const { slug: scoreId } = params;
+
+  return (
+    <main className="flex min-h-screen items-center justify-center">
+      <ScoreDataWrapper scoreId={scoreId} />
+    </main>
+  );
 }

@@ -27,5 +27,11 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+    session: async ({ session, token }) => {
+      if (session?.user && typeof token.userId === "string") {
+        session.user.id = token.userId;
+      }
+      return session;
+    },
   },
 };

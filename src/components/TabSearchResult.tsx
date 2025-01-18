@@ -3,8 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-import { getTabTableAll } from "@/api/prisma";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getTabTableAll } from "@/services/prisma";
 
 import TabInfo from "./TabInfo";
 

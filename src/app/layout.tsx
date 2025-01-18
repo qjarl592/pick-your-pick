@@ -3,10 +3,9 @@ import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 
-import GlobalNav from "@/components/GlobalNav";
-import QueryProvider from "@/components/QueryProvider";
+import QueryProvider from "@/components/provider/QueryProvider";
 
-import ClientProvider from "../components/ClientProvider";
+import AuthProvider from "../components/provider/AuthProvider";
 
 interface Props {
   children: ReactNode;
@@ -24,12 +23,9 @@ export default function RootLayout(props: Props) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClientProvider>
-          <QueryProvider>
-            <GlobalNav />
-            {children}
-          </QueryProvider>
-        </ClientProvider>
+        <AuthProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );

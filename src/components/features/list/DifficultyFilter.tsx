@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import { nanoid } from "nanoid";
 
-import { Filter } from "@/components/common/Filter";
+import { Filter } from "@/components/common/FilterTemp";
 
 export default function DifficultyFilter() {
   const renderStars = (count: number) => (

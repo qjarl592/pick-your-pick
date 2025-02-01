@@ -1,0 +1,52 @@
+import { Play, Star } from "lucide-react";
+import { nanoid } from "nanoid";
+import Image from "next/image";
+import React from "react";
+
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+
+const sampleData = {
+  thumbnailSrc: "/asset/image/thumbnailSample.jpeg",
+  title: "얼음(오징어게임 시즌2)",
+  artist: "제프프 작곡, 성기훈 노래",
+  difficulty: 5,
+  lastPracticeDate: "24.02.01",
+};
+
+export default function ScoreCard() {
+  const { thumbnailSrc, title, artist, difficulty, lastPracticeDate } = sampleData;
+
+  return (
+    <Card className="group relative w-40 overflow-hidden rounded-xl shadow-md">
+      <div className="relative size-40 overflow-hidden">
+        <Image src={thumbnailSrc} className="object-cover" alt={title} fill />
+      </div>
+      <div className="px-2 py-1">
+        <CardTitle className="text-base">
+          <p className="truncate">{title}</p>
+        </CardTitle>
+        <CardDescription>{artist}</CardDescription>
+      </div>
+
+      {/* Dimmed overlay for entire card */}
+      <div className="absolute inset-0 translate-y-full bg-black/60 transition-transform duration-300 group-hover:translate-y-0">
+        <div className="flex h-full flex-col items-center justify-center p-2 text-white">
+          <Play className="mb-1.5 rounded-full bg-white p-1 text-black" size={40} />
+          <div className="flex flex-col items-center gap-1.5 p-2 text-sm">
+            <p className="max-w-36 truncate font-semibold">{title}</p>
+            <p className="max-w-36 truncate">{artist}</p>
+            <div className="flex">
+              {Array.from({ length: difficulty }).map((_) => (
+                <Star key={nanoid()} fill="#fde047" className="text-yellow-300" size={18} />
+              ))}
+            </div>
+            <div className="flex flex-col items-center">
+              <p>마지막 연습일</p>
+              <p>{lastPracticeDate}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}

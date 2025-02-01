@@ -17,3 +17,14 @@ export function cn(...inputs: ClassValue[]) {
 //   }
 //   return data;
 // };
+
+export function chunk(list: any[], chunkSize: number) {
+  return Array.from(
+    {
+      length: Math.ceil(list.length / chunkSize),
+    },
+    (_, index) => {
+      return list.slice(index * chunkSize, (index + 1) * chunkSize);
+    }
+  );
+}

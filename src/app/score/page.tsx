@@ -1,4 +1,5 @@
 import DifficultyFilter from "@/components/features/list/DifficultyFilter";
+import RecordingFilter from "@/components/features/list/RecordingFilter";
 import SearchBar from "@/components/features/list/SearchBar";
 import SortSelector from "@/components/features/list/SortSelector";
 
@@ -8,6 +9,7 @@ export default function Page() {
       <SearchBar />
       <SortSelector />
       <DifficultyFilter />
+      <RecordingFilter />
     </main>
   );
 }

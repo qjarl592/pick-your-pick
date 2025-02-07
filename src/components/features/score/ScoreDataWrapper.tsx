@@ -3,10 +3,13 @@
 import { Score } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosResponse, AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import React from "react";
 
 import { api } from "@/services/axios";
+
+import ScoreViewer from "./ScoreViewer";
 
 interface Props {
   scoreId: string;
@@ -21,7 +24,11 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
   });
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return (
+      <div>
+        <Loader2 className="animate-spin" size={40} />
+      </div>
+    );
   }
 
   if (error) {
@@ -31,10 +38,14 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
     } else {
       router.push("/score");
     }
-    return;
+    return null;
   }
 
   if (!data) return null;
 
-  return <div>{JSON.stringify(data.data)}</div>;
+  return (
+    <div>
+      <ScoreViewer pdfUrl="/test.pdf" />
+    </div>
+  );
 }

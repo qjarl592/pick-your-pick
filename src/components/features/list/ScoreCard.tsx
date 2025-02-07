@@ -1,3 +1,4 @@
+import { Score } from "@prisma/client";
 import { Play, Star } from "lucide-react";
 import { nanoid } from "nanoid";
 import Image from "next/image";
@@ -5,21 +6,21 @@ import React from "react";
 
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
-const sampleData = {
-  thumbnailSrc: "/asset/image/thumbnailSample.jpeg",
-  title: "얼음(오징어게임 시즌2)",
-  artist: "제프프 작곡, 성기훈 노래",
-  difficulty: 5,
-  lastPracticeDate: "24.02.01",
-};
+interface Props {
+  score: Score;
+}
 
-export default function ScoreCard() {
-  const { thumbnailSrc, title, artist, difficulty, lastPracticeDate } = sampleData;
+export default function ScoreCard({ score }: Props) {
+  const { thumbnailUrl, title, artist, difficulty, lastPracticeDate } = score;
+
+  if (!thumbnailUrl || !title || !artist || !difficulty || !lastPracticeDate) {
+    return null;
+  }
 
   return (
     <Card className="group relative w-40 overflow-hidden rounded-xl shadow-md">
       <div className="relative size-40 overflow-hidden">
-        <Image src={thumbnailSrc} className="object-cover" alt={title} fill />
+        <Image src={thumbnailUrl} className="object-cover" alt={title} fill />
       </div>
       <div className="px-2 py-1">
         <CardTitle className="text-base">
@@ -42,7 +43,7 @@ export default function ScoreCard() {
             </div>
             <div className="flex flex-col items-center">
               <p>마지막 연습일</p>
-              <p>{lastPracticeDate}</p>
+              <p>{new Date(lastPracticeDate).toLocaleDateString("ko-KR")}</p>
             </div>
           </div>
         </div>

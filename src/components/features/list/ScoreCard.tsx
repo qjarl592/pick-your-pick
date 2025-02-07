@@ -1,8 +1,8 @@
+import { Score } from "@prisma/client";
 import { Play, Star } from "lucide-react";
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import React from "react";
-import { Score } from "@prisma/client";
 
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
@@ -12,7 +12,10 @@ interface Props {
 
 export default function ScoreCard({ score }: Props) {
   const { thumbnailUrl, title, artist, difficulty, lastPracticeDate } = score;
-  console.log(thumbnailUrl);
+
+  if (!thumbnailUrl || !title || !artist || !difficulty || !lastPracticeDate) {
+    return null;
+  }
 
   return (
     <Card className="group relative w-40 overflow-hidden rounded-xl shadow-md">
@@ -40,7 +43,7 @@ export default function ScoreCard({ score }: Props) {
             </div>
             <div className="flex flex-col items-center">
               <p>마지막 연습일</p>
-              <p>{lastPracticeDate}</p>
+              <p>{new Date(lastPracticeDate).toLocaleDateString("ko-KR")}</p>
             </div>
           </div>
         </div>

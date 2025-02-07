@@ -1,4 +1,5 @@
 import { Score } from "@prisma/client";
+
 import { api } from "../axios";
 
 export const getScoresByUserId = async (userId: string) => {

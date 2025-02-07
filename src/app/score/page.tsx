@@ -1,6 +1,7 @@
 "use client";
 
 import { nanoid } from "nanoid";
+import { useSession } from "next-auth/react";
 
 import DifficultyFilter from "@/components/features/list/DifficultyFilter";
 import RecordingFilter from "@/components/features/list/RecordingFilter";
@@ -8,7 +9,6 @@ import ScoreCard from "@/components/features/list/ScoreCard";
 import ScoreListCarousel from "@/components/features/list/ScoreListCarousel";
 import SearchBar from "@/components/features/list/SearchBar";
 import SortSelector from "@/components/features/list/SortSelector";
-import { useSession } from "next-auth/react";
 import { useScores } from "@/hooks/useStores/useStores";
 
 export default function Page() {

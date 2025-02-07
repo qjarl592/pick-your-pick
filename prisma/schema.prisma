@@ -9,6 +9,12 @@ datasource db {
 }
 
 model Score {
-  id      String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId  String  @map("user_id")
+  userId           String?   @map("user_id")
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  thumbnailUrl     String?
+  title            String?
+  artist           String?   @map("\u0008artist")
+  difficulty       Int?      @db.SmallInt
+  lastPracticeDate DateTime? @db.Timestamptz(6)
+  pdfUrl           String?
 }

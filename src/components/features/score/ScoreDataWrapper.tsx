@@ -2,7 +2,7 @@
 
 import { Score } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { AxiosResponse, AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import React from "react";
@@ -18,9 +18,12 @@ interface Props {
 export default function ScoreDataWrapper({ scoreId }: Props) {
   const router = useRouter();
 
-  const { data, error, isLoading } = useQuery<AxiosResponse<Score>, AxiosError>({
+  const { data, error, isLoading } = useQuery<Score, AxiosError>({
     queryKey: ["score"],
-    queryFn: () => api.get<Score>(`/score/${scoreId}`),
+    queryFn: async () => {
+      const res = await api.get<Score>(`/score/${scoreId}`);
+      return res.data;
+    },
   });
 
   if (isLoading) {
@@ -41,11 +44,13 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
     return null;
   }
 
-  if (!data) return null;
+  if (!data || !data.pdfUrl) return null;
+
+  const { pdfUrl } = data;
 
   return (
     <div>
-      <ScoreViewer pdfUrl="/test.pdf" />
+      <ScoreViewer pdfUrl={pdfUrl} />
     </div>
   );
 }

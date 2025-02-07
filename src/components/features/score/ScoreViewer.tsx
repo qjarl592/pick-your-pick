@@ -49,7 +49,7 @@ export default function ScoreViewer({ pdfUrl }: Props) {
           </Document>
         </div>
       </div>
-      <ScoreController {...scoreUtils} />
+      {totalPages > 0 && <ScoreController {...scoreUtils} />}
     </div>
   );
 }

@@ -34,7 +34,7 @@ export default function Page() {
       <DifficultyFilter />
       <RecordingFilter />
       <ScoreListCarousel>
-        {scores?.map((score) => <ScoreCard key={nanoid()} score={score} />)}
+        {scores?.data?.map((score) => <ScoreCard key={nanoid()} score={score} />)}
       </ScoreListCarousel>
     </main>
   );

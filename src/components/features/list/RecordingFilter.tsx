@@ -12,9 +12,9 @@ export default function RecordingFilter() {
   };
 
   return (
-    <>
+    <div className="flex items-center gap-2">
       <span>레코딩 유무</span>
       <Switch checked={enabled} onCheckedChange={handleChange} />
-    </>
+    </div>
   );
 }

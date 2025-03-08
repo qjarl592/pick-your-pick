@@ -6,6 +6,7 @@ import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useScoreFilterStore } from "@/store/scoreFilterStore";
 
 interface FilterOption {
   value: string;
@@ -18,19 +19,21 @@ interface FilterProps {
   onChange?: (values: string[]) => void;
 }
 
-export function Filter({ title, options, onChange }: FilterProps) {
-  const [selected, setSelected] = useState<string[]>([]);
+export function Filter({ title, options }: FilterProps) {
+  const { difficulty, addDifficulty, removeDifficulty } = useScoreFilterStore((state) => ({
+    difficulty: state.difficulty,
+    addDifficulty: state.addDifficulty,
+    removeDifficulty: state.removeDifficulty,
+  }));
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = (value: string) => {
-    const newSelected = selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value];
-
-    setSelected(newSelected);
-    onChange?.(newSelected);
+    if (Number.isNaN(Number(value))) return;
+    addDifficulty(Number(value));
   };
 
   return (
-    <div>
+    <div className="flex items-center gap-2">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="gap-2">
@@ -46,7 +49,7 @@ export function Filter({ title, options, onChange }: FilterProps) {
                 className="flex cursor-pointer items-center space-x-2 rounded p-1 hover:bg-gray-100"
                 onClick={() => handleToggle(option.value)}
               >
-                <Checkbox checked={selected.includes(option.value)} />
+                <Checkbox checked={difficulty.includes(Number(option.value))} />
                 <span>{option.label}</span>
               </div>
             ))}
@@ -54,14 +57,14 @@ export function Filter({ title, options, onChange }: FilterProps) {
         </PopoverContent>
       </Popover>
 
-      {selected.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {selected.map((value) => {
-            const option = options.find((opt) => opt.value === value);
+      {difficulty.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {difficulty.map((value) => {
+            const option = options.find((opt) => opt.value === value.toString());
             if (!option) return null;
 
             return (
-              <Button key={value} variant="secondary" size="sm" onClick={() => handleToggle(value)}>
+              <Button key={value} variant="secondary" size="sm" onClick={() => removeDifficulty(value)}>
                 {option.label}
               </Button>
             );

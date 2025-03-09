@@ -17,4 +17,5 @@ model Score {
   difficulty       Int?      @db.SmallInt
   lastPracticeDate DateTime? @db.Timestamptz(6)
   pdfUrl           String?
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
 }

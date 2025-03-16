@@ -17,6 +17,7 @@ interface Props {
   children: ReactNode;
 }
 
+// TODO: 반응형 최적화
 export default function ScoreListCarousel({ row = 2, children }: Props) {
   const [colNum, setColNum] = useState(1);
   const slides = chunk(Children.toArray(children), row * colNum);

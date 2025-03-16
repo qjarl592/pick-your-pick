@@ -1,7 +1,7 @@
 "use client";
 
 import { nanoid } from "nanoid";
-import { Children, Fragment, ReactNode } from "react";
+import { Children, Fragment, ReactNode, useEffect, useRef, useState } from "react";
 
 import {
   Carousel,
@@ -14,30 +14,54 @@ import { chunk } from "@/lib/utils";
 
 interface Props {
   row?: number;
-  col?: number;
   children: ReactNode;
 }
 
-export default function ScoreListCarousel({ row = 2, col = 5, children }: Props) {
-  const slides = chunk(Children.toArray(children), row * col);
+export default function ScoreListCarousel({ row = 2, children }: Props) {
+  const [colNum, setColNum] = useState(1);
+  const slides = chunk(Children.toArray(children), row * colNum);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (!carouselRef.current) return;
+      const { clientWidth } = carouselRef.current;
+      setResponsiveColNum(clientWidth);
+    };
+
+    onResize();
+
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  const setResponsiveColNum = (curSlideWidth: number) => {
+    const itemWidth = 160;
+    const gap = 16;
+    const newColNum = Math.max(1, Math.floor((curSlideWidth + gap) / (itemWidth + gap)));
+    setColNum(newColNum);
+  };
 
   return (
     <Carousel
       opts={{
         align: "start",
       }}
-      style={{ width: `${col * 160 + (col - 1) * 16}px` }}
+      ref={carouselRef}
+      className="w-full"
     >
       <CarouselPrevious />
       <CarouselNext />
       <CarouselContent>
         {slides.map((slide) => (
-          <CarouselItem key={nanoid()} className="w-fit">
+          <CarouselItem key={nanoid()} className="flex w-full justify-center">
             <div
               key={nanoid()}
-              className="grid gap-4"
+              className="mx-auto grid justify-center gap-4"
               style={{
-                gridTemplateColumns: `repeat(${col}, minmax(0, 1fr))`,
+                gridTemplateColumns: `repeat(${colNum}, minmax(0, 1fr))`,
                 gridTemplateRows: `repeat(${row}, minmax(0, 1fr))`,
               }}
             >

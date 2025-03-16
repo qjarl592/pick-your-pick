@@ -2,6 +2,7 @@ import { Score } from "@prisma/client";
 import { Play, Star } from "lucide-react";
 import { nanoid } from "nanoid";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -11,14 +12,22 @@ interface Props {
 }
 
 export default function ScoreCard({ score }: Props) {
-  const { thumbnailUrl, title, artist, difficulty, lastPracticeDate } = score;
+  const { thumbnailUrl, title, artist, difficulty, lastPracticeDate, id } = score;
+  const router = useRouter();
 
   if (!thumbnailUrl || !title || !artist || !difficulty || !lastPracticeDate) {
     return null;
   }
 
+  const handleClick = () => {
+    router.push(`/score/${id}`);
+  };
+
   return (
-    <Card className="group relative w-40 overflow-hidden rounded-xl shadow-md">
+    <Card
+      className="group relative w-40 overflow-hidden rounded-xl shadow-md hover:cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="relative size-40 overflow-hidden">
         <Image src={thumbnailUrl} className="object-cover" alt={title} fill />
       </div>

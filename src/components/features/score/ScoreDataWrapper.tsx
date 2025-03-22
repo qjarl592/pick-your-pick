@@ -37,9 +37,9 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
   if (error) {
     const status = error.response?.status;
     if (status === 400 || status === 404) {
-      notFound();
-    } else {
       router.push("/score");
+    } else {
+      notFound();
     }
     return null;
   }

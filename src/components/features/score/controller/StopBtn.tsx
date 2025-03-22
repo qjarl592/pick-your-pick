@@ -1,29 +1,17 @@
 import { Square } from "lucide-react";
 import React from "react";
-import { Player } from "tone";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import useAudioStore from "@/store/audioStore";
 
 interface Props {
-  playerRef: React.RefObject<Player | null>;
   className?: string;
+  toggleStop: () => void;
 }
 
-export default function StopBtn({ playerRef, className }: Props) {
-  const { setIsPlaying, setCurrentPosition } = useAudioStore();
-
-  const handleClick = () => {
-    if (!playerRef.current) return;
-
-    playerRef.current.stop();
-    setIsPlaying(false);
-    setCurrentPosition(0);
-  };
-
+export default function StopBtn({ className, toggleStop }: Props) {
   return (
-    <Button variant="outline" size="icon" className={cn("", className)} onClick={handleClick}>
+    <Button variant="outline" size="icon" className={cn("", className)} onClick={toggleStop}>
       <Square />
     </Button>
   );

@@ -5,7 +5,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "pdfjs-dist/webpack";
 
 import ScoreController from "./ScoreController";
-import { useScoreControl } from "../../../hooks/useScoreControl/useScoreControl";
+import { usePdfScore } from "../../../hooks/usePdfScore/usePdfScore";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -16,7 +16,7 @@ interface Props {
 export default function ScoreViewer({ pdfUrl }: Props) {
   const [totalPages, setTotalPages] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const scoreUtils = useScoreControl(containerRef);
+  const pdfScore = usePdfScore(containerRef);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setTotalPages(numPages);
@@ -27,11 +27,11 @@ export default function ScoreViewer({ pdfUrl }: Props) {
       <div ref={containerRef} className="h-[calc(100vh-64px)] w-full overflow-auto">
         <div
           style={{
-            transform: `scale(${scoreUtils.scale})`,
-            transformOrigin: scoreUtils.scale <= 1 ? "center top" : "top left",
+            transform: `scale(${pdfScore.scale})`,
+            transformOrigin: pdfScore.scale <= 1 ? "center top" : "top left",
             transition: "all 0.3s ease-in-out",
-            width: scoreUtils.scale <= 1 ? "100%" : `${100 / scoreUtils.scale}%`,
-            margin: scoreUtils.scale <= 1 ? "0 auto" : "0",
+            width: pdfScore.scale <= 1 ? "100%" : `${100 / pdfScore.scale}%`,
+            margin: pdfScore.scale <= 1 ? "0 auto" : "0",
           }}
         >
           <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} className="w-full">
@@ -49,7 +49,7 @@ export default function ScoreViewer({ pdfUrl }: Props) {
           </Document>
         </div>
       </div>
-      {totalPages > 0 && <ScoreController PdfControlFeatures={scoreUtils} />}
+      {totalPages > 0 && <ScoreController pdfScore={pdfScore} />}
     </div>
   );
 }

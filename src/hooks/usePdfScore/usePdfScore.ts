@@ -5,7 +5,7 @@ const defaultOptions = {
   scrollUnit: 600,
 };
 
-export function useScoreControl(
+export function usePdfScore(
   containerRef: RefObject<HTMLDivElement>,
   options?: {
     scaleUnit?: number;

@@ -38,10 +38,10 @@ export default function MixBtn({
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start">
-        <div className="ml-4 flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           {trackIds.map((trackId) => (
-            <div key={trackId} className="flex items-center gap-2">
-              <div>{getTrackName(trackId)}</div>
+            <div key={trackId} className="flex items-center gap-3">
+              <div className="min-w-14 text-sm">{getTrackName(trackId)}</div>
               <Button size="sm" onClick={() => toggleTrackMute(trackId)}>
                 {tracks[trackId].isMuted ? <VolumeX size={16} /> : <Volume size={16} />}
               </Button>

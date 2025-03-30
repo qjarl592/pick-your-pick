@@ -108,7 +108,6 @@ export function useAudioPlayers() {
 
     if (players[trackId]) {
       players[trackId].volume.value = dbVolume;
-      console.log(`Track ${trackId} volume set to: ${dbVolume} dB (from linear: ${volume})`);
     }
 
     setTrackVolume(trackId, volume);

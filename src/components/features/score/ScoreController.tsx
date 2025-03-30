@@ -25,13 +25,26 @@ interface Props {
 export default function ScoreController({ pdfScore }: Props) {
   const { moveNext, movePrev } = pdfScore;
 
-  const { isPlaying, togglePlayPause, toggleStop, toggleTrackMute } = useAudioPlayers();
+  const {
+    tracks,
+    isPlaying,
+    togglePlayPause,
+    toggleStop,
+    toggleTrackMute,
+    toggleTrackMuteOthers,
+    updateTrackVolume,
+  } = useAudioPlayers();
 
   return (
     <div className="fixed bottom-0 left-0 z-50 flex w-full items-center gap-2 bg-white/80 p-4">
       <PlayPauseBtn isPlaying={isPlaying} togglePlayPause={togglePlayPause} />
       <StopBtn toggleStop={toggleStop} />
-      <MixBtn toggleTrackMute={toggleTrackMute} />
+      <MixBtn
+        tracks={tracks}
+        toggleTrackMute={toggleTrackMute}
+        toggleTrackMuteOthers={toggleTrackMuteOthers}
+        updateTrackVolume={updateTrackVolume}
+      />
       <FeatureBtn />
       <MovePrevBtn movePrev={movePrev} />
       <MoveNextBtn moveNext={moveNext} />

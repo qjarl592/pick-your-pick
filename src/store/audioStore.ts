@@ -7,13 +7,15 @@ interface TrackSettings {
   volume: number;
 }
 
+export type Tracks = Record<AudioTrackId, TrackSettings>;
+
 interface AudioTrackStore {
   // 모든 트랙 공통 상태
   isPlaying: boolean;
   currentPosition: number;
 
   // 각 트랙
-  tracks: Record<AudioTrackId, TrackSettings>;
+  tracks: Tracks;
 
   // 재생 상태 제어
   setIsPlaying: (isPlaying: boolean) => void;
@@ -23,6 +25,7 @@ interface AudioTrackStore {
   // 트랙별 설정 제어
   setTrackVolume: (trackId: AudioTrackId, volume: number) => void;
   setTrackMute: (trackId: AudioTrackId) => void;
+  setTrackMuteOthers: (trackId: AudioTrackId) => void;
 }
 
 // 트랙 설정 초기 상태
@@ -32,7 +35,7 @@ const initialTrackSettings: TrackSettings = {
 };
 
 // 모든 트랙에 대한 초기 설정 생성
-const createInitialTrackSettings = (): Record<AudioTrackId, TrackSettings> => {
+const createInitialTrackSettings = (): Tracks => {
   return {
     bass: { ...initialTrackSettings },
     drum: { ...initialTrackSettings },
@@ -79,6 +82,19 @@ const useAudioTrackStore = create<AudioTrackStore>((set) => ({
           isMuted: !state.tracks[trackId].isMuted,
         },
       },
+    })),
+
+  setTrackMuteOthers: (trackId: AudioTrackId) =>
+    set((state) => ({
+      tracks: Object.fromEntries(
+        (Object.entries(state.tracks) as [AudioTrackId, TrackSettings][]).map(([id, track]) => [
+          id,
+          {
+            ...track,
+            isMuted: id !== trackId,
+          },
+        ])
+      ) as Tracks,
     })),
 }));
 

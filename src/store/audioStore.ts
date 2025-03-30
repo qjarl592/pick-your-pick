@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type AudioTrackId = "bass" | "drum" | "guitar" | "original" | "others" | "piano" | "vocal";
+export type AudioTrackId = "bass" | "drum" | "guitar" | "others" | "piano" | "vocal";
 
 interface TrackSettings {
   isMuted: boolean;
@@ -37,7 +37,6 @@ const createInitialTrackSettings = (): Record<AudioTrackId, TrackSettings> => {
     bass: { ...initialTrackSettings },
     drum: { ...initialTrackSettings },
     guitar: { ...initialTrackSettings },
-    original: { ...initialTrackSettings },
     others: { ...initialTrackSettings },
     piano: { ...initialTrackSettings },
     vocal: { ...initialTrackSettings },

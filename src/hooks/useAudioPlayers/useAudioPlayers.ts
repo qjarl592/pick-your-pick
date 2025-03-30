@@ -26,7 +26,7 @@ export function useAudioPlayers() {
     Object.keys(tracks).forEach((trackId) => {
       if (!players[trackId]) {
         players[trackId] = new Player({
-          url: `/audio/${trackId}.mp3`,
+          url: `https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/${trackId}.mp3`,
           autostart: false,
           onload: () => console.log(`${trackId} loaded`),
         }).toDestination();

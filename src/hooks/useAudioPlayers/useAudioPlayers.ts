@@ -18,6 +18,8 @@ export function useAudioPlayers() {
     setCurrentPosition,
     resetPosition,
     setTrackMute,
+    setTrackMuteOthers,
+    setTrackVolume,
   } = useAudioTrackStore();
 
   // 플레이어 초기화
@@ -26,17 +28,21 @@ export function useAudioPlayers() {
     Object.keys(tracks).forEach((trackId) => {
       if (!players[trackId]) {
         players[trackId] = new Player({
-          url: `/audio/${trackId}.mp3`,
+          // 테스트용 임시 url
+          url: `https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/${trackId}.mp3`,
           autostart: false,
           onload: () => console.log(`${trackId} loaded`),
         }).toDestination();
       }
     });
+  }, [tracks]);
 
-    // 음소거 상태 동기화
+  // 트랙 설정이 변경될 때만 볼륨 및 음소거 상태 업데이트
+  useEffect(() => {
     Object.entries(tracks).forEach(([trackId, track]) => {
       if (players[trackId]) {
-        players[trackId].volume.value = track.isMuted ? -Infinity : 0;
+        const dbVolume = track.volume === 0 ? -Infinity : 20 * Math.log10(track.volume);
+        players[trackId].volume.value = track.isMuted ? -Infinity : dbVolume;
       }
     });
   }, [tracks]);
@@ -89,10 +95,30 @@ export function useAudioPlayers() {
     setTrackMute(trackId);
   };
 
+  const toggleTrackMuteOthers = (trackId: AudioTrackId) => {
+    setTrackMuteOthers(trackId);
+  };
+
+  const updateTrackVolume = (trackId: AudioTrackId, volume: number) => {
+    // 0-1 범위에서 데시벨로 변환
+    // volume 1 = 0dB (최대 볼륨)
+    // volume 0.5 ≈ -6dB
+    // volume 0 = -Infinity dB (무음)
+    const dbVolume = volume === 0 ? -Infinity : 20 * Math.log10(volume);
+
+    if (players[trackId]) {
+      players[trackId].volume.value = dbVolume;
+    }
+
+    setTrackVolume(trackId, volume);
+  };
+
   return {
     togglePlayPause,
     toggleStop,
     toggleTrackMute,
+    toggleTrackMuteOthers,
+    updateTrackVolume,
     isPlaying,
     currentPosition,
     tracks,

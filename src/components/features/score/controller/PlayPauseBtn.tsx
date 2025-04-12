@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function PlayPauseBtn({ className }: Props) {
-  const { isload, isPlay, play, pause } = useAudioStore();
+  const { isLoad, isPlay, play, pause } = useAudioStore();
 
   const togglePlayPause = () => {
     if (isPlay) {
@@ -26,7 +26,7 @@ export default function PlayPauseBtn({ className }: Props) {
       size="icon"
       className={cn("", className)}
       onClick={togglePlayPause}
-      disabled={!isload}
+      disabled={!isLoad}
     >
       {!isPlay ? <Play /> : <Pause />}
     </Button>

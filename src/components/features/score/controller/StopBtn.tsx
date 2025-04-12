@@ -10,9 +10,9 @@ interface Props {
 }
 
 export default function StopBtn({ className }: Props) {
-  const { isload, stop } = useAudioStore();
+  const { isLoad, stop } = useAudioStore();
   return (
-    <Button variant="outline" size="icon" className={cn("", className)} onClick={stop} disabled={!isload}>
+    <Button variant="outline" size="icon" className={cn("", className)} onClick={stop} disabled={!isLoad}>
       <Square />
     </Button>
   );

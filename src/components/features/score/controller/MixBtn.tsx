@@ -13,7 +13,7 @@ interface Props {
 
 export default function MixBtn({ className }: Props) {
   // 사용 가능한 트랙 목록
-  const { isload, toggleMute, setVolume, tracks } = useAudioStore();
+  const { isLoad, toggleMute, setVolume, tracks } = useAudioStore();
   const trackIds = (tracks ? Object.keys(tracks) : []) as AudioTrackId[];
 
   const clickSolo = (trackId: AudioTrackId) => {
@@ -33,7 +33,7 @@ export default function MixBtn({ className }: Props) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("", className)} disabled={!isload}>
+        <Button variant="outline" className={cn("", className)} disabled={!isLoad}>
           <AudioLines />
           <span className="ml-2">믹싱</span>
         </Button>

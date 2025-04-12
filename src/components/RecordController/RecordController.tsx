@@ -1,4 +1,3 @@
-// src/components/RecordController/RecordController.tsx
 import React from "react";
 
 import { useAudioRecorder } from "@/hooks/useAudioRecorder/useAudioRecorder";

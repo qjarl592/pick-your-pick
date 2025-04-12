@@ -1,101 +1,144 @@
+import { getContext, getTransport, loaded, Player, start } from "tone";
 import { create } from "zustand";
 
 export type AudioTrackId = "bass" | "drum" | "guitar" | "others" | "piano" | "vocal";
 
-interface TrackSettings {
+interface AudioTrack {
+  player: Player;
   isMuted: boolean;
   volume: number;
 }
 
-export type Tracks = Record<AudioTrackId, TrackSettings>;
+type AudioTrackList = {
+  [key in AudioTrackId]: AudioTrack;
+};
 
-interface AudioTrackStore {
-  // 모든 트랙 공통 상태
-  isPlaying: boolean;
-  currentPosition: number;
-
-  // 각 트랙
-  tracks: Tracks;
-
-  // 재생 상태 제어
-  setIsPlaying: (isPlaying: boolean) => void;
-  setCurrentPosition: (position: number) => void;
-  resetPosition: () => void;
-
-  // 트랙별 설정 제어
-  setTrackVolume: (trackId: AudioTrackId, volume: number) => void;
-  setTrackMute: (trackId: AudioTrackId) => void;
-  setTrackMuteOthers: (trackId: AudioTrackId) => void;
+interface AudioStoreState {
+  isLoad: boolean;
+  isPlay: boolean;
+  currentTime: number;
+  tracks: AudioTrackList | null;
 }
 
-// 트랙 설정 초기 상태
-const initialTrackSettings: TrackSettings = {
-  isMuted: false,
-  volume: 1,
-};
+interface AudioStoreAction {
+  initTracks: (urlList: { [key in AudioTrackId]: string }) => void;
 
-// 모든 트랙에 대한 초기 설정 생성
-const createInitialTrackSettings = (): Tracks => {
-  return {
-    bass: { ...initialTrackSettings },
-    drum: { ...initialTrackSettings },
-    guitar: { ...initialTrackSettings },
-    others: { ...initialTrackSettings },
-    piano: { ...initialTrackSettings },
-    vocal: { ...initialTrackSettings },
-  };
-};
+  play: () => void;
+  pause: () => void;
+  stop: () => void;
 
-const useAudioTrackStore = create<AudioTrackStore>((set) => ({
-  // 모든 트랙의 공통 상태
-  isPlaying: false,
-  currentPosition: 0,
+  toggleMute: (trackId: AudioTrackId) => void;
+  setVolume: (trackId: AudioTrackId, volume: number) => void;
+}
 
-  // 각 트랙별 설정
-  tracks: createInitialTrackSettings(),
+export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, get) => ({
+  isLoad: false,
+  isPlay: false,
+  currentTime: 0,
+  tracks: null,
 
-  // 재생 상태 제어
-  setIsPlaying: (isPlaying) => set({ isPlaying }),
+  initTracks: async (urlList: { [key in AudioTrackId]: string }) => {
+    const prevTracks = get().tracks;
 
-  setCurrentPosition: (position) => set({ currentPosition: position }),
+    // clean up
+    if (prevTracks) {
+      Object.values(prevTracks).forEach((track) => {
+        if (track.player) track.player.dispose();
+      });
+    }
 
-  resetPosition: () => set({ currentPosition: 0 }),
+    const newTracks = Object.keys(urlList).reduce((acc, trackId) => {
+      const trackUrl = urlList[trackId as AudioTrackId];
+      const player = new Player({
+        url: trackUrl,
+        onload: () => console.log(`${trackId} is loaded`),
+      }).toDestination();
+      const track: AudioTrack = {
+        player,
+        isMuted: false,
+        volume: 50,
+      };
+      return { ...acc, [trackId]: track };
+    }, {}) as AudioTrackList;
 
-  // 트랙별 설정 제어
-  setTrackVolume: (trackId, volume) =>
-    set((state) => ({
-      tracks: {
-        ...state.tracks,
-        [trackId]: {
-          ...state.tracks[trackId],
-          volume: Math.max(0, Math.min(1, volume)),
-        },
-      },
-    })),
+    await loaded();
 
-  setTrackMute: (trackId) =>
-    set((state) => ({
-      tracks: {
-        ...state.tracks,
-        [trackId]: {
-          ...state.tracks[trackId],
-          isMuted: !state.tracks[trackId].isMuted,
-        },
-      },
-    })),
+    set({ tracks: newTracks, isLoad: true });
+  },
 
-  setTrackMuteOthers: (trackId: AudioTrackId) =>
-    set((state) => ({
-      tracks: Object.fromEntries(
-        (Object.entries(state.tracks) as [AudioTrackId, TrackSettings][]).map(([id, track]) => [
-          id,
-          {
-            ...track,
-            isMuted: id !== trackId,
-          },
-        ])
-      ) as Tracks,
-    })),
+  // 모든 트랙 동시 재생
+  play: async () => {
+    const { tracks, currentTime, isLoad } = get();
+    if (!tracks || !isLoad) return;
+    if (getContext().state !== "running") {
+      await start();
+    }
+
+    getTransport().start();
+
+    Object.values(tracks).forEach((track) => {
+      if (track.player && track.player.state !== "started") {
+        track.player.sync().start(currentTime);
+      }
+    });
+
+    set({ isPlay: true });
+  },
+
+  pause: () => {
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
+
+    const transport = getTransport();
+
+    transport.pause();
+    const currentTime = transport.seconds;
+
+    set({ isPlay: false, currentTime });
+  },
+
+  // 모든 트랙 정지
+  stop: () => {
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
+
+    getTransport().stop();
+
+    Object.values(tracks).forEach((track) => {
+      if (track.player) {
+        track.player.unsync();
+        track.player.stop();
+      }
+    });
+
+    set({ isPlay: false, currentTime: 0 });
+  },
+
+  toggleMute: (trackId: AudioTrackId) => {
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
+
+    const newisMuted = !tracks[trackId].isMuted;
+    tracks[trackId].isMuted = newisMuted;
+    tracks[trackId].player.mute = newisMuted;
+
+    set({ tracks: { ...tracks } });
+  },
+
+  setVolume: (trackId: AudioTrackId, volume: number) => {
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
+
+    // sliderValue 범위 : 0~100, 0: 음소거, 50: 1배(기본값), 100: 2배
+    const toDecibel = (sliderValue: number) => {
+      if (sliderValue === 0) return -Infinity;
+      if (sliderValue <= 50) return -60 + (sliderValue / 50) * 60;
+      else return (sliderValue - 50) * (6 / 50);
+    };
+
+    tracks[trackId].volume = volume;
+    tracks[trackId].player.volume.value = toDecibel(volume);
+
+    set({ tracks: { ...tracks } });
+  },
 }));
-
-export default useAudioTrackStore;

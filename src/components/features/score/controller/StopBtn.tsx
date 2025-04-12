@@ -3,15 +3,16 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAudioStore } from "@/store/audioStore";
 
 interface Props {
   className?: string;
-  toggleStop: () => void;
 }
 
-export default function StopBtn({ className, toggleStop }: Props) {
+export default function StopBtn({ className }: Props) {
+  const { isload, stop } = useAudioStore();
   return (
-    <Button variant="outline" size="icon" className={cn("", className)} onClick={toggleStop}>
+    <Button variant="outline" size="icon" className={cn("", className)} onClick={stop} disabled={!isload}>
       <Square />
     </Button>
   );

@@ -14,7 +14,7 @@ type AudioTrackList = {
 };
 
 interface AudioStoreState {
-  isload: boolean;
+  isLoad: boolean;
   isPlay: boolean;
   currentTime: number;
   tracks: AudioTrackList | null;
@@ -32,7 +32,7 @@ interface AudioStoreAction {
 }
 
 export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, get) => ({
-  isload: false,
+  isLoad: false,
   isPlay: false,
   currentTime: 0,
   tracks: null,
@@ -63,13 +63,13 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
 
     await loaded();
 
-    set({ tracks: newTracks, isload: true });
+    set({ tracks: newTracks, isLoad: true });
   },
 
   // 모든 트랙 동시 재생
   play: async () => {
-    const { tracks, currentTime, isload } = get();
-    if (!tracks || !isload) return;
+    const { tracks, currentTime, isLoad } = get();
+    if (!tracks || !isLoad) return;
     if (getContext().state !== "running") {
       await start();
     }
@@ -86,8 +86,8 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   },
 
   pause: () => {
-    const { tracks, isload } = get();
-    if (!tracks || !isload) return;
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
 
     const transport = getTransport();
 
@@ -99,8 +99,8 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
 
   // 모든 트랙 정지
   stop: () => {
-    const { tracks, isload } = get();
-    if (!tracks || !isload) return;
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
 
     getTransport().stop();
 
@@ -115,8 +115,8 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   },
 
   toggleMute: (trackId: AudioTrackId) => {
-    const { tracks, isload } = get();
-    if (!tracks || !isload) return;
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
 
     const newisMuted = !tracks[trackId].isMuted;
     tracks[trackId].isMuted = newisMuted;
@@ -126,8 +126,8 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   },
 
   setVolume: (trackId: AudioTrackId, volume: number) => {
-    const { tracks, isload } = get();
-    if (!tracks || !isload) return;
+    const { tracks, isLoad } = get();
+    if (!tracks || !isLoad) return;
 
     // sliderValue 범위 : 0~100, 0: 음소거, 50: 1배(기본값), 100: 2배
     const toDecibel = (sliderValue: number) => {

@@ -5,7 +5,7 @@ export type AudioTrackId = "bass" | "drum" | "guitar" | "others" | "piano" | "vo
 
 interface AudioTrack {
   player: Player;
-  muted: boolean;
+  isMuted: boolean;
   volume: number;
 }
 
@@ -55,7 +55,7 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
       }).toDestination();
       const track: AudioTrack = {
         player,
-        muted: false,
+        isMuted: false,
         volume: 50,
       };
       return { ...acc, [trackId]: track };
@@ -118,9 +118,9 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     const { tracks, isload } = get();
     if (!tracks || !isload) return;
 
-    const newMuted = !tracks[trackId].muted;
-    tracks[trackId].muted = newMuted;
-    tracks[trackId].player.mute = newMuted;
+    const newisMuted = !tracks[trackId].isMuted;
+    tracks[trackId].isMuted = newisMuted;
+    tracks[trackId].player.mute = newisMuted;
 
     set({ tracks: { ...tracks } });
   },
@@ -129,6 +129,7 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     const { tracks, isload } = get();
     if (!tracks || !isload) return;
 
+    // sliderValue 범위 : 0~100, 0: 음소거, 50: 1배(기본값), 100: 2배
     const toDecibel = (sliderValue: number) => {
       if (sliderValue === 0) return -Infinity;
       if (sliderValue <= 50) return -60 + (sliderValue / 50) * 60;

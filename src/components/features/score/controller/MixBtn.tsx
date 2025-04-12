@@ -23,9 +23,9 @@ export default function MixBtn({ className }: Props) {
       const id = i as AudioTrackId;
       const curTrack = tracks[id];
       if (id === trackId) {
-        if (curTrack.muted) toggleMute(id);
+        if (curTrack.isMuted) toggleMute(id);
       } else {
-        if (!curTrack.muted) toggleMute(id);
+        if (!curTrack.isMuted) toggleMute(id);
       }
     });
   };
@@ -51,7 +51,7 @@ export default function MixBtn({ className }: Props) {
                     {trackName}
                   </div>
                   <Button size="sm" onClick={() => toggleMute(trackId)}>
-                    {track.muted ? <VolumeX size={16} /> : <Volume size={16} />}
+                    {track.isMuted ? <VolumeX size={16} /> : <Volume size={16} />}
                   </Button>
                   <Button size="sm" onClick={() => clickSolo(trackId)}>
                     Solo

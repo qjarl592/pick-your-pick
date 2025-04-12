@@ -1,6 +1,7 @@
 import { Mic } from "lucide-react";
 import React from "react";
 
+import RecordController from "@/components/RecordController/RecordController";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ export default function RecordBtn({ className }: Props) {
       </SheetTrigger>
       <SheetContent side="bottom" className="min-h-96">
         <SheetTitle className="invisible">Record Sheet</SheetTitle>
+        <RecordController />
       </SheetContent>
     </Sheet>
   );

@@ -17,6 +17,7 @@ interface AudioStoreState {
   isLoad: boolean;
   isPlay: boolean;
   currentTime: number;
+  duration: number;
   tracks: AudioTrackList | null;
 }
 
@@ -35,6 +36,7 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   isLoad: false,
   isPlay: false,
   currentTime: 0,
+  duration: 0,
   tracks: null,
 
   initTracks: async (urlList: { [key in AudioTrackId]: string }) => {
@@ -63,7 +65,17 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
 
     await loaded();
 
-    set({ tracks: newTracks, isLoad: true });
+    const maxDuration =
+      Math.round(
+        Object.values(newTracks).reduce((max, track) => {
+          if (track.player.buffer) {
+            const trackDuration = track.player.buffer.duration;
+            return Math.max(max, trackDuration);
+          } else return max;
+        }, 0) * 10
+      ) / 10;
+
+    set({ tracks: newTracks, isLoad: true, duration: maxDuration });
   },
 
   // 모든 트랙 동시 재생

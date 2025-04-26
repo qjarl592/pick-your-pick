@@ -14,12 +14,24 @@ const formatTime = (secUnit: number) => {
 };
 
 export default function AudioProgress() {
-  const { isLoad, currentTime, duration } = useAudioStore();
+  const { isLoad, currentTime, duration, seek } = useAudioStore();
+
+  const handleSliderChange = (values: number[]) => {
+    const targetTime = values[0];
+    seek(targetTime);
+  };
 
   return (
     <div className="flex h-10 flex-1 items-center rounded-md border border-input bg-background px-2">
       <div className="mt-3 w-full">
-        <Slider step={0.1} disabled={!isLoad} min={0} max={duration} value={[currentTime]} />
+        <Slider
+          step={0.1}
+          disabled={!isLoad}
+          min={0}
+          max={duration}
+          value={[currentTime]}
+          onValueChange={handleSliderChange}
+        />
         <span className="text-xs">{`${formatTime(currentTime)} / ${formatTime(duration)}`}</span>
       </div>
     </div>

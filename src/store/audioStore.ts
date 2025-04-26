@@ -19,6 +19,8 @@ interface AudioStoreState {
   currentTime: number;
   duration: number;
   tracks: AudioTrackList | null;
+
+  _rafId: number | null; // for tracking requestAnimationFrame
 }
 
 interface AudioStoreAction {
@@ -27,9 +29,13 @@ interface AudioStoreAction {
   play: () => void;
   pause: () => void;
   stop: () => void;
+  seek: (targetTime: number) => void;
 
   toggleMute: (trackId: AudioTrackId) => void;
   setVolume: (trackId: AudioTrackId, volume: number) => void;
+
+  // for animation frame updates
+  _updateCurrentTime: () => void;
 }
 
 export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, get) => ({
@@ -38,6 +44,7 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   currentTime: 0,
   duration: 0,
   tracks: null,
+  _rafId: null,
 
   initTracks: async (urlList: { [key in AudioTrackId]: string }) => {
     const prevTracks = get().tracks;
@@ -65,22 +72,38 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
 
     await loaded();
 
-    const maxDuration =
-      Math.round(
-        Object.values(newTracks).reduce((max, track) => {
-          if (track.player.buffer) {
-            const trackDuration = track.player.buffer.duration;
-            return Math.max(max, trackDuration);
-          } else return max;
-        }, 0) * 10
-      ) / 10;
+    const maxDuration = Object.values(newTracks).reduce((max, track) => {
+      if (track.player.buffer) {
+        const trackDuration = track.player.buffer.duration;
+        return Math.max(max, trackDuration);
+      } else return max;
+    }, 0);
 
     set({ tracks: newTracks, isLoad: true, duration: maxDuration });
   },
 
-  // 모든 트랙 동시 재생
+  // for animation frame updates
+  _updateCurrentTime: () => {
+    const { isPlay, duration, _updateCurrentTime, stop } = get();
+
+    if (isPlay) {
+      const transport = getTransport();
+      const currentSeconds = transport.seconds;
+
+      set({ currentTime: currentSeconds });
+
+      if (currentSeconds >= duration) {
+        stop();
+        return;
+      }
+
+      const rafId = requestAnimationFrame(() => _updateCurrentTime());
+      set({ _rafId: rafId });
+    }
+  },
+
   play: async () => {
-    const { tracks, currentTime, isLoad } = get();
+    const { tracks, currentTime, isLoad, _updateCurrentTime } = get();
     if (!tracks || !isLoad) return;
     if (getContext().state !== "running") {
       await start();
@@ -90,15 +113,16 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
 
     Object.values(tracks).forEach((track) => {
       if (track.player && track.player.state !== "started") {
-        track.player.sync().start(currentTime);
+        track.player.sync().start(undefined, currentTime);
       }
     });
 
+    _updateCurrentTime();
     set({ isPlay: true });
   },
 
   pause: () => {
-    const { tracks, isLoad } = get();
+    const { tracks, isLoad, _rafId } = get();
     if (!tracks || !isLoad) return;
 
     const transport = getTransport();
@@ -107,11 +131,15 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     const currentTime = transport.seconds;
 
     set({ isPlay: false, currentTime });
+
+    // Cancel the animation frame
+    if (_rafId !== null) {
+      cancelAnimationFrame(_rafId);
+    }
   },
 
-  // 모든 트랙 정지
   stop: () => {
-    const { tracks, isLoad } = get();
+    const { tracks, isLoad, _rafId } = get();
     if (!tracks || !isLoad) return;
 
     getTransport().stop();
@@ -124,6 +152,37 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     });
 
     set({ isPlay: false, currentTime: 0 });
+
+    // Cancel the animation frame
+    if (_rafId !== null) {
+      cancelAnimationFrame(_rafId);
+    }
+  },
+
+  seek: (targetTime: number) => {
+    const { tracks, isLoad, isPlay, duration } = get();
+    if (!tracks || !isLoad) return;
+
+    const validTime = Math.max(0, Math.min(targetTime, duration));
+
+    const transport = getTransport();
+    transport.seconds = validTime;
+
+    if (isPlay) {
+      Object.values(tracks).forEach((track) => {
+        if (track.player) {
+          track.player.unsync();
+          track.player.stop();
+        }
+      });
+      Object.values(tracks).forEach((track) => {
+        if (track.player) {
+          track.player.sync().start(undefined, validTime);
+        }
+      });
+    }
+
+    set({ currentTime: validTime });
   },
 
   toggleMute: (trackId: AudioTrackId) => {

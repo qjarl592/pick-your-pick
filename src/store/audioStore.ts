@@ -35,7 +35,8 @@ interface AudioStoreAction {
   setVolume: (trackId: AudioTrackId, volume: number) => void;
 
   // for animation frame updates
-  _updateCurrentTime: () => void;
+  _updateRaf: () => void;
+  _cancelRaf: () => void;
 }
 
 export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, get) => ({
@@ -50,6 +51,8 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     const prevTracks = get().tracks;
 
     // clean up
+    get()._cancelRaf();
+
     if (prevTracks) {
       Object.values(prevTracks).forEach((track) => {
         if (track.player) track.player.dispose();
@@ -79,50 +82,64 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
       } else return max;
     }, 0);
 
-    set({ tracks: newTracks, isLoad: true, duration: maxDuration });
+    set({ tracks: newTracks, isLoad: true, duration: maxDuration, isPlay: false, currentTime: 0 });
   },
 
   // for animation frame updates
-  _updateCurrentTime: () => {
-    const { isPlay, duration, _updateCurrentTime, stop } = get();
+  _updateRaf: () => {
+    const state = get();
+    if (!state.isPlay) return;
 
-    if (isPlay) {
-      const transport = getTransport();
-      const currentSeconds = transport.seconds;
+    const transport = getTransport();
+    const currentSeconds = transport.seconds;
 
-      set({ currentTime: currentSeconds });
+    set({ currentTime: currentSeconds });
 
-      if (currentSeconds >= duration) {
-        stop();
-        return;
-      }
+    if (currentSeconds >= state.duration) {
+      get().stop();
+      return;
+    }
 
-      const rafId = requestAnimationFrame(() => _updateCurrentTime());
-      set({ _rafId: rafId });
+    const rafId = requestAnimationFrame(() => get()._updateRaf());
+    set({ _rafId: rafId });
+  },
+
+  _cancelRaf: () => {
+    const { _rafId } = get();
+
+    if (_rafId !== null) {
+      cancelAnimationFrame(_rafId);
+      set({ _rafId: null });
     }
   },
 
   play: async () => {
-    const { tracks, currentTime, isLoad, _updateCurrentTime } = get();
-    if (!tracks || !isLoad) return;
+    const state = get();
+    if (!state.tracks || !state.isLoad) return;
     if (getContext().state !== "running") {
       await start();
     }
 
-    getTransport().start();
+    const transport = getTransport();
+    transport.stop();
+    transport.seconds = state.currentTime;
+    transport.start();
 
-    Object.values(tracks).forEach((track) => {
-      if (track.player && track.player.state !== "started") {
-        track.player.sync().start(undefined, currentTime);
+    Object.values(state.tracks).forEach((track) => {
+      if (track.player) {
+        track.player.stop();
+        track.player.unsync();
+        track.player.sync().start(0);
       }
     });
 
-    _updateCurrentTime();
+    get()._cancelRaf();
     set({ isPlay: true });
+    get()._updateRaf();
   },
 
   pause: () => {
-    const { tracks, isLoad, _rafId } = get();
+    const { tracks, isLoad } = get();
     if (!tracks || !isLoad) return;
 
     const transport = getTransport();
@@ -130,16 +147,18 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     transport.pause();
     const currentTime = transport.seconds;
 
-    set({ isPlay: false, currentTime });
+    Object.values(tracks).forEach((track) => {
+      if (track.player) {
+        track.player.unsync();
+      }
+    });
 
-    // Cancel the animation frame
-    if (_rafId !== null) {
-      cancelAnimationFrame(_rafId);
-    }
+    get()._cancelRaf();
+    set({ isPlay: false, currentTime });
   },
 
   stop: () => {
-    const { tracks, isLoad, _rafId } = get();
+    const { tracks, isLoad } = get();
     if (!tracks || !isLoad) return;
 
     getTransport().stop();
@@ -151,35 +170,34 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
       }
     });
 
+    get()._cancelRaf();
     set({ isPlay: false, currentTime: 0 });
-
-    // Cancel the animation frame
-    if (_rafId !== null) {
-      cancelAnimationFrame(_rafId);
-    }
   },
 
   seek: (targetTime: number) => {
-    const { tracks, isLoad, isPlay, duration } = get();
-    if (!tracks || !isLoad) return;
+    const state = get();
+    if (!state.tracks || !state.isLoad) return;
 
-    const validTime = Math.max(0, Math.min(targetTime, duration));
-
+    const validTime = Math.max(0, Math.min(targetTime, state.duration));
     const transport = getTransport();
+
     transport.seconds = validTime;
 
-    if (isPlay) {
-      Object.values(tracks).forEach((track) => {
+    if (state.isPlay) {
+      get()._cancelRaf();
+      transport.stop();
+      transport.seconds = validTime;
+      transport.start();
+
+      Object.values(state.tracks).forEach((track) => {
         if (track.player) {
-          track.player.unsync();
           track.player.stop();
+          track.player.unsync();
+          track.player.sync().start(0);
         }
       });
-      Object.values(tracks).forEach((track) => {
-        if (track.player) {
-          track.player.sync().start(undefined, validTime);
-        }
-      });
+
+      get()._updateRaf();
     }
 
     set({ currentTime: validTime });

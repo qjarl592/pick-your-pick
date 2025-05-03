@@ -3,8 +3,8 @@ import * as Tone from "tone";
 
 import { useRecordStore } from "@/store/recordStore";
 
+import AudioVisualizer from "./AudioVisualizer";
 import { Button } from "../ui/button";
-import AudioVisualizer from "./visualizer/AudioVisualizer";
 
 interface TrackContainerProps {
   originalUrl: string;
@@ -213,15 +213,9 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
       </div>
 
       <div className="rounded border p-4">
-        {/* 타임라인 */}
         <div className="relative mb-2 h-6 border-b text-xs text-gray-500">{renderTimeMarkers()}</div>
-
-        {/* 트랙 컨테이너 */}
         <div ref={containerRef} className="relative min-w-full" onClick={handleContainerClick}>
-          {/* 공통 진행바 */}
           <div ref={progressRef} className="absolute inset-y-0 z-10 w-0.5 bg-red-500" style={{ left: 0 }} />
-
-          {/* 트랙 영역 - 파형 시각화는 AudioVisualizer 컴포넌트 별도 구현 필요 */}
           <div className="mb-6">
             <div className="mb-2 flex">
               <span className="text-sm font-medium">원곡</span>
@@ -242,6 +236,11 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
           <div>
             <div className="mb-2 flex">
               <span className="text-sm font-medium">녹음</span>
+              {recordingUrl && recordingPlayerRef.current && (
+                <span className="ml-2 text-xs text-gray-500">
+                  (녹음 길이: {formatTime(recordingPlayerRef.current.buffer.duration)})
+                </span>
+              )}
             </div>
             <div className="h-[70px] rounded bg-gray-100">
               {!recordingUrl && (

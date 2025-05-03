@@ -7,7 +7,7 @@ interface AudioVisualizerProps {
   progressColor: string;
   height: number;
   progress: number;
-  duration: number;
+  duration: number; // 공유되는 전체 길이 (원곡 기준)
   pixelsPerSecond: number;
 }
 
@@ -40,15 +40,24 @@ export default function AudioVisualizer({
     const buffer = player.buffer.getChannelData(0); // 모노인 경우 첫 번째 채널만
     const amp = height / 2;
 
+    // 플레이어의 실제 오디오 길이 사용
+    const playerDuration = player.buffer.duration;
+
+    // 실제 오디오 길이의 비율
+    const durationRatio = playerDuration / duration;
+
+    // 현재 플레이어의 실제 사용 너비 계산 (전체 너비 중 실제 길이에 해당하는 부분)
+    const actualWidth = Math.floor(parentWidth * durationRatio);
+
     // 오디오 버퍼와 캔버스 픽셀 간의 비율 계산
-    const compressionRatio = buffer.length / parentWidth;
+    const compressionRatio = buffer.length / actualWidth;
 
     // 캔버스 초기화
     ctx.clearRect(0, 0, canvas.width, height);
     ctx.fillStyle = color;
 
     // 파형 그리기
-    for (let i = 0; i < parentWidth; i++) {
+    for (let i = 0; i < actualWidth; i++) {
       let min = 1.0;
       let max = -1.0;
 
@@ -75,30 +84,38 @@ export default function AudioVisualizer({
     const drawProgress = () => {
       if (!ctx || !canvas) return;
 
-      // 진행률을 계산하여 캔버스 너비로 변환
+      // 전체 진행률을 계산
       const progressRatio = progress / duration;
-      const progressX = Math.floor(progressRatio * canvas.width);
+
+      // 플레이어의 실제 길이에 맞게 진행 정도 조정
+      const adjustedProgress = Math.min(progressRatio, durationRatio);
+
+      // 실제 표시할 픽셀 위치 계산
+      const progressX = Math.floor(adjustedProgress * parentWidth);
 
       // 프로그레스 이전 부분 다시 그리기
       ctx.fillStyle = progressColor;
 
       for (let i = 0; i < progressX; i++) {
-        let min = 1.0;
-        let max = -1.0;
+        // 실제 파형이 그려진 영역 내에서만 진행 표시
+        if (i < actualWidth) {
+          let min = 1.0;
+          let max = -1.0;
 
-        const startIndex = Math.floor(i * compressionRatio);
-        const endIndex = Math.floor((i + 1) * compressionRatio);
+          const startIndex = Math.floor(i * compressionRatio);
+          const endIndex = Math.floor((i + 1) * compressionRatio);
 
-        for (let j = startIndex; j < endIndex; j++) {
-          const datum = buffer[j] || 0;
-          if (datum < min) min = datum;
-          if (datum > max) max = datum;
+          for (let j = startIndex; j < endIndex; j++) {
+            const datum = buffer[j] || 0;
+            if (datum < min) min = datum;
+            if (datum > max) max = datum;
+          }
+
+          const y1 = (1 + min) * amp;
+          const y2 = (1 + max) * amp;
+
+          ctx.fillRect(i, y1, 1, y2 - y1);
         }
-
-        const y1 = (1 + min) * amp;
-        const y2 = (1 + max) * amp;
-
-        ctx.fillRect(i, y1, 1, y2 - y1);
       }
     };
 
@@ -120,13 +137,15 @@ export default function AudioVisualizer({
         const newWidth = canvas.parentElement.clientWidth;
         canvas.width = newWidth;
 
+        // 비율 재계산
+        const newActualWidth = Math.floor(newWidth * durationRatio);
+        const newCompressionRatio = buffer.length / newActualWidth;
+
         // 전체 파형 다시 그리기
         ctx.clearRect(0, 0, newWidth, height);
         ctx.fillStyle = color;
 
-        const newCompressionRatio = buffer.length / newWidth;
-
-        for (let i = 0; i < newWidth; i++) {
+        for (let i = 0; i < newActualWidth; i++) {
           let min = 1.0;
           let max = -1.0;
 

@@ -44,11 +44,7 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
         setDuration(player.buffer.duration);
         setIsReady(true);
 
-        // 컨테이너 너비 설정
-        if (containerRef.current) {
-          const containerWidth = Math.ceil(player.buffer.duration * PIXELS_PER_SECOND);
-          containerRef.current.style.width = `${containerWidth}px`;
-        }
+        // 컨테이너 너비 설정 제거 - 스크롤 방지
       },
     }).toDestination();
 
@@ -102,8 +98,9 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
         setCurrentTime(time);
 
         if (progressRef.current) {
-          const position = time * PIXELS_PER_SECOND;
-          progressRef.current.style.left = `${position}px`;
+          // 시간 비율을 퍼센트로 계산
+          const progressPercent = (time / duration) * 100;
+          progressRef.current.style.left = `${progressPercent}%`;
         }
 
         if (isPlay) {
@@ -141,23 +138,23 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
         cancelAnimationFrame(animationId);
       }
     };
-  }, [isPlay, isReady]);
+  }, [duration, isPlay, isReady]);
 
   // 위치 클릭 처리
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current || !isReady) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left + containerRef.current.scrollLeft;
-    const time = clickX / PIXELS_PER_SECOND;
-    const validTime = Math.max(0, Math.min(time, duration));
+    const clickX = e.clientX - rect.left;
+    const clickPercent = clickX / rect.width;
+    const validTime = Math.max(0, Math.min(clickPercent * duration, duration));
 
     // Tone.js 위치 이동
     Tone.Transport.seconds = validTime;
 
     // 진행바 업데이트
     if (progressRef.current) {
-      progressRef.current.style.left = `${validTime * PIXELS_PER_SECOND}px`;
+      progressRef.current.style.left = `${clickPercent * 100}%`;
     }
 
     setCurrentTime(validTime);
@@ -180,13 +177,27 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
     if (duration <= 0) return null;
 
     const markers = [];
-    for (let i = 0; i <= Math.ceil(duration); i += 10) {
+    // 30초 간격으로 마커 생성
+    const interval = 30; // 30초 간격
+    const totalSeconds = Math.ceil(duration);
+
+    // 첫 번째 마커 (0초)
+    markers.push(
+      <div key={0} className="absolute" style={{ left: "0%" }}>
+        {"0:00"}
+      </div>
+    );
+
+    // 30초 간격 마커
+    for (let i = interval; i < totalSeconds; i += interval) {
+      const percentPosition = (i / totalSeconds) * 100;
       markers.push(
-        <div key={i} className="absolute" style={{ left: `${i * PIXELS_PER_SECOND}px` }}>
+        <div key={i} className="absolute" style={{ left: `${percentPosition}%` }}>
           {formatTime(i)}
         </div>
       );
     }
+
     return markers;
   };
 
@@ -201,7 +212,7 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
         </div>
       </div>
 
-      <div className="overflow-auto rounded border p-4">
+      <div className="rounded border p-4">
         {/* 타임라인 */}
         <div className="relative mb-2 h-6 border-b text-xs text-gray-500">{renderTimeMarkers()}</div>
 

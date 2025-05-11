@@ -10,11 +10,15 @@ interface TrackContainerProps {
   originalUrl: string;
   recordingUrl: string | null;
   isRecording: boolean;
+  recordingStartTime: number;
 }
 
-const PIXELS_PER_SECOND = 100;
-
-export default function TracksContainer({ originalUrl, recordingUrl, isRecording }: TrackContainerProps) {
+export default function TracksContainer({
+  originalUrl,
+  recordingUrl,
+  isRecording,
+  recordingStartTime,
+}: TrackContainerProps) {
   // UI 참조
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -28,6 +32,9 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isReady, setIsReady] = useState<boolean>(false);
   const { isPlay, setIsPlay } = useRecordStore();
+
+  // 녹음 정보 상태
+  const [recordingDuration, setRecordingDuration] = useState<number>(0);
 
   // 원곡 초기화
   useEffect(() => {
@@ -72,7 +79,8 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
     const player = new Tone.Player({
       url: recordingUrl,
       onload: () => {
-        console.log("녹음 트랙 로드 완료");
+        // 실제 녹음 길이 저장
+        setRecordingDuration(player.buffer.duration);
       },
     }).toDestination();
 
@@ -84,7 +92,7 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
         recordingPlayerRef.current = null;
       }
     };
-  }, [recordingUrl, isRecording]);
+  }, [recordingUrl, isRecording, recordingStartTime]);
 
   // 재생 상태 변경 처리
   useEffect(() => {
@@ -119,7 +127,8 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
       }
 
       if (recordingPlayerRef.current) {
-        recordingPlayerRef.current.sync().start(0);
+        // 녹음된 오디오는 녹음 시작 위치에서 재생되도록 설정
+        recordingPlayerRef.current.sync().start(recordingStartTime);
       }
 
       animationId = requestAnimationFrame(updateProgress);
@@ -138,7 +147,7 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
         cancelAnimationFrame(animationId);
       }
     };
-  }, [duration, isPlay, isReady]);
+  }, [duration, isPlay, isReady, recordingStartTime]);
 
   // 위치 클릭 처리
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -228,7 +237,6 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
                 height={70}
                 progress={currentTime}
                 duration={duration}
-                pixelsPerSecond={PIXELS_PER_SECOND}
               />
             </div>
           </div>
@@ -238,7 +246,7 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
               <span className="text-sm font-medium">녹음</span>
               {recordingUrl && recordingPlayerRef.current && (
                 <span className="ml-2 text-xs text-gray-500">
-                  (녹음 길이: {formatTime(recordingPlayerRef.current.buffer.duration)})
+                  (녹음 길이: {formatTime(recordingDuration)}, 시작 위치: {formatTime(recordingStartTime)})
                 </span>
               )}
             </div>
@@ -249,15 +257,33 @@ export default function TracksContainer({ originalUrl, recordingUrl, isRecording
                 </div>
               )}
               {recordingUrl && recordingPlayerRef.current && (
-                <AudioVisualizer
-                  player={recordingPlayerRef.current}
-                  color="#8A2BE2"
-                  progressColor="#7126B3"
-                  height={70}
-                  progress={currentTime}
-                  duration={duration}
-                  pixelsPerSecond={PIXELS_PER_SECOND}
-                />
+                <div className="relative h-full">
+                  {recordingStartTime > 0 && (
+                    <div
+                      className="absolute left-0 top-0 h-full bg-gray-200"
+                      style={{
+                        width: `${(recordingStartTime / duration) * 100}%`,
+                      }}
+                    />
+                  )}
+
+                  <div
+                    className="absolute top-0 h-full"
+                    style={{
+                      left: `${(recordingStartTime / duration) * 100}%`,
+                      width: `${(recordingDuration / duration) * 100}%`,
+                    }}
+                  >
+                    <AudioVisualizer
+                      player={recordingPlayerRef.current}
+                      color="#8A2BE2"
+                      progressColor="#7126B3"
+                      height={70}
+                      progress={currentTime}
+                      duration={recordingDuration}
+                    />
+                  </div>
+                </div>
               )}
             </div>
           </div>

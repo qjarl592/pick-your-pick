@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import React, { FormEvent } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useScoreFilterStore } from "@/store/scoreFilterStore";
 
@@ -20,16 +21,24 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} role="search" className="w-full max-w-lg">
-      <div className="relative">
-        <Input
-          defaultValue={keyword}
-          type="search"
-          name="search"
-          placeholder="검색어를 입력하세요."
-          className="pl-8"
-        />
-        <Search className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-gray-500" />
+    <form onSubmit={handleSubmit} role="search" className="w-full">
+      <div className="relative flex items-center">
+        <div className="relative w-full">
+          <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-blue-500" />
+          <Input
+            defaultValue={keyword}
+            type="search"
+            name="search"
+            placeholder="악보 제목, 작곡가, 장르로 검색하세요"
+            className="h-12 rounded-full border-2 border-blue-100 bg-white/80 pl-12 pr-24 text-gray-700 shadow-sm backdrop-blur-sm transition-all focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          />
+        </div>
+        <Button
+          type="submit"
+          className="absolute right-1 h-10 rounded-full bg-blue-600 px-4 text-white transition-colors hover:bg-blue-700"
+        >
+          검색
+        </Button>
       </div>
     </form>
   );

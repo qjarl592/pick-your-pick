@@ -29,18 +29,29 @@ export default function ScoreController({ pdfScore }: Props) {
 
   useEffect(() => {
     const audioTrackIds: AudioTrackId[] = ["bass", "drum", "guitar", "others", "piano", "vocal"];
+
+    // URL에서 scoreId 추출
+    const pathname = window.location.pathname;
+    const scoreId = pathname.split("/").pop(); // URL에서 마지막 부분(scoreId) 추출
+
+    // Cloudflare Worker URL
+    const WORKER_URL = "https://pick-your-pick.jinwonmusicdev.workers.dev";
+
     const sampleUrlList = audioTrackIds.reduce((acc, id) => {
-      // tmp
+      // 개발 환경일 경우 로컬 샘플 사용
       const baseUrl = "/sample/audio/";
       const extension = ".mp3";
-      const audioUrl = baseUrl + id + extension;
-      const tmpAudioUrl = checkIsDev()
-        ? audioUrl
-        : `https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/${id}.mp3`;
+      const localAudioUrl = baseUrl + id + extension;
+
+      // 프로덕션 환경에서는 Worker URL + 실제 scoreId 사용
+      const prodAudioUrl = `${WORKER_URL}/Score/audio/${scoreId}/${id}.mp3`;
+
+      // 개발 환경과 프로덕션 환경 구분
+      const finalUrl = checkIsDev() ? localAudioUrl : prodAudioUrl;
 
       return {
         ...acc,
-        [id]: tmpAudioUrl,
+        [id]: finalUrl,
       };
     }, {}) as { [key in AudioTrackId]: string };
 

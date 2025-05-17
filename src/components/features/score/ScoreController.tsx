@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Player } from "tone";
 
+import { checkIsDev } from "@/lib/utils";
 import { AudioTrackId, useAudioStore } from "@/store/audioStore";
 
 import AudioProgress from "./controller/AudioProgress";
@@ -29,9 +30,17 @@ export default function ScoreController({ pdfScore }: Props) {
   useEffect(() => {
     const audioTrackIds: AudioTrackId[] = ["bass", "drum", "guitar", "others", "piano", "vocal"];
     const sampleUrlList = audioTrackIds.reduce((acc, id) => {
+      // tmp
+      const baseUrl = "/sample/audio/";
+      const extension = ".mp3";
+      const audioUrl = baseUrl + id + extension;
+      const tmpAudioUrl = checkIsDev()
+        ? audioUrl
+        : `https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/${id}.mp3`;
+
       return {
         ...acc,
-        [id]: `https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/${id}.mp3`,
+        [id]: tmpAudioUrl,
       };
     }, {}) as { [key in AudioTrackId]: string };
 

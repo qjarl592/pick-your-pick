@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
 import React from "react";
 
+import { checkIsDev } from "@/lib/utils";
 import { api } from "@/services/axios";
 
 import ScoreViewer from "./ScoreViewer";
@@ -48,9 +49,12 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
 
   const { pdfUrl } = data;
 
+  //tmp
+  const tmpPdfUrl = checkIsDev() ? "/sample/score/sample_score.pdf" : pdfUrl;
+
   return (
     <div>
-      <ScoreViewer pdfUrl={pdfUrl} />
+      <ScoreViewer pdfUrl={tmpPdfUrl} />
     </div>
   );
 }

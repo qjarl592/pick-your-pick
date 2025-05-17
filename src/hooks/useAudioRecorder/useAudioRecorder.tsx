@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import * as Tone from "tone";
 
 import { AUDIO_MIME_TYPE } from "@/constants/recorder";
 
@@ -9,6 +10,7 @@ interface UseAudioRecorderReturn {
   selectedDevice: string | null;
   isRecording: boolean;
   audioURL: string;
+  recordingStartTime: number;
   setSelectedDevice: (deviceId: string) => void;
   startRecording: () => Promise<void>;
   stopRecording: () => void;
@@ -20,9 +22,11 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string>("");
+  const [recordingStartTime, setRecordingStartTime] = useState<number>(0);
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  // Tone.js 관련 참조
+  const micRef = useRef<Tone.UserMedia | null>(null);
+  const recorderRef = useRef<Tone.Recorder | null>(null);
 
   // 오디오 입력 장치 가져오기
   const fetchAudioDevices = useCallback(async () => {
@@ -45,72 +49,91 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
   useEffect(() => {
     fetchAudioDevices();
 
+    // Recorder 초기화
+    recorderRef.current = new Tone.Recorder();
+
     // 사용 가능한 장치 목록을 실시간으로 업데이트
     const mediaDevices = navigator.mediaDevices;
     if (mediaDevices) {
       mediaDevices.addEventListener("devicechange", handleDeviceChange);
       return () => {
         mediaDevices.removeEventListener("devicechange", handleDeviceChange);
+
+        // 리소스 정리
+        if (micRef.current) {
+          micRef.current.close();
+        }
+        if (recorderRef.current) {
+          recorderRef.current.dispose();
+        }
       };
     }
   }, [fetchAudioDevices, handleDeviceChange]);
 
-  // 미디어 스트림 가져오기
-  const getMediaStream = useCallback(async () => {
-    return navigator.mediaDevices.getUserMedia({
-      audio: {
-        deviceId: selectedDevice ? { exact: selectedDevice } : undefined,
-      },
-    });
-  }, [selectedDevice]);
-
   // 녹음 시작
   const startRecording = useCallback(async () => {
     try {
-      const stream = await getMediaStream();
+      await Tone.start();
 
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
+      // 이전 마이크 연결 해제
+      if (micRef.current) {
+        micRef.current.close();
+      }
 
-      // 데이터 수집 이벤트 핸들러
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
+      // 새 마이크 인스턴스 생성
+      const mic = new Tone.UserMedia();
+      await mic.open();
 
-      // 녹음 중지 이벤트 핸들러
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: AUDIO_MIME_TYPE });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioURL(audioUrl);
-      };
+      // if (selectedDevice) {
+      //   await mic.open({ deviceId: selectedDevice });
+      // } else {
+      //   await mic.open();
+      // }
 
-      mediaRecorder.start();
+      // 마이크를 레코더에 연결
+      mic.connect(recorderRef.current!);
+      micRef.current = mic;
+
+      // 현재 Tone.js 재생 위치를 저장
+      const currentPosition = Tone.Transport.seconds;
+      setRecordingStartTime(currentPosition);
+
+      // 레코더 시작
+      recorderRef.current!.start();
       setIsRecording(true);
     } catch (error) {
       console.error("녹음 시작 오류:", error);
     }
-  }, [getMediaStream]);
+  }, []);
 
-  // 녹음 중지
-  const stopRecording = useCallback(() => {
-    const mediaRecorder = mediaRecorderRef.current;
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
+  // 녹음 중지 및 처리
+  const stopRecording = useCallback(async () => {
+    if (!isRecording || !recorderRef.current || !micRef.current) return;
+
+    try {
+      // 레코더 중지 및 녹음 데이터 가져오기
+      const recordingData = await recorderRef.current.stop();
+
+      // 마이크 닫기
+      micRef.current.close();
+
+      // 녹음 데이터를 URL로 변환
+      const recordingBlob = new Blob([recordingData], { type: AUDIO_MIME_TYPE });
+      const recordingUrl = URL.createObjectURL(recordingBlob);
+
+      // 처리된 오디오 URL 설정
+      setAudioURL(recordingUrl);
       setIsRecording(false);
-
-      // 트랙 정리
-      const stream = mediaRecorder.stream;
-      stream.getTracks().forEach((track) => track.stop());
+    } catch (error) {
+      console.error("녹음 중지 오류:", error);
+      setIsRecording(false);
     }
   }, [isRecording]);
 
   // 녹음 토글
   const toggleRecording = useCallback(async () => {
     if (isRecording) {
-      stopRecording();
+      await stopRecording();
     } else {
       await startRecording();
     }
@@ -121,6 +144,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     selectedDevice,
     isRecording,
     audioURL,
+    recordingStartTime,
     setSelectedDevice,
     startRecording,
     stopRecording,

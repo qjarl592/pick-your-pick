@@ -20,8 +20,16 @@ const ORIGINAL_AUDIO_URL =
   "https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/original.mp3";
 
 export default function RecordController() {
-  const { inputDevices, selectedDevice, isRecording, audioURL, setSelectedDevice, toggleRecording } =
-    useAudioRecorder();
+  const {
+    inputDevices,
+    selectedDevice,
+    isRecording,
+    audioURL,
+    recordingStartTime,
+    setSelectedDevice,
+    toggleRecording,
+  } = useAudioRecorder();
+
   const { isPlay, setIsPlay } = useRecordStore();
 
   // 내부에 상태 및 참조 추가
@@ -35,7 +43,7 @@ export default function RecordController() {
       prevAudioUrlRef.current = audioURL;
       setRecordingUrl(audioURL);
     }
-  }, [audioURL]);
+  }, [audioURL, recordingStartTime]);
 
   // 녹음 시작 시 재생 중지
   useEffect(() => {
@@ -86,6 +94,7 @@ export default function RecordController() {
         originalUrl={ORIGINAL_AUDIO_URL}
         recordingUrl={recordingUrl || null}
         isRecording={isRecording}
+        recordingStartTime={recordingStartTime}
       />
     </div>
   );

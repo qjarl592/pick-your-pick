@@ -7,8 +7,7 @@ interface AudioVisualizerProps {
   progressColor: string;
   height: number;
   progress: number;
-  duration: number; // 공유되는 전체 길이 (원곡 기준)
-  pixelsPerSecond: number;
+  duration: number; // 오디오 길이 (현재 플레이어 기준)
 }
 
 export default function AudioVisualizer({
@@ -43,21 +42,15 @@ export default function AudioVisualizer({
     // 플레이어의 실제 오디오 길이 사용
     const playerDuration = player.buffer.duration;
 
-    // 실제 오디오 길이의 비율
-    const durationRatio = playerDuration / duration;
-
-    // 현재 플레이어의 실제 사용 너비 계산 (전체 너비 중 실제 길이에 해당하는 부분)
-    const actualWidth = Math.floor(parentWidth * durationRatio);
-
     // 오디오 버퍼와 캔버스 픽셀 간의 비율 계산
-    const compressionRatio = buffer.length / actualWidth;
+    const compressionRatio = buffer.length / parentWidth;
 
     // 캔버스 초기화
     ctx.clearRect(0, 0, canvas.width, height);
     ctx.fillStyle = color;
 
     // 파형 그리기
-    for (let i = 0; i < actualWidth; i++) {
+    for (let i = 0; i < parentWidth; i++) {
       let min = 1.0;
       let max = -1.0;
 
@@ -84,38 +77,54 @@ export default function AudioVisualizer({
     const drawProgress = () => {
       if (!ctx || !canvas) return;
 
-      // 전체 진행률을 계산
-      const progressRatio = progress / duration;
+      // 녹음된 오디오는 자신의 고유한 duration을 가지므로 진행률을 그에 맞게 계산
+      // 현재 진행 중인 전역 시간과 자신의 duration을 비교하여 계산
+      const progressRatio = Math.min(progress / playerDuration, 1);
+      const progressX = Math.floor(progressRatio * parentWidth);
 
-      // 플레이어의 실제 길이에 맞게 진행 정도 조정
-      const adjustedProgress = Math.min(progressRatio, durationRatio);
+      // 파형 다시 그리기
+      ctx.clearRect(0, 0, canvas.width, height);
 
-      // 실제 표시할 픽셀 위치 계산
-      const progressX = Math.floor(adjustedProgress * parentWidth);
+      // 배경 파형
+      ctx.fillStyle = color;
+      for (let i = 0; i < parentWidth; i++) {
+        let min = 1.0;
+        let max = -1.0;
 
-      // 프로그레스 이전 부분 다시 그리기
-      ctx.fillStyle = progressColor;
+        const startIndex = Math.floor(i * compressionRatio);
+        const endIndex = Math.floor((i + 1) * compressionRatio);
 
-      for (let i = 0; i < progressX; i++) {
-        // 실제 파형이 그려진 영역 내에서만 진행 표시
-        if (i < actualWidth) {
-          let min = 1.0;
-          let max = -1.0;
-
-          const startIndex = Math.floor(i * compressionRatio);
-          const endIndex = Math.floor((i + 1) * compressionRatio);
-
-          for (let j = startIndex; j < endIndex; j++) {
-            const datum = buffer[j] || 0;
-            if (datum < min) min = datum;
-            if (datum > max) max = datum;
-          }
-
-          const y1 = (1 + min) * amp;
-          const y2 = (1 + max) * amp;
-
-          ctx.fillRect(i, y1, 1, y2 - y1);
+        for (let j = startIndex; j < endIndex; j++) {
+          const datum = buffer[j] || 0;
+          if (datum < min) min = datum;
+          if (datum > max) max = datum;
         }
+
+        const y1 = (1 + min) * amp;
+        const y2 = (1 + max) * amp;
+
+        ctx.fillRect(i, y1, 1, y2 - y1);
+      }
+
+      // 진행률 표시
+      ctx.fillStyle = progressColor;
+      for (let i = 0; i < progressX; i++) {
+        let min = 1.0;
+        let max = -1.0;
+
+        const startIndex = Math.floor(i * compressionRatio);
+        const endIndex = Math.floor((i + 1) * compressionRatio);
+
+        for (let j = startIndex; j < endIndex; j++) {
+          const datum = buffer[j] || 0;
+          if (datum < min) min = datum;
+          if (datum > max) max = datum;
+        }
+
+        const y1 = (1 + min) * amp;
+        const y2 = (1 + max) * amp;
+
+        ctx.fillRect(i, y1, 1, y2 - y1);
       }
     };
 
@@ -138,14 +147,13 @@ export default function AudioVisualizer({
         canvas.width = newWidth;
 
         // 비율 재계산
-        const newActualWidth = Math.floor(newWidth * durationRatio);
-        const newCompressionRatio = buffer.length / newActualWidth;
+        const newCompressionRatio = buffer.length / newWidth;
 
         // 전체 파형 다시 그리기
         ctx.clearRect(0, 0, newWidth, height);
         ctx.fillStyle = color;
 
-        for (let i = 0; i < newActualWidth; i++) {
+        for (let i = 0; i < newWidth; i++) {
           let min = 1.0;
           let max = -1.0;
 

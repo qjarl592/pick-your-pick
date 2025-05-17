@@ -7,21 +7,21 @@ import Image from "next/image";
 const steps = [
   {
     id: 0,
-    icon: <PlusCircle className="size-12 text-primary" />,
+    icon: <PlusCircle className="size-12 text-blue-600" />,
     title: "악보 추가",
     description: "유튜브에서 곡을 검색하거나 직접 PDF 악보를 업로드하세요.",
     image: "/step1.png",
   },
   {
     id: 1,
-    icon: <Search className="size-12 text-primary" />,
+    icon: <Search className="size-12 text-blue-600" />,
     title: "악보 찾기",
     description: "제목, 아티스트, 난이도로 악보를 쉽게 검색하고 필터링하세요.",
     image: "/step2.png",
   },
   {
     id: 2,
-    icon: <Music className="size-12 text-primary" />,
+    icon: <Music className="size-12 text-blue-600" />,
     title: "연습 시작",
     description: "내장된 PDF 뷰어로 악보를 열고 바로 연습을 시작하세요.",
     image: "/step3.png",
@@ -30,7 +30,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="px-4 py-20 lg:px-24" id="how-it-works">
+    <section className="bg-white px-4 py-20 lg:px-24" id="how-it-works">
       <div className="mx-auto max-w-7xl">
         <motion.div
           className="text-center"
@@ -39,8 +39,8 @@ export default function HowItWorks() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7 }}
         >
-          <h2 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">사용 방법</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          <h2 className="text-3xl font-bold tracking-tight text-blue-700 md:text-4xl">사용 방법</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-600">
             Pick Your Pick은 직관적인 인터페이스로 악보 관리를 간단하게 만들어 줍니다.
           </p>
         </motion.div>
@@ -79,9 +79,9 @@ export default function HowItWorks() {
                     >
                       {step.icon}
                     </motion.div>
-                    <h3 className="text-2xl font-bold text-gray-900">{step.title}</h3>
+                    <h3 className="text-2xl font-bold text-blue-700">{step.title}</h3>
                   </motion.div>
-                  <p className="text-lg text-gray-600">{step.description}</p>
+                  <p className="text-lg text-blue-600">{step.description}</p>
                 </div>
               </motion.div>
               <motion.div
@@ -92,7 +92,7 @@ export default function HowItWorks() {
                 transition={{ duration: 0.5, delay: index * 0.3 + 0.4 }}
               >
                 <motion.div
-                  className="relative h-[300px] w-full overflow-hidden rounded-lg shadow-lg md:h-[400px]"
+                  className="relative h-[300px] w-full overflow-hidden rounded-lg border border-blue-100 shadow-lg md:h-[400px]"
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >

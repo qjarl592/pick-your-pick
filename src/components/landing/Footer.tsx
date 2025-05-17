@@ -28,7 +28,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-900 px-4 py-12 text-gray-300 lg:px-24">
+    <footer className="bg-blue-900 px-4 py-12 text-blue-100 lg:px-24">
       <div className="mx-auto max-w-7xl">
         <motion.div
           className="grid gap-12 md:grid-cols-3 lg:grid-cols-4"
@@ -135,7 +135,7 @@ export default function Footer() {
         </motion.div>
 
         <motion.div
-          className="mt-12 border-t border-gray-800 pt-8 text-center text-sm"
+          className="mt-12 border-t border-blue-800 pt-8 text-center text-sm"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

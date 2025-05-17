@@ -1,12 +1,12 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import Logo from "@/components/common/Logo";
-import { Button } from "@/components/ui/button";
+import LoginButton from "@/components/LoginButton";
 
 const navigation = [
   { id: 0, name: "기능", href: "#features" },
@@ -18,7 +18,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 bg-white/90 shadow-sm backdrop-blur-sm">
       <motion.nav
         className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-24"
         initial={{ y: -20, opacity: 0 }}
@@ -38,7 +38,7 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-gray-600 hover:text-primary"
+                className="text-sm font-medium text-gray-600 hover:text-blue-600"
               >
                 {item.name}
               </Link>
@@ -52,12 +52,9 @@ export default function Navbar() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Button variant="outline" asChild>
-            <Link href="/score">로그인</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/score">시작하기</Link>
-          </Button>
+          <LoginButton className="bg-blue-600 text-white hover:bg-blue-700">
+            시작하기 <ArrowRight className="ml-2 size-4" />
+          </LoginButton>
         </motion.div>
 
         <motion.div
@@ -68,7 +65,7 @@ export default function Navbar() {
         >
           <motion.button
             type="button"
-            className="text-gray-600"
+            className="text-blue-600"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -112,7 +109,7 @@ export default function Navbar() {
                 >
                   <Link
                     href={item.href}
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-primary"
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.name}
@@ -126,12 +123,9 @@ export default function Navbar() {
                   visible: { opacity: 1, y: 0 },
                 }}
               >
-                <Button variant="outline" asChild className="w-full">
-                  <Link href="/score">로그인</Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link href="/score">시작하기</Link>
-                </Button>
+                <LoginButton className="w-full bg-blue-600 text-white hover:bg-blue-700">
+                  시작하기 <ArrowRight className="ml-2 size-4" />
+                </LoginButton>
               </motion.div>
             </motion.div>
           </motion.div>

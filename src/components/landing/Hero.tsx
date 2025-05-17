@@ -37,27 +37,32 @@ export default function Hero() {
         variants={containerVariants}
       >
         <motion.h1
-          className="text-4xl font-bold tracking-tight text-primary md:text-5xl lg:text-6xl"
+          className="text-4xl font-bold tracking-tight text-blue-700 md:text-5xl lg:text-6xl"
           variants={itemVariants}
         >
           당신의 연주를 위한 <br />
-          <span className="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
             최고의 악보 관리
           </span>
         </motion.h1>
-        <motion.p className="max-w-md text-lg text-gray-600" variants={itemVariants}>
+        <motion.p className="max-w-md text-lg text-blue-700" variants={itemVariants}>
           선택하고, 연습하고, 성장하세요. Pick Your Pick은 음악가들의 연습 여정을 더 효율적으로 만들어 줍니다.
         </motion.p>
         <motion.div
           className="flex flex-col space-y-3 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
           variants={itemVariants}
         >
-          <Button size="lg" asChild>
+          <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700" asChild>
             <Link href="/score">
               시작하기 <ArrowRight className="ml-2 size-4" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" asChild>
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+            asChild
+          >
             <Link href="#features">기능 살펴보기</Link>
           </Button>
         </motion.div>

@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Music, PlusCircle, Loader2 } from "lucide-react";
+import { Music, PlusCircle, Loader2, LogOut } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 import AddTabModal from "@/components/AddTabModal/AddTabModal";
 import Logo from "@/components/common/Logo";
@@ -11,6 +11,7 @@ import FilterWrap from "@/components/features/list/FilterWrap";
 import ScoreCard from "@/components/features/list/ScoreCard";
 import ScoreListCarousel from "@/components/features/list/ScoreListCarousel";
 import SearchBar from "@/components/features/list/SearchBar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useScores } from "@/hooks/useStores/useStores";
 
@@ -37,11 +38,25 @@ export default function Page() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 flex flex-col items-center gap-6"
+          className="relative mb-8 flex w-full flex-col items-center gap-6"
         >
-          <div className="mb-2 flex items-center gap-3">
-            <Music className="size-10 text-blue-600" />
-            <Logo size="lg" />
+          <div className="flex w-full items-center justify-between">
+            <div className="flex-1"></div>
+            <div className="mb-2 flex items-center gap-3">
+              <Music className="size-10 text-blue-600" />
+              <Logo size="lg" />
+            </div>
+            <div className="flex flex-1 justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                onClick={() => signOut()}
+              >
+                <LogOut className="mr-2 size-4" />
+                로그아웃
+              </Button>
+            </div>
           </div>
           <p className="max-w-2xl text-center text-blue-700">
             악보를 검색하고 관리하여 연주 실력을 향상시켜보세요

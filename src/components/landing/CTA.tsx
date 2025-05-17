@@ -2,13 +2,12 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import LoginButton from "@/components/LoginButton";
 
 export default function CTA() {
   return (
-    <section className="bg-gradient-to-r from-primary to-blue-600 px-4 py-20 text-white lg:px-24">
+    <section className="bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-20 text-white lg:px-24">
       <motion.div
         className="mx-auto max-w-4xl text-center"
         initial={{ opacity: 0, y: 50 }}
@@ -42,11 +41,12 @@ export default function CTA() {
           transition={{ delay: 0.6, duration: 0.7 }}
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/score">
-                지금 시작하기 <ArrowRight className="ml-2 size-4" />
-              </Link>
-            </Button>
+            <LoginButton
+              size="lg"
+              className="border border-blue-200 bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+            >
+              지금 시작하기 <ArrowRight className="ml-2 size-4" />
+            </LoginButton>
           </motion.div>
         </motion.div>
       </motion.div>

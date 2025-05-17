@@ -28,3 +28,7 @@ export function chunk(list: any[], chunkSize: number) {
     }
   );
 }
+
+export function checkIsDev() {
+  return process.env.NODE_ENV === "development";
+}

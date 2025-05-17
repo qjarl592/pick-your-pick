@@ -1,4 +1,4 @@
-import { getContext, getTransport, loaded, Player, start } from "tone";
+import { getContext, getTransport, loaded, Player, start, Synth, Loop } from "tone";
 import { create } from "zustand";
 
 export type AudioTrackId = "bass" | "drum" | "guitar" | "others" | "piano" | "vocal";
@@ -19,8 +19,17 @@ interface AudioStoreState {
   currentTime: number;
   duration: number;
   tracks: AudioTrackList | null;
+  playbackSpeed: number;
 
-  _rafId: number | null; // for tracking requestAnimationFrame
+  // Only one metronome state
+  isMetronomeOn: boolean;
+
+  _rafId: number | null;
+  _startTime: number | null;
+  _pausedTime: number;
+  _metronomeSynth: Synth | null;
+  _metronomeLoop: Loop | null;
+  currentBPM: number;
 }
 
 interface AudioStoreAction {
@@ -33,8 +42,12 @@ interface AudioStoreAction {
 
   toggleMute: (trackId: AudioTrackId) => void;
   setVolume: (trackId: AudioTrackId, volume: number) => void;
+  setPlaybackSpeed: (speed: number) => void;
 
-  // for animation frame updates
+  // Metronome actions
+  toggleMetronome: (isOn: boolean) => void;
+  setBPM: (bpm: number) => void;
+
   _updateRaf: () => void;
   _cancelRaf: () => void;
 }
@@ -45,7 +58,17 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   currentTime: 0,
   duration: 0,
   tracks: null,
+  playbackSpeed: 1,
+
+  // Only metronome on/off state
+  isMetronomeOn: false,
+  currentBPM: 0,
+
   _rafId: null,
+  _startTime: null,
+  _pausedTime: 0,
+  _metronomeSynth: null,
+  _metronomeLoop: null,
 
   initTracks: async (urlList: { [key in AudioTrackId]: string }) => {
     const prevTracks = get().tracks;
@@ -56,6 +79,22 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     if (prevTracks) {
       Object.values(prevTracks).forEach((track) => {
         if (track.player) track.player.dispose();
+      });
+    }
+
+    // Initialize metronome if not already done
+    const state = get();
+    if (!state._metronomeSynth) {
+      const synth = new Synth().toDestination();
+      synth.volume.value = -10; // Default metronome volume
+
+      const loop = new Loop((time) => {
+        synth.triggerAttackRelease("C6", "8n", time);
+      }, "4n");
+
+      set({
+        _metronomeSynth: synth,
+        _metronomeLoop: loop,
       });
     }
 
@@ -82,20 +121,29 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
       } else return max;
     }, 0);
 
-    set({ tracks: newTracks, isLoad: true, duration: maxDuration, isPlay: false, currentTime: 0 });
+    set({
+      tracks: newTracks,
+      isLoad: true,
+      duration: maxDuration,
+      isPlay: false,
+      currentTime: 0,
+      _pausedTime: 0,
+      _startTime: null,
+    });
   },
 
-  // for animation frame updates
   _updateRaf: () => {
     const state = get();
-    if (!state.isPlay) return;
+    if (!state.isPlay || state._startTime === null) return;
 
-    const transport = getTransport();
-    const currentSeconds = transport.seconds;
+    const now = Date.now();
+    const elapsedTime = (now - state._startTime) / 1000;
+    const scaledElapsedTime = elapsedTime * state.playbackSpeed;
+    const currentTime = state._pausedTime + scaledElapsedTime;
 
-    set({ currentTime: currentSeconds });
+    set({ currentTime });
 
-    if (currentSeconds >= state.duration) {
+    if (currentTime >= state.duration) {
       get().stop();
       return;
     }
@@ -122,14 +170,25 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
 
     const transport = getTransport();
     transport.stop();
-    transport.seconds = state.currentTime;
-    transport.start();
 
+    // Set BPM for metronome
+    transport.bpm.value = state.currentBPM * state.playbackSpeed;
+
+    // Start metronome if enabled
+    if (state.isMetronomeOn && state._metronomeLoop) {
+      state._metronomeLoop.start(0);
+      transport.start();
+    }
+
+    // Set start time for accurate time tracking
+    set({ _startTime: Date.now() });
+
+    // Start all tracks from the current time position
     Object.values(state.tracks).forEach((track) => {
       if (track.player) {
         track.player.stop();
-        track.player.unsync();
-        track.player.sync().start(0);
+        track.player.playbackRate = state.playbackSpeed;
+        track.player.start(0, state.currentTime / state.playbackSpeed);
       }
     });
 
@@ -139,39 +198,56 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
   },
 
   pause: () => {
-    const { tracks, isLoad } = get();
+    const { tracks, isLoad, currentTime, _metronomeLoop } = get();
     if (!tracks || !isLoad) return;
 
+    // Pause metronome
     const transport = getTransport();
-
     transport.pause();
-    const currentTime = transport.seconds;
 
+    if (_metronomeLoop) {
+      _metronomeLoop.stop();
+    }
+
+    // Stop all tracks
     Object.values(tracks).forEach((track) => {
       if (track.player) {
-        track.player.unsync();
-      }
-    });
-
-    get()._cancelRaf();
-    set({ isPlay: false, currentTime });
-  },
-
-  stop: () => {
-    const { tracks, isLoad } = get();
-    if (!tracks || !isLoad) return;
-
-    getTransport().stop();
-
-    Object.values(tracks).forEach((track) => {
-      if (track.player) {
-        track.player.unsync();
         track.player.stop();
       }
     });
 
     get()._cancelRaf();
-    set({ isPlay: false, currentTime: 0 });
+    set({
+      isPlay: false,
+      _pausedTime: currentTime,
+      _startTime: null,
+    });
+  },
+
+  stop: () => {
+    const { tracks, isLoad, _metronomeLoop } = get();
+    if (!tracks || !isLoad) return;
+
+    const transport = getTransport();
+    transport.stop();
+
+    if (_metronomeLoop) {
+      _metronomeLoop.stop();
+    }
+
+    Object.values(tracks).forEach((track) => {
+      if (track.player) {
+        track.player.stop();
+      }
+    });
+
+    get()._cancelRaf();
+    set({
+      isPlay: false,
+      currentTime: 0,
+      _pausedTime: 0,
+      _startTime: null,
+    });
   },
 
   seek: (targetTime: number) => {
@@ -179,28 +255,20 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     if (!state.tracks || !state.isLoad) return;
 
     const validTime = Math.max(0, Math.min(targetTime, state.duration));
-    const transport = getTransport();
-
-    transport.seconds = validTime;
 
     if (state.isPlay) {
-      get()._cancelRaf();
-      transport.stop();
-      transport.seconds = validTime;
-      transport.start();
-
-      Object.values(state.tracks).forEach((track) => {
-        if (track.player) {
-          track.player.stop();
-          track.player.unsync();
-          track.player.sync().start(0);
-        }
+      get().pause();
+      set({
+        currentTime: validTime,
+        _pausedTime: validTime,
       });
-
-      get()._updateRaf();
+      get().play();
+    } else {
+      set({
+        currentTime: validTime,
+        _pausedTime: validTime,
+      });
     }
-
-    set({ currentTime: validTime });
   },
 
   toggleMute: (trackId: AudioTrackId) => {
@@ -218,7 +286,6 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     const { tracks, isLoad } = get();
     if (!tracks || !isLoad) return;
 
-    // sliderValue 범위 : 0~100, 0: 음소거, 50: 1배(기본값), 100: 2배
     const toDecibel = (sliderValue: number) => {
       if (sliderValue === 0) return -Infinity;
       if (sliderValue <= 50) return -60 + (sliderValue / 50) * 60;
@@ -229,5 +296,64 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
     tracks[trackId].player.volume.value = toDecibel(volume);
 
     set({ tracks: { ...tracks } });
+  },
+
+  setPlaybackSpeed: (speed: number) => {
+    const state = get();
+    if (!state.tracks || !state.isLoad) return;
+
+    const validSpeed = Math.max(0.25, Math.min(speed, 2.0));
+
+    if (state.isPlay) {
+      const currentTime = state.currentTime;
+
+      get().pause();
+      set({ playbackSpeed: validSpeed });
+      set({
+        currentTime: currentTime,
+        _pausedTime: currentTime,
+      });
+      get().play();
+    } else {
+      set({ playbackSpeed: validSpeed });
+    }
+  },
+
+  // Separate BPM control function
+  setBPM: (bpm: number) => {
+    const state = get();
+
+    set({ currentBPM: bpm });
+
+    // Update transport BPM if metronome is on and playing
+    if (state.isMetronomeOn || state.isPlay) {
+      const transport = getTransport();
+      transport.bpm.value = bpm * state.playbackSpeed;
+    }
+  },
+
+  // Simplified metronome toggle function (only handles on/off)
+  toggleMetronome: (isOn: boolean) => {
+    const state = get();
+
+    if (!state._metronomeSynth || !state._metronomeLoop) return;
+
+    // Handle metronome toggle
+    if (state.isPlay) {
+      const transport = getTransport();
+
+      if (isOn) {
+        // Turn on metronome
+        transport.bpm.value = state.currentBPM * state.playbackSpeed;
+        state._metronomeLoop.start(0);
+        transport.start();
+      } else {
+        // Turn off metronome
+        state._metronomeLoop.stop();
+        transport.stop();
+      }
+    }
+
+    set({ isMetronomeOn: isOn });
   },
 }));

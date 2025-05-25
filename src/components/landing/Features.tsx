@@ -76,7 +76,7 @@ export default function Features() {
           <h2 className="text-3xl font-bold tracking-tight text-blue-700 md:text-4xl">
             연주자를 위한 완벽한 기능
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg">
             Pick Your Pick은 음악가들이 연습에 집중할 수 있도록 설계된 다양한 기능을 제공합니다.
           </p>
         </motion.div>
@@ -98,7 +98,7 @@ export default function Features() {
             >
               <div className="mb-4 inline-flex rounded-md bg-blue-50 p-3">{feature.icon}</div>
               <h3 className="mb-2 text-xl font-medium text-blue-700">{feature.title}</h3>
-              <p className="text-blue-600">{feature.description}</p>
+              <p>{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>

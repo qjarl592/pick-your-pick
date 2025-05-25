@@ -10,21 +10,21 @@ const steps = [
     icon: <PlusCircle className="size-12 text-blue-600" />,
     title: "악보 추가",
     description: "유튜브에서 곡을 검색하거나 직접 PDF 악보를 업로드하세요.",
-    image: "/step1.png",
+    image: "/asset/image/score_add.png",
   },
   {
     id: 1,
     icon: <Search className="size-12 text-blue-600" />,
     title: "악보 찾기",
     description: "제목, 아티스트, 난이도로 악보를 쉽게 검색하고 필터링하세요.",
-    image: "/step2.png",
+    image: "/asset/image/score_search.png",
   },
   {
     id: 2,
     icon: <Music className="size-12 text-blue-600" />,
     title: "연습 시작",
     description: "내장된 PDF 뷰어로 악보를 열고 바로 연습을 시작하세요.",
-    image: "/step3.png",
+    image: "/asset/image/score_view.png",
   },
 ];
 
@@ -40,7 +40,7 @@ export default function HowItWorks() {
           transition={{ duration: 0.7 }}
         >
           <h2 className="text-3xl font-bold tracking-tight text-blue-700 md:text-4xl">사용 방법</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg">
             Pick Your Pick은 직관적인 인터페이스로 악보 관리를 간단하게 만들어 줍니다.
           </p>
         </motion.div>
@@ -81,7 +81,7 @@ export default function HowItWorks() {
                     </motion.div>
                     <h3 className="text-2xl font-bold text-blue-700">{step.title}</h3>
                   </motion.div>
-                  <p className="text-lg text-blue-600">{step.description}</p>
+                  <p className="text-lg">{step.description}</p>
                 </div>
               </motion.div>
               <motion.div
@@ -96,7 +96,13 @@ export default function HowItWorks() {
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Image src={step.image} alt={step.title} fill className="object-cover" unoptimized />
+                  <Image
+                    src={step.image}
+                    alt={step.title}
+                    fill
+                    className="bg-white object-cover"
+                    unoptimized
+                  />
                 </motion.div>
               </motion.div>
             </motion.div>

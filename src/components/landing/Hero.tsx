@@ -45,7 +45,7 @@ export default function Hero() {
             최고의 악보 관리
           </span>
         </motion.h1>
-        <motion.p className="max-w-md text-lg text-blue-700" variants={itemVariants}>
+        <motion.p className="max-w-md text-lg" variants={itemVariants}>
           선택하고, 연습하고, 성장하세요. Pick Your Pick은 음악가들의 연습 여정을 더 효율적으로 만들어 줍니다.
         </motion.p>
         <motion.div
@@ -60,7 +60,7 @@ export default function Hero() {
           <Button
             variant="outline"
             size="lg"
-            className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+            className="border-blue-200 hover:bg-blue-50 hover:text-blue-700"
             asChild
           >
             <Link href="#features">기능 살펴보기</Link>
@@ -82,7 +82,7 @@ export default function Hero() {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <Image
-            src="/landing-hero.png"
+            src="/asset/image/main_kv.png"
             alt="악보 관리 앱 이미지"
             fill
             className="rounded-lg object-cover"

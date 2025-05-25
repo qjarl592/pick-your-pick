@@ -46,13 +46,17 @@ export default function SortSelector() {
           clearSortOrder();
         }}
       >
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-[150px] rounded-lg border-blue-100 bg-white text-gray-700 shadow-sm hover:border-blue-300 focus:ring-blue-200">
           <SelectValue placeholder="정렬 기준 선택" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-lg border-blue-100 bg-white shadow-lg">
           <SelectGroup>
             {selectOptions.map((item) => (
-              <SelectItem value={item.value} key={`select_${item.value}`}>
+              <SelectItem
+                value={item.value}
+                key={`select_${item.value}`}
+                className="text-gray-700 hover:bg-blue-50 focus:bg-blue-50"
+              >
                 {item.title}
               </SelectItem>
             ))}
@@ -60,7 +64,12 @@ export default function SortSelector() {
         </SelectContent>
       </Select>
 
-      <Button variant="outline" size="icon" onClick={toggleSortOrder} className="size-10">
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={toggleSortOrder}
+        className="size-10 rounded-lg border-blue-100 bg-white text-blue-600 shadow-sm hover:bg-blue-50 hover:text-blue-700"
+      >
         {order === "none" ? (
           <ArrowDownUp className="size-4" />
         ) : (

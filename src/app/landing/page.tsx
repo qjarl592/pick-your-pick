@@ -9,9 +9,9 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import Navbar from "@/components/landing/Navbar";
 import Testimonials from "@/components/landing/Testimonials";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200">
+    <>
       <Navbar />
       <main>
         <Hero />
@@ -22,6 +22,6 @@ export default function Home() {
         <CTA />
       </main>
       <Footer />
-    </div>
+    </>
   );
 }

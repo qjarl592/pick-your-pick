@@ -13,6 +13,7 @@ export default function Metronome() {
   const handleKeydown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key.toLowerCase() !== "enter") return;
     const newValue = Number((e.target as HTMLInputElement).value);
+    console.log(newValue);
     if (Number.isNaN(newValue)) return;
     if (newValue > 0 && newValue <= 300) {
       setBPM(newValue);

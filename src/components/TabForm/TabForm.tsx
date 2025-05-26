@@ -28,7 +28,7 @@ const tabInputFormSchema = z.object({
   artist: z.string().min(1, "아티스트 이름을 입력해주세요"),
   difficulty: z.number().min(1, "난이도를 선택해주세요").max(5, "난이도를 선택해주세요"),
   pdfFile: z
-    .instanceof(FileList)
+    .custom<FileList>((val) => val instanceof FileList, "FileList가 필요합니다")
     .refine((files) => files.length > 0, "PDF 파일을 선택해주세요")
     .refine((files) => files[0]?.type === "application/pdf", "PDF 파일만 업로드 가능합니다"),
 });

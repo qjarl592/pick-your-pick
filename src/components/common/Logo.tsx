@@ -25,7 +25,7 @@ export default function Logo({ className, size, link = true }: Props) {
   if (link) {
     return (
       <Link href="/score" className={cn(logoVariants({ size }), className)}>
-        Logo
+        Pick Your Pick
       </Link>
     );
   }

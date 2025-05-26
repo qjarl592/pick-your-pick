@@ -28,9 +28,8 @@ const tabInputFormSchema = z.object({
   artist: z.string().min(1, "아티스트 이름을 입력해주세요"),
   difficulty: z.number().min(1, "난이도를 선택해주세요").max(5, "난이도를 선택해주세요"),
   pdfFile: z
-    .custom<FileList>((val) => val instanceof FileList, "FileList가 필요합니다")
-    .refine((files) => files.length > 0, "PDF 파일을 선택해주세요")
-    .refine((files) => files[0]?.type === "application/pdf", "PDF 파일만 업로드 가능합니다"),
+    .instanceof(File)
+    .refine((file) => file.type === "application/pdf", "PDF 파일만 업로드 가능합니다"),
 });
 
 export type TabInputForm = z.infer<typeof tabInputFormSchema>;
@@ -53,8 +52,7 @@ export function TabForm({ selectedVideo, onSubmit }: Props) {
     { value: 5, label: "매우 어려움" },
   ];
 
-  const watchedPdfFile = form.watch("pdfFile");
-  const selectedFile = watchedPdfFile?.[0];
+  const selectedPdfFile = form.watch("pdfFile");
 
   useEffect(() => {
     form.reset({
@@ -131,19 +129,29 @@ export function TabForm({ selectedVideo, onSubmit }: Props) {
               <FormLabel>PDF 파일 *</FormLabel>
               <FormControl>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Input type="file" accept=".pdf" onChange={(e) => onChange(e.target.files)} {...field} />
+                  <Input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onChange(file);
+                      }
+                    }}
+                    {...field}
+                  />
                 </div>
               </FormControl>
               <FormDescription>PDF 파일만 업로드 가능합니다</FormDescription>
 
               {/* 선택된 파일 정보 표시 */}
-              {selectedFile && (
+              {selectedPdfFile && (
                 <div className="mt-2 rounded-md border bg-blue-50 p-3">
                   <p className="text-sm text-blue-800">
-                    <span className="font-medium">선택된 파일:</span> {selectedFile.name}
+                    <span className="font-medium">선택된 파일:</span> {selectedPdfFile.name}
                   </p>
                   <p className="text-sm text-blue-600">
-                    크기: {(selectedFile.size / 1024 / 1024).toFixed(2)}MB
+                    크기: {(selectedPdfFile.size / 1024 / 1024).toFixed(2)}MB
                   </p>
                 </div>
               )}

@@ -77,35 +77,39 @@ export default function Page() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-8"
         >
-          <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm">
-            {scores ? (
-              <ScoreListCarousel>
-                <AddTabModal>
-                  <Card className="group relative flex h-60 w-44 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 transition-all hover:cursor-pointer hover:border-blue-400 hover:shadow-md">
-                    <div className="rounded-full bg-blue-100 p-4 transition-colors group-hover:bg-blue-200">
-                      <PlusCircle size={48} className="text-blue-600" />
-                    </div>
-                    <span className="font-medium text-blue-700">악보 추가</span>
-                  </Card>
-                </AddTabModal>
+          <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm transition-all duration-300 ease-in-out">
+            <div className="size-full">
+              {scores ? (
+                <div className="h-[540px]">
+                  <ScoreListCarousel>
+                    <AddTabModal>
+                      <Card className="group relative flex h-60 w-44 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 transition-all hover:cursor-pointer hover:border-blue-400 hover:shadow-md">
+                        <div className="rounded-full bg-blue-100 p-4 transition-colors group-hover:bg-blue-200">
+                          <PlusCircle size={48} className="text-blue-600" />
+                        </div>
+                        <span className="font-medium text-blue-700">악보 추가</span>
+                      </Card>
+                    </AddTabModal>
 
-                {scores.data?.map((score) => <ScoreCard key={nanoid()} score={score} />)}
-              </ScoreListCarousel>
-            ) : (
-              <div className="flex flex-col items-center justify-center p-10 text-center">
-                {isLoading ? (
-                  <div className="flex flex-col items-center">
-                    <Loader2 className="mb-3 size-10 animate-spin text-blue-600" />
-                    <p className="font-medium text-blue-600">악보를 불러오는 중...</p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center text-red-500">
-                    <p className="font-medium">오류가 발생했습니다</p>
-                    <p className="mt-1 text-sm">잠시 후 다시 시도해주세요</p>
-                  </div>
-                )}
-              </div>
-            )}
+                    {scores.data?.map((score) => <ScoreCard key={nanoid()} score={score} />)}
+                  </ScoreListCarousel>
+                </div>
+              ) : (
+                <div className="flex h-[540px] flex-col items-center justify-center">
+                  {isLoading ? (
+                    <div className="flex flex-col items-center justify-center">
+                      <Loader2 className="size-12 animate-spin text-blue-600" />
+                      <p className="mt-4 font-medium text-blue-600">악보를 불러오는 중...</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center text-center text-red-500">
+                      <p className="font-medium">오류가 발생했습니다</p>
+                      <p className="mt-1 text-sm">잠시 후 다시 시도해주세요</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </Card>
         </motion.div>
       </div>

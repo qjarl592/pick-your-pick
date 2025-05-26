@@ -24,13 +24,15 @@ export default function FilterWrap() {
           <RecordingFilter />
         </div>
 
-        <div>
-          <p className="mb-2 text-sm font-semibold text-blue-700">정렬 방식</p>
-          <SortSelector />
-        </div>
+        <div className="flex items-end gap-4">
+          <div>
+            <p className="mb-2 text-sm font-semibold text-blue-700">정렬 방식</p>
+            <SortSelector />
+          </div>
 
-        <div className="flex h-full items-end pb-0.5">
-          <RefreshFilter />
+          <div className="flex h-full items-end pb-0.5">
+            <RefreshFilter />
+          </div>
         </div>
       </div>
     </motion.div>

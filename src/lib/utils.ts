@@ -30,5 +30,6 @@ export function chunk(list: any[], chunkSize: number) {
 }
 
 export function checkIsDev() {
-  return process.env.NODE_ENV === "development";
+  const forceDevEnv = true; // supabase 이용량 제한 걸린 경우
+  return forceDevEnv || process.env.NODE_ENV === "development";
 }

@@ -31,6 +31,18 @@ export default function Page() {
     return null;
   }
 
+  // tmp
+  const sampleScoreList =
+    scores && scores.data
+      ? Array.from({ length: 30 }).map((_, idx) => {
+          const firstData = scores.data[0];
+          return {
+            ...firstData,
+            id: `${firstData.id}_${idx}`,
+          };
+        })
+      : null;
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 pb-16">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -90,8 +102,8 @@ export default function Page() {
                         <span className="font-medium text-blue-700">악보 추가</span>
                       </Card>
                     </AddTabModal>
-
-                    {scores.data?.map((score) => <ScoreCard key={nanoid()} score={score} />)}
+                    {sampleScoreList &&
+                      sampleScoreList.map((score) => <ScoreCard key={nanoid()} score={score} />)}
                   </ScoreListCarousel>
                 </div>
               ) : (

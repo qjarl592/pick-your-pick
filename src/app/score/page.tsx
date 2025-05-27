@@ -34,11 +34,10 @@ export default function Page() {
   // tmp
   const sampleScoreList =
     scores && scores.data
-      ? Array.from({ length: 30 }).map((_, idx) => {
+      ? Array.from({ length: 30 }).map((_) => {
           const firstData = scores.data[0];
           return {
             ...firstData,
-            id: `${firstData.id}_${idx}`,
           };
         })
       : null;

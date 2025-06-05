@@ -6,8 +6,13 @@ import { Filter } from "@/components/common/Filter";
 export default function DifficultyFilter() {
   const renderStars = (count: number) => (
     <div className="flex gap-0.5">
-      {[...Array(count)].map(() => (
-        <Star key={nanoid()} size={14} className="text-yellow-300" fill="currentColor" />
+      {[...Array(5)].map((_, index) => (
+        <Star
+          key={nanoid()}
+          size={14}
+          className={index < count ? "text-yellow-400" : "text-gray-300"}
+          fill={index < count ? "currentColor" : "none"}
+        />
       ))}
     </div>
   );

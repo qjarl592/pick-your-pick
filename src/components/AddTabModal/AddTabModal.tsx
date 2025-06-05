@@ -2,8 +2,8 @@ import React, { ReactNode, useState } from "react";
 
 import { YoutubeSearchItem } from "@/type/youtube";
 
+import { TabForm, TabInputForm } from "./TabForm";
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
-import { TabForm, TabInputForm } from "../TabForm/TabForm";
 import {
   Dialog,
   DialogContent,
@@ -49,7 +49,7 @@ export default function AddTabModal({ children }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="flex flex-col gap-3">
+      <DialogContent className="flex max-h-[80vh] flex-col gap-3 overflow-auto">
         <DialogHeader className="w-full">
           <DialogTitle>악보 추가</DialogTitle>
           <DialogDescription>아래 양식을 작성해 새로운 악보를 추가해 주세요.</DialogDescription>

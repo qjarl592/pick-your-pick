@@ -50,6 +50,7 @@ export default function ScoreCard({ score }: Props) {
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
           />
 
           {/* 난이도 뱃지 */}

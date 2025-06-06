@@ -17,7 +17,7 @@ import { useScores } from "@/hooks/useStores/useStores";
 
 export default function Page() {
   const { data: session, status: sessionStatus } = useSession();
-  const { data: scores, isLoading } = useScores(session?.user?.id || "");
+  const { data: scores, isLoading, refetch } = useScores(session?.user?.id || "");
 
   if (sessionStatus === "loading") {
     return (
@@ -30,17 +30,6 @@ export default function Page() {
   if (!session) {
     return null;
   }
-
-  // tmp
-  const sampleScoreList =
-    scores && scores.data
-      ? Array.from({ length: 30 }).map((_) => {
-          const firstData = scores.data[0];
-          return {
-            ...firstData,
-          };
-        })
-      : null;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 pb-16">
@@ -93,7 +82,7 @@ export default function Page() {
               {scores ? (
                 <div className="h-[540px]">
                   <ScoreListCarousel>
-                    <AddTabModal>
+                    <AddTabModal onSubmitSuccess={() => refetch()}>
                       <Card className="group relative flex h-60 w-44 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 transition-all hover:cursor-pointer hover:border-blue-400 hover:shadow-md">
                         <div className="rounded-full bg-blue-100 p-4 transition-colors group-hover:bg-blue-200">
                           <PlusCircle size={48} className="text-blue-600" />
@@ -101,8 +90,7 @@ export default function Page() {
                         <span className="font-medium text-blue-700">악보 추가</span>
                       </Card>
                     </AddTabModal>
-                    {sampleScoreList &&
-                      sampleScoreList.map((score) => <ScoreCard key={nanoid()} score={score} />)}
+                    {scores.data && scores.data.map((score) => <ScoreCard key={nanoid()} score={score} />)}
                   </ScoreListCarousel>
                 </div>
               ) : (

@@ -13,3 +13,10 @@ export const youtubeApi = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const aiServerApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_AI_SERVER_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});

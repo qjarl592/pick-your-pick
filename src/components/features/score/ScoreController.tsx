@@ -1,8 +1,9 @@
+import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { Player } from "tone";
 
-import { checkIsDev } from "@/lib/utils";
-import { AudioTrackId, useAudioStore } from "@/store/audioStore";
+import { getAllAudioUrls } from "@/lib/storage";
+import { useAudioStore } from "@/store/audioStore";
 
 import AudioProgress from "./controller/AudioProgress";
 import FeatureBtn from "./controller/FeatureBtn";
@@ -26,26 +27,24 @@ interface Props {
 export default function ScoreController({ pdfScore }: Props) {
   const { moveNext, movePrev } = pdfScore;
   const { initTracks } = useAudioStore();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    const audioTrackIds: AudioTrackId[] = ["bass", "drum", "guitar", "others", "piano", "vocal"];
-    const sampleUrlList = audioTrackIds.reduce((acc, id) => {
-      // tmp
-      const baseUrl = "/sample/audio/";
-      const extension = ".mp3";
-      const audioUrl = baseUrl + id + extension;
-      const tmpAudioUrl = checkIsDev()
-        ? audioUrl
-        : `https://aesedyevxercqigjbuli.supabase.co/storage/v1/object/public/Score/audio/test_user/${id}.mp3`;
+    // URL에서 scoreId 추출
+    const pathname = window.location.pathname;
+    const scoreId = pathname.split("/").pop();
 
-      return {
-        ...acc,
-        [id]: tmpAudioUrl,
-      };
-    }, {}) as { [key in AudioTrackId]: string };
+    const userId = session?.user?.id;
 
-    initTracks(sampleUrlList);
-  }, [initTracks]);
+    if (!scoreId || !userId) {
+      return;
+    }
+
+    // 개발환경에서도 실제 Storage 사용 (테스트용)
+    const audioUrls = getAllAudioUrls(userId, scoreId);
+
+    initTracks(audioUrls);
+  }, [initTracks, session?.user?.id]);
 
   return (
     <div className="fixed bottom-0 left-0 z-50 flex w-full items-center gap-2 bg-white/80 p-4">

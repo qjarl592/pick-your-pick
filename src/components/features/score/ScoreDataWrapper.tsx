@@ -5,8 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { notFound, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import React from "react";
 
+import { getScoreUrl } from "@/lib/storage";
 import { api } from "@/services/axios";
 
 import ScoreViewer from "./ScoreViewer";
@@ -17,6 +19,7 @@ interface Props {
 
 export default function ScoreDataWrapper({ scoreId }: Props) {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const { data, error, isLoading } = useQuery<Score, AxiosError>({
     queryKey: ["score"],
@@ -44,14 +47,18 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
     return null;
   }
 
-  if (!data) return null;
+  const userId = session?.user?.id;
 
-  //tmp
-  const tmpPdfUrl = "/sample/score/sample_score.pdf";
+  if (!data || !userId) {
+    return null;
+  }
+
+  // PDF URL 생성
+  const pdfUrl = getScoreUrl(userId, scoreId);
 
   return (
     <div>
-      <ScoreViewer pdfUrl={tmpPdfUrl} />
+      <ScoreViewer pdfUrl={pdfUrl} />
     </div>
   );
 }

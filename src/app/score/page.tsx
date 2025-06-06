@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Music, PlusCircle, Loader2, LogOut } from "lucide-react";
-import { nanoid } from "nanoid";
 import { useSession, signOut } from "next-auth/react";
 
 import AddTabModal from "@/components/AddTabModal/AddTabModal";
@@ -17,7 +16,8 @@ import { useScores } from "@/hooks/useStores/useStores";
 
 export default function Page() {
   const { data: session, status: sessionStatus } = useSession();
-  const { data: scores, isLoading, refetch } = useScores(session?.user?.id || "");
+  const userId = session?.user?.id || "";
+  const { data: scores, isLoading, error, refetch } = useScores(userId);
 
   if (sessionStatus === "loading") {
     return (
@@ -30,6 +30,8 @@ export default function Page() {
   if (!session) {
     return null;
   }
+
+  const scoreList = scores?.data || [];
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 pb-16">
@@ -79,7 +81,7 @@ export default function Page() {
         >
           <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm transition-all duration-300 ease-in-out">
             <div className="size-full">
-              {scores ? (
+              {scoreList.length > 0 ? (
                 <div className="h-[540px]">
                   <ScoreListCarousel>
                     <AddTabModal onSubmitSuccess={() => refetch()}>
@@ -90,7 +92,9 @@ export default function Page() {
                         <span className="font-medium text-blue-700">악보 추가</span>
                       </Card>
                     </AddTabModal>
-                    {scores.data && scores.data.map((score) => <ScoreCard key={nanoid()} score={score} />)}
+                    {scoreList.map((score) => (
+                      <ScoreCard key={score.id} score={score} />
+                    ))}
                   </ScoreListCarousel>
                 </div>
               ) : (
@@ -100,10 +104,16 @@ export default function Page() {
                       <Loader2 className="size-12 animate-spin text-blue-600" />
                       <p className="mt-4 font-medium text-blue-600">악보를 불러오는 중...</p>
                     </div>
-                  ) : (
+                  ) : error ? (
                     <div className="flex flex-col items-center text-center text-red-500">
                       <p className="font-medium">오류가 발생했습니다</p>
-                      <p className="mt-1 text-sm">잠시 후 다시 시도해주세요</p>
+                      <p className="mt-1 text-sm">{error.toString()}</p>
+                      <p className="mt-1 text-xs text-gray-500">콘솔을 확인해주세요</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center text-center text-gray-500">
+                      <p className="font-medium">악보가 없습니다</p>
+                      <p className="mt-1 text-sm">처음 악보를 추가해보세요!</p>
                     </div>
                   )}
                 </div>

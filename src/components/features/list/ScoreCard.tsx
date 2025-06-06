@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { checkIsDev } from "@/lib/utils";
 
 interface Props {
   score: Score;
@@ -45,7 +44,7 @@ export default function ScoreCard({ score }: Props) {
         {/* 썸네일 이미지 */}
         <div className="relative h-36 overflow-hidden bg-blue-50">
           <Image
-            src={checkIsDev() ? "/sample/album_cover.jpeg" : thumbnailUrl}
+            src={thumbnailUrl}
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             alt={title}
             fill

@@ -17,7 +17,7 @@ import { useScores } from "@/hooks/useStores/useStores";
 export default function Page() {
   const { data: session, status: sessionStatus } = useSession();
   const userId = session?.user?.id || "";
-  const { data: scores, isLoading, error } = useScores(userId);
+  const { data: scores, isLoading, error, refetch } = useScores(userId);
 
   if (sessionStatus === "loading") {
     return (
@@ -84,7 +84,7 @@ export default function Page() {
               {scoreList.length > 0 ? (
                 <div className="h-[540px]">
                   <ScoreListCarousel>
-                    <AddTabModal>
+                    <AddTabModal onSubmitSuccess={() => refetch()}>
                       <Card className="group relative flex h-60 w-44 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 transition-all hover:cursor-pointer hover:border-blue-400 hover:shadow-md">
                         <div className="rounded-full bg-blue-100 p-4 transition-colors group-hover:bg-blue-200">
                           <PlusCircle size={48} className="text-blue-600" />

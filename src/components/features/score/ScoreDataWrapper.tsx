@@ -55,7 +55,6 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
 
   // PDF URL 생성
   const pdfUrl = getScoreUrl(userId, scoreId);
-  console.log(pdfUrl);
 
   return (
     <div>

@@ -1,7 +1,6 @@
 import { Score } from "@prisma/client";
 import { motion } from "framer-motion";
 import { Play, Star, Music, Calendar, Clock } from "lucide-react";
-import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -13,10 +12,10 @@ interface Props {
 }
 
 export default function ScoreCard({ score }: Props) {
-  const { thumbnailUrl, title, artist, difficulty, lastPracticeDate, id } = score;
+  const { thumbnailUrl, title, artist, difficulty, lastPracticeDate, id, createdAt } = score;
   const router = useRouter();
 
-  if (!thumbnailUrl || !title || !artist || !difficulty || !lastPracticeDate) {
+  if (!thumbnailUrl || !title || !artist || !difficulty || !createdAt) {
     return null;
   }
 
@@ -24,12 +23,13 @@ export default function ScoreCard({ score }: Props) {
     router.push(`/score/${id}`);
   };
 
-  const lastPractice = new Date(lastPracticeDate);
+  const lastPractice = lastPracticeDate && new Date(lastPracticeDate);
   const today = new Date();
-  const daysDifference = Math.floor((today.getTime() - lastPractice.getTime()) / (1000 * 3600 * 24));
+  const daysDifference =
+    lastPractice && Math.floor((today.getTime() - lastPractice.getTime()) / (1000 * 3600 * 24));
 
   const practiceStatus =
-    daysDifference > 14
+    !daysDifference || daysDifference > 14
       ? "bg-red-100 text-red-600"
       : daysDifference > 7
         ? "bg-amber-100 text-amber-600"
@@ -49,18 +49,21 @@ export default function ScoreCard({ score }: Props) {
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
           />
 
           {/* 난이도 뱃지 */}
           <div className="absolute right-2 top-2 flex items-center rounded-full bg-white/80 px-2 py-1 backdrop-blur-sm">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <Star
-                key={nanoid()}
-                fill={index < difficulty ? "#fde047" : "none"}
-                className={`${index < difficulty ? "text-yellow-400" : "text-gray-300"}`}
-                size={12}
-              />
-            ))}
+            {Array.from({ length: 5 })
+              .map((_, idx) => idx)
+              .map((id) => (
+                <Star
+                  key={`${title}-star${id}`}
+                  fill={id < difficulty ? "#fde047" : "none"}
+                  className={`${id < difficulty ? "text-yellow-400" : "text-gray-300"}`}
+                  size={12}
+                />
+              ))}
           </div>
 
           {/* 최근 연습 상태 표시 */}
@@ -68,7 +71,7 @@ export default function ScoreCard({ score }: Props) {
             className={`absolute left-2 top-2 ${practiceStatus} flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium`}
           >
             <Clock size={10} />
-            {daysDifference === 0 ? "오늘" : `${daysDifference}일 전`}
+            {daysDifference ? (daysDifference === 0 ? "오늘" : `${daysDifference}일 전`) : "미연습"}
           </div>
         </div>
 
@@ -84,7 +87,7 @@ export default function ScoreCard({ score }: Props) {
           <div className="mt-1 flex items-center gap-1">
             <Calendar size={12} className="text-blue-500" />
             <CardDescription className="text-xs">
-              {new Date(lastPracticeDate).toLocaleDateString("ko-KR")}
+              {new Date(createdAt).toLocaleDateString("ko-KR")}
             </CardDescription>
           </div>
         </div>

@@ -16,4 +16,5 @@ model Score {
   difficulty       Int?      @db.SmallInt
   lastPracticeDate DateTime? @db.Timestamptz(6)
   createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  thumbnailUrl     String?
 }

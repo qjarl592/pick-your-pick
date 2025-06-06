@@ -1,5 +1,10 @@
+import { Prisma } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
 
+import { createScore } from "@/app/actions/score";
+import { uploadFile } from "@/lib/supabase/supabase";
+import { aiServerApi } from "@/services/axios";
 import { YoutubeSearchItem } from "@/type/youtube";
 
 import { TabForm, TabInputForm } from "./TabForm";
@@ -15,9 +20,12 @@ import {
 
 interface Props {
   children: ReactNode;
+  onSubmitSuccess: () => void;
 }
 
-export default function AddTabModal({ children }: Props) {
+export default function AddTabModal({ children, onSubmitSuccess }: Props) {
+  const { data: session } = useSession();
+
   const defaultVideo = {
     id: {
       videoId: "",
@@ -35,12 +43,49 @@ export default function AddTabModal({ children }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<YoutubeSearchItem>(defaultVideo);
 
-  const handleSubmit = async (data: TabInputForm & { thumbnailUrl: string }) => {
+  const handleSubmit = async (formData: TabInputForm & { thumbnailUrl: string }) => {
+    if (!session) return;
+
+    console.log("제출된 데이터:", formData);
+    const { pdfFile, ...rest } = formData;
+
     try {
-      // API 호출이나 데이터 처리
-      console.log("제출된 데이터:", data);
-      // 성공적으로 처리되면 모달 닫기
+      const data: Prisma.ScoreCreateInput = {
+        ...rest,
+        userId: session.user.id,
+        lastPracticeDate: null,
+      };
+      // db row 추가
+
+      const res = await createScore(data);
+
+      // // 악보 pdf 업로드
+      if (!res.data?.id) {
+        throw new Error("score_id is undefined!!");
+      }
+      const scoreId = res.data.id;
+      const pdfUrl = `/${session.user.id}/${scoreId}/score.pdf`;
+      await uploadFile(pdfUrl, pdfFile);
+
+      // 음원분리
+      // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
+      if (process.env.NODE_ENV === "development") {
+        const videoId = rest.thumbnailUrl.match(/\/vi\/([/]+)\//)?.[1];
+        if (!videoId) {
+          throw new Error("videoId is undefined!!");
+        }
+        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        await aiServerApi.get("/extract_audio", {
+          params: {
+            youtube_url: youtubeUrl,
+            user_id: session.user.id,
+            score_id: scoreId,
+          },
+        });
+      }
+
       setIsOpen(false);
+      onSubmitSuccess();
     } catch (error) {
       console.error("에러:", error);
     }

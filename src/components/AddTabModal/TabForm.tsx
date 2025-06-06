@@ -19,7 +19,7 @@ import { YoutubeSearchItem } from "@/type/youtube";
 
 interface Props {
   selectedVideo: YoutubeSearchItem;
-  onSubmit: (data: TabInputForm & { thumbnailUrl: string }) => Promise<void>;
+  onSubmit: (data: TabInputForm & { thumbnailUrl: string }) => void;
 }
 
 const tabInputFormSchema = z.object({
@@ -53,9 +53,9 @@ export function TabForm({ selectedVideo, onSubmit }: Props) {
     });
   }, [selectedVideo, form]);
 
-  const handleSubmit = async (values: TabInputForm) => {
+  const handleSubmit = (values: TabInputForm) => {
     const thumbnailUrl = thumbnails.medium.url;
-    await onSubmit({ ...values, thumbnailUrl });
+    onSubmit({ ...values, thumbnailUrl });
   };
 
   return (

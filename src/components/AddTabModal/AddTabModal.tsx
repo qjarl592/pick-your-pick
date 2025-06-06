@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
 
@@ -43,52 +44,62 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<YoutubeSearchItem>(defaultVideo);
 
-  const handleSubmit = async (formData: TabInputForm & { thumbnailUrl: string }) => {
-    if (!session) return;
-
-    console.log("제출된 데이터:", formData);
+  const createScoreMutation = async ({
+    formData,
+    userId,
+  }: {
+    formData: TabInputForm & { thumbnailUrl: string };
+    userId: string;
+  }) => {
     const { pdfFile, ...rest } = formData;
 
-    try {
-      const data: Prisma.ScoreCreateInput = {
-        ...rest,
-        userId: session.user.id,
-        lastPracticeDate: null,
-      };
-      // db row 추가
+    const data: Prisma.ScoreCreateInput = {
+      ...rest,
+      userId,
+      lastPracticeDate: null,
+    };
+    // db row 추가
 
-      const res = await createScore(data);
+    const res = await createScore(data);
 
-      // // 악보 pdf 업로드
-      if (!res.data?.id) {
-        throw new Error("score_id is undefined!!");
+    // // 악보 pdf 업로드
+    if (!res.data?.id) {
+      throw new Error("score_id is undefined!!");
+    }
+    const scoreId = res.data.id;
+    const pdfUrl = `/${userId}/${scoreId}/score.pdf`;
+    await uploadFile(pdfUrl, pdfFile);
+
+    // 음원분리
+    // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
+    if (process.env.NODE_ENV === "development") {
+      const videoId = rest.thumbnailUrl.match(/\/vi\/([^/]+)\//)?.[1];
+      if (!videoId) {
+        throw new Error("videoId is undefined!!");
       }
-      const scoreId = res.data.id;
-      const pdfUrl = `/${session.user.id}/${scoreId}/score.pdf`;
-      await uploadFile(pdfUrl, pdfFile);
+      const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+      await aiServerApi.get("/extract_audio", {
+        params: {
+          youtube_url: youtubeUrl,
+          user_id: userId,
+          score_id: scoreId,
+        },
+      });
+    }
+  };
 
-      // 음원분리
-      // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
-      if (process.env.NODE_ENV === "development") {
-        const videoId = rest.thumbnailUrl.match(/\/vi\/([/]+)\//)?.[1];
-        if (!videoId) {
-          throw new Error("videoId is undefined!!");
-        }
-        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-        await aiServerApi.get("/extract_audio", {
-          params: {
-            youtube_url: youtubeUrl,
-            user_id: session.user.id,
-            score_id: scoreId,
-          },
-        });
-      }
-
+  const { mutate } = useMutation({
+    mutationFn: createScoreMutation,
+    onSuccess: () => {
       setIsOpen(false);
       onSubmitSuccess();
-    } catch (error) {
-      console.error("에러:", error);
-    }
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const handleSubmit = (formData: TabInputForm & { thumbnailUrl: string }) => {
+    if (!session) return;
+    mutate({ formData, userId: session.user.id });
   };
 
   return (

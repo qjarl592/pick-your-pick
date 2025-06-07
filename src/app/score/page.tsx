@@ -31,7 +31,7 @@ export default function Page() {
     return null;
   }
 
-  const scoreList = scores?.data || [];
+  const scoreList = scores?.data;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 pb-16">
@@ -81,7 +81,7 @@ export default function Page() {
         >
           <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm transition-all duration-300 ease-in-out">
             <div className="size-full">
-              {scoreList.length > 0 ? (
+              {scoreList ? (
                 <div className="h-[540px]">
                   <ScoreListCarousel>
                     <AddTabModal onSubmitSuccess={() => refetch()}>

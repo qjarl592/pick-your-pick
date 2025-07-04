@@ -93,7 +93,7 @@ export default function Page() {
                       </Card>
                     </AddTabModal>
                     {scoreList.map((score) => (
-                      <ScoreCard key={score.id} score={score} />
+                      <ScoreCard key={score.id} score={score} onDelete={() => refetch()} />
                     ))}
                   </ScoreListCarousel>
                 </div>

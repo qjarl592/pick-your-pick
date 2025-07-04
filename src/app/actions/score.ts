@@ -1,15 +1,14 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
-import { revalidatePath } from "next/cache";
 
 import prisma from "@/lib/supabase/prisma";
+import { supabase } from "@/lib/supabase/supabase";
 
 // Create
 export async function createScore(data: Prisma.ScoreCreateInput) {
   try {
     const score = await prisma.score.create({ data });
-    // revalidatePath("/scores");
     return { data: score };
   } catch (error) {
     console.error("Score create failed:", error);
@@ -68,7 +67,6 @@ export async function updateScore(id: string, data: Prisma.ScoreUpdateInput) {
       where: { id },
       data,
     });
-    revalidatePath("/scores");
     return { data: score };
   } catch (error) {
     console.error("Score update failed:", error);
@@ -76,13 +74,51 @@ export async function updateScore(id: string, data: Prisma.ScoreUpdateInput) {
   }
 }
 
+// Storage 파일들 삭제 함수
+async function deleteScoreFromStorage(scoreId: string) {
+  try {
+    // Storage 삭제를 위해 scoreId로 userId 찾기
+    const existingScore = await prisma.score.findUnique({
+      where: { id: scoreId },
+    });
+
+    if (!existingScore || !existingScore.userId) {
+      return;
+    }
+
+    const storageName = process.env.NEXT_PUBLIC_STORAGE_BUCKET as string;
+    const { userId } = existingScore;
+
+    // 삭제할 파일 목록
+    const filesToDelete = [
+      `${userId}/${scoreId}/score.pdf`,
+      `${userId}/${scoreId}/bass.mp3`,
+      `${userId}/${scoreId}/drum.mp3`,
+      `${userId}/${scoreId}/guitar.mp3`,
+      `${userId}/${scoreId}/others.mp3`,
+      `${userId}/${scoreId}/piano.mp3`,
+      `${userId}/${scoreId}/vocal.mp3`,
+      `${userId}/${scoreId}/original.mp3`,
+    ];
+
+    const { data } = await supabase.storage.from(storageName).remove(filesToDelete);
+    return { data };
+  } catch (error) {
+    console.error("Storage deletion failed:", error);
+    return false;
+  }
+}
+
 // Delete - Single
 export async function deleteScore(id: string) {
   try {
+    // Storage에서 파일 삭제
+    await deleteScoreFromStorage(id);
+
+    // DB에서 삭제
     const score = await prisma.score.delete({
       where: { id },
     });
-    revalidatePath("/scores");
     return { data: score };
   } catch (error) {
     console.error("Score delete failed:", error);
@@ -96,7 +132,6 @@ export async function deleteManyScores(where: Prisma.ScoreWhereInput) {
     const result = await prisma.score.deleteMany({
       where,
     });
-    revalidatePath("/scores");
     return { data: result };
   } catch (error) {
     console.error("Score delete failed:", error);

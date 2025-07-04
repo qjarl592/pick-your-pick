@@ -2,8 +2,10 @@ import { Prisma } from "@prisma/client";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
+import { toast } from "sonner";
 
 import { createScore } from "@/app/actions/score";
 import { uploadFile } from "@/lib/supabase/supabase";
@@ -29,6 +31,7 @@ interface Props {
 
 export default function AddTabModal({ children, onSubmitSuccess }: Props) {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const defaultVideo = {
     id: {
@@ -89,17 +92,30 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
         },
       });
     }
+    return { title: formData.title, artist: formData.artist, id: scoreId };
   };
 
   const { mutate, isPending } = useMutation({
     mutationFn: createScoreMutation,
-    onSuccess: () => {
+    onSuccess: ({ title, artist, id }) => {
       onSubmitSuccess();
+      toast.success("악보가 성공적으로 추가됬습니다!", {
+        description: `${title} by ${artist}`,
+        action: {
+          label: "바로가기",
+          onClick: () => router.push(`/score/${id}`),
+        },
+      });
     },
     onSettled: () => {
       setIsOpen(false);
     },
-    onError: (error) => console.log(error),
+    onError: (error) => {
+      console.log(error);
+      toast.error("악보 추가에 실패했습니다.", {
+        description: "문제가 반복되면 관리자에게 문의해주세요.",
+      });
+    },
   });
 
   const handleSubmit = (formData: TabInputForm & { thumbnailUrl: string }) => {

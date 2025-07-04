@@ -1,10 +1,13 @@
 import { Prisma } from "@prisma/client";
+import { DialogPortal } from "@radix-ui/react-dialog";
 import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
 
 import { createScore } from "@/app/actions/score";
 import { uploadFile } from "@/lib/supabase/supabase";
+import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";
 import { YoutubeSearchItem } from "@/type/youtube";
 
@@ -88,11 +91,13 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     }
   };
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: createScoreMutation,
     onSuccess: () => {
-      setIsOpen(false);
       onSubmitSuccess();
+    },
+    onSettled: () => {
+      setIsOpen(false);
     },
     onError: (error) => console.log(error),
   });
@@ -105,7 +110,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="flex max-h-[80vh] flex-col gap-3 overflow-auto">
+      <DialogContent className={cn("flex max-h-[80vh] flex-col gap-3 overflow-auto", { "z-10": isPending })}>
         <DialogHeader className="w-full">
           <DialogTitle>악보 추가</DialogTitle>
           <DialogDescription>아래 양식을 작성해 새로운 악보를 추가해 주세요.</DialogDescription>
@@ -113,6 +118,15 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
         <YoutubeSearchWrapper onSelectVideo={setSelectedVideo} />
         <TabForm selectedVideo={selectedVideo} onSubmit={handleSubmit} />
       </DialogContent>
+      {isPending && (
+        <DialogPortal>
+          <div className="fixed left-0 top-0 z-[60] flex h-screen w-screen flex-col items-center justify-center text-primary-foreground">
+            <Loader2 className="size-14 animate-spin" />
+            <p className="mt-6">음원 등록 중입니다. 잠시만 기다려주세요.</p>
+            <p className="mt-2">음원 등록은 평균적으로 5분 정도 소요됩니다.</p>
+          </div>
+        </DialogPortal>
+      )}
     </Dialog>
   );
 }

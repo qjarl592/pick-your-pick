@@ -11,9 +11,10 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 interface Props {
   score: Score;
+  onDelete: () => void;
 }
 
-export default function ScoreCard({ score }: Props) {
+export default function ScoreCard({ score, onDelete }: Props) {
   const { thumbnailUrl, title, artist, difficulty, lastPracticeDate, id, createdAt } = score;
   const router = useRouter();
 
@@ -37,6 +38,9 @@ export default function ScoreCard({ score }: Props) {
       await deleteScore(id);
 
       alert(`"${title}" 악보가 성공적으로 삭제되었습니다.`);
+
+      // 삭제 성공 후 쿼리 초기화
+      onDelete();
     } catch (error) {
       console.error("Delete error:", error);
       alert("악보 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
@@ -91,9 +95,8 @@ export default function ScoreCard({ score }: Props) {
             <Clock size={10} />
             {daysDifference ? (daysDifference === 0 ? "오늘" : `${daysDifference}일 전`) : "미연습"}
           </div>
-          {/* 삭제 버튼 - hover 시에만 표시 */}
-          {/* <div */}
 
+          {/* 삭제 버튼 - hover 시에만 표시 */}
           <Button
             variant="ghost"
             size="sm"
@@ -102,7 +105,6 @@ export default function ScoreCard({ score }: Props) {
           >
             <Trash2 size={12} className="text-white" />
           </Button>
-          {/* </div> */}
         </div>
 
         {/* 정보 섹션 */}

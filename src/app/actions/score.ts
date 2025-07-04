@@ -9,7 +9,7 @@ import prisma from "@/lib/supabase/prisma";
 export async function createScore(data: Prisma.ScoreCreateInput) {
   try {
     const score = await prisma.score.create({ data });
-    revalidatePath("/scores");
+    // revalidatePath("/scores");
     return { data: score };
   } catch (error) {
     console.error("Score create failed:", error);

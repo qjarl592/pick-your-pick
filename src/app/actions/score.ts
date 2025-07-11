@@ -116,6 +116,14 @@ export async function deleteScore(id: string) {
     await deleteScoreFromStorage(id);
 
     // DB에서 삭제
+    // Storage 삭제를 위해 scoreId로 userId 찾기
+    const existingScore = await prisma.score.findUnique({
+      where: { id },
+    });
+
+    if (!existingScore || !existingScore.userId) {
+      return;
+    }
     const score = await prisma.score.delete({
       where: { id },
     });

@@ -26,7 +26,7 @@ export default function YoutubeSearchResult({ keyword, onSelectVideo }: Props) {
   if (showLoading) {
     return (
       <div className="mt-2 flex flex-col gap-2 rounded-md shadow-md">
-        {Array.from({ length: 3 })
+        {Array.from({ length: 5 })
           .map((_, idx) => idx)
           .map((id) => {
             return (
@@ -46,7 +46,13 @@ export default function YoutubeSearchResult({ keyword, onSelectVideo }: Props) {
     );
   }
 
-  if (!data) return <></>;
+  if (!data)
+    return (
+      <div className="flex grow flex-col items-center justify-center gap-2 pb-10 text-muted-foreground">
+        <p>검색을 해서 원하는 음원을 선택해주세요.</p>
+        <p className="text-sm">* 유튜브 영상 데이터에서 검색됩니다.</p>
+      </div>
+    );
 
   if (data.length === 0) return <div>검색 결과가 없습니다.</div>;
 
@@ -62,7 +68,14 @@ export default function YoutubeSearchResult({ keyword, onSelectVideo }: Props) {
             onClick={() => onSelectVideo(item)}
             variant="ghost"
           >
-            <Image src={snippet.thumbnails.medium.url} width={120} height={68} alt={snippet.title} priority />
+            <Image
+              className="min-h-[68px]"
+              src={snippet.thumbnails.medium.url}
+              width={120}
+              height={68}
+              alt={snippet.title}
+              priority
+            />
             <div className="flex min-w-0 flex-col gap-1">
               <Label className="text-left text-sm font-bold">제목: </Label>
               <span className="w-full truncate text-sm">{snippet.title}</span>

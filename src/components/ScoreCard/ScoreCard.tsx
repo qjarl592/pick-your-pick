@@ -102,7 +102,7 @@ export default function ScoreCard({ score, onDelete }: Props) {
             <div className="mb-4 rounded-full bg-white p-3">
               <Play className="text-gray-800" size={28} />
             </div>
-            <p className="max-w-36 px-2 text-center font-bold">{title}</p>
+            <p className="line-clamp-2 max-w-36 px-2 text-center font-bold">{title}</p>
             <p className="max-w-36 truncate text-sm text-gray-300">{artist}</p>
             <div className="mt-3 rounded-full bg-white/20 px-3 py-1 text-xs">지금 연주하기</div>
           </div>

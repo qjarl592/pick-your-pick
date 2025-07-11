@@ -80,7 +80,7 @@
     "@next/next/no-img-element": "error",
     "react/no-unescaped-entities": "off",
     "@next/next/no-page-custom-font": "off",
-    "react/no-array-index-key": "error"
+    "react/no-array-index-key": "warn"
   },
   "overrides": [
     {

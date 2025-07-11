@@ -2,12 +2,13 @@ import { Prisma } from "@prisma/client";
 import { DialogPortal } from "@radix-ui/react-dialog";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
-import { createScore } from "@/app/actions/score";
+import { createScore, deleteScore } from "@/app/actions/score";
 import { uploadFile } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";
@@ -32,23 +33,8 @@ interface Props {
 export default function AddTabModal({ children, onSubmitSuccess }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
-
-  const defaultVideo = {
-    id: {
-      videoId: "",
-    },
-    snippet: {
-      title: "",
-      channelTitle: "",
-      thumbnails: {
-        medium: {
-          url: "",
-        },
-      },
-    },
-  };
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<YoutubeSearchItem>(defaultVideo);
+  const [selectedVideo, setSelectedVideo] = useState<YoutubeSearchItem | null>(null);
 
   const createScoreMutation = async ({
     formData,
@@ -65,34 +51,38 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
       lastPracticeDate: null,
     };
     // db row 추가
-
     const res = await createScore(data);
 
-    // // 악보 pdf 업로드
+    // 악보 pdf 업로드
     if (!res.data?.id) {
       throw new Error("score_id is undefined!!");
     }
     const scoreId = res.data.id;
     const pdfUrl = `/${userId}/${scoreId}/score.pdf`;
-    await uploadFile(pdfUrl, pdfFile);
+    try {
+      await uploadFile(pdfUrl, pdfFile);
 
-    // 음원분리
-    // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
-    if (process.env.NODE_ENV === "development") {
-      const videoId = rest.thumbnailUrl.match(/\/vi\/([^/]+)\//)?.[1];
-      if (!videoId) {
-        throw new Error("videoId is undefined!!");
+      // 음원분리
+      // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
+      if (process.env.NODE_ENV === "development") {
+        const videoId = rest.thumbnailUrl.match(/\/vi\/([^/]+)\//)?.[1];
+        if (!videoId) {
+          throw new Error("videoId is undefined!!");
+        }
+        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        await aiServerApi.get("/extract_audio", {
+          params: {
+            youtube_url: youtubeUrl,
+            user_id: userId,
+            score_id: scoreId,
+          },
+        });
       }
-      const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      await aiServerApi.get("/extract_audio", {
-        params: {
-          youtube_url: youtubeUrl,
-          user_id: userId,
-          score_id: scoreId,
-        },
-      });
+      return { title: formData.title, artist: formData.artist, id: scoreId };
+    } catch (e) {
+      await deleteScore(scoreId);
+      throw e;
     }
-    return { title: formData.title, artist: formData.artist, id: scoreId };
   };
 
   const { mutate, isPending } = useMutation({
@@ -109,6 +99,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     },
     onSettled: () => {
       setIsOpen(false);
+      setSelectedVideo(null);
     },
     onError: (error) => {
       console.log(error);
@@ -124,15 +115,37 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        setSelectedVideo(null);
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className={cn("flex max-h-[80vh] flex-col gap-3 overflow-auto", { "z-10": isPending })}>
+      <DialogContent
+        className={cn("flex min-h-[600px] max-h-[600px] flex-col gap-3 overflow-auto", { "z-10": isPending })}
+      >
         <DialogHeader className="w-full">
           <DialogTitle>악보 추가</DialogTitle>
           <DialogDescription>아래 양식을 작성해 새로운 악보를 추가해 주세요.</DialogDescription>
         </DialogHeader>
-        <YoutubeSearchWrapper onSelectVideo={setSelectedVideo} />
-        <TabForm selectedVideo={selectedVideo} onSubmit={handleSubmit} />
+        {!selectedVideo ? (
+          <YoutubeSearchWrapper onSelectVideo={setSelectedVideo} />
+        ) : (
+          <>
+            <p className="text-sm font-medium leading-none">썸네일 이미지</p>
+            <Image
+              className="min-h-[68px]"
+              src={selectedVideo.snippet.thumbnails.medium.url}
+              width={180}
+              height={102}
+              alt={selectedVideo.snippet.title}
+              priority
+            />
+            <TabForm selectedVideo={selectedVideo} onSubmit={handleSubmit} />
+          </>
+        )}
       </DialogContent>
       {isPending && (
         <DialogPortal>

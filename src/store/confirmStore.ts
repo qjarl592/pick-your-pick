@@ -2,8 +2,8 @@ import { create } from "zustand";
 
 type OnConfirmHandler = (
   props: Omit<ConfirmStoreState, "isOpen" | "resolver"> & {
-    onConfirm: () => Promise<unknown> | unknown;
-    onCancel: () => Promise<unknown> | unknown;
+    onConfirm?: () => Promise<unknown> | unknown;
+    onCancel?: () => Promise<unknown> | unknown;
   }
 ) => Promise<unknown>;
 
@@ -11,8 +11,6 @@ interface ConfirmStoreState {
   isOpen: boolean;
   title: string;
   description: string;
-  actionText: string;
-  cancelText: string;
   resolver: (isConfirm: boolean) => void;
 }
 
@@ -24,8 +22,6 @@ const defaultConfirmState: ConfirmStoreState = {
   isOpen: false,
   title: "",
   description: "",
-  actionText: "",
-  cancelText: "",
   resolver: () => {},
 };
 
@@ -37,11 +33,9 @@ const useConfirmStore = create<ConfirmStoreState & ConfirmStoreAction>((set) => 
       set({ resolver: resolve });
     });
     set({ isOpen: false });
-    if (isConfirm) {
-      return onConfirm();
-    } else {
-      return onCancel();
-    }
+
+    const handler = isConfirm ? onConfirm : onCancel;
+    return handler?.();
   },
 }));
 

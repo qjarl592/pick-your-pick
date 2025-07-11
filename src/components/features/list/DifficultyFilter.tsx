@@ -1,5 +1,4 @@
 import { Star } from "lucide-react";
-import { nanoid } from "nanoid";
 
 import { Filter } from "@/components/common/Filter";
 
@@ -8,7 +7,7 @@ export default function DifficultyFilter() {
     <div className="flex gap-0.5">
       {[...Array(5)].map((_, index) => (
         <Star
-          key={nanoid()}
+          key={`star-${index}`}
           size={14}
           className={index < count ? "text-yellow-400" : "text-gray-300"}
           fill={index < count ? "currentColor" : "none"}

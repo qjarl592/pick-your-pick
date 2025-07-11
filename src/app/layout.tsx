@@ -27,10 +27,10 @@ export default function RootLayout(props: Props) {
       <body className={inter.className}>
         <ConfirmProvider>
           <AuthProvider>
-            <QueryProvider>
-              {children}
+            <>
+              <QueryProvider>{children}</QueryProvider>
               <Toaster position="top-right" />
-            </QueryProvider>
+            </>
           </AuthProvider>
         </ConfirmProvider>
       </body>

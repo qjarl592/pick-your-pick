@@ -1,13 +1,13 @@
 import { Score } from "@prisma/client";
 import { motion } from "framer-motion";
-import { Play, Star, Music, Calendar, Clock, Trash2 } from "lucide-react";
+import { Play, Star, Music, Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { deleteScore } from "@/app/actions/score";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+
+import ScoreDeleteButton from "./ScoreDeleteButton";
 
 interface Props {
   score: Score;
@@ -24,27 +24,6 @@ export default function ScoreCard({ score, onDelete }: Props) {
 
   const handleClick = () => {
     router.push(`/score/${id}`);
-  };
-
-  const handleClickDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const confirmed = window.confirm(
-      `"${title}" 악보를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없으며, 관련된 모든 파일이 삭제됩니다.`
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteScore(id);
-
-      alert(`"${title}" 악보가 성공적으로 삭제되었습니다.`);
-
-      // 삭제 성공 후 쿼리 초기화
-      onDelete();
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("악보 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-    }
   };
 
   const lastPractice = lastPracticeDate && new Date(lastPracticeDate);
@@ -97,14 +76,7 @@ export default function ScoreCard({ score, onDelete }: Props) {
           </div>
 
           {/* 삭제 버튼 - hover 시에만 표시 */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute right-2 top-2 z-20 size-7 rounded-full bg-red-500 p-0 text-white opacity-0 shadow-lg transition-opacity duration-200 hover:bg-red-600 group-hover:opacity-100"
-            onClick={handleClickDelete}
-          >
-            <Trash2 size={12} className="text-white" />
-          </Button>
+          <ScoreDeleteButton id={id} title={title} artist={artist} onDelete={onDelete} />
         </div>
 
         {/* 정보 섹션 */}

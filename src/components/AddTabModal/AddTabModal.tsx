@@ -99,7 +99,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     mutationFn: createScoreMutation,
     onSuccess: ({ title, artist, id }) => {
       onSubmitSuccess();
-      toast.success("악보가 성공적으로 추가됬습니다!", {
+      toast.success("악보가 성공적으로 추가됐습니다", {
         description: `${title} by ${artist}`,
         action: {
           label: "바로가기",

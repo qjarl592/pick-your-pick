@@ -46,7 +46,13 @@ export default function YoutubeSearchResult({ keyword, onSelectVideo }: Props) {
     );
   }
 
-  if (!data) return <></>;
+  if (!data)
+    return (
+      <div className="flex grow flex-col items-center justify-center gap-2 pb-10 text-muted-foreground">
+        <p>검색을 해서 원하는 음원을 선택해주세요.</p>
+        <p className="text-sm">* 유튜브 영상 데이터에서 검색됩니다.</p>
+      </div>
+    );
 
   if (data.length === 0) return <div>검색 결과가 없습니다.</div>;
 

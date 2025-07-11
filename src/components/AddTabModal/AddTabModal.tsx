@@ -130,8 +130,9 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
           <DialogTitle>악보 추가</DialogTitle>
           <DialogDescription>아래 양식을 작성해 새로운 악보를 추가해 주세요.</DialogDescription>
         </DialogHeader>
-        {!selectedVideo && <YoutubeSearchWrapper onSelectVideo={setSelectedVideo} />}
-        {selectedVideo && (
+        {!selectedVideo ? (
+          <YoutubeSearchWrapper onSelectVideo={setSelectedVideo} />
+        ) : (
           <>
             <p className="text-sm font-medium leading-none">썸네일 이미지</p>
             <Image

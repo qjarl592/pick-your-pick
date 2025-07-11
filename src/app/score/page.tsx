@@ -81,23 +81,29 @@ export default function Page() {
         >
           <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm transition-all duration-300 ease-in-out">
             <div className="size-full">
+              <AddTabModal onSubmitSuccess={() => refetch()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  <PlusCircle className="text-blue-600" />
+                  악보 추가
+                </Button>
+              </AddTabModal>
               {scoreList ? (
                 <div className="h-[540px]">
-                  <AddTabModal onSubmitSuccess={() => refetch()}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                    >
-                      <PlusCircle className="text-blue-600" />
-                      악보 추가
-                    </Button>
-                  </AddTabModal>
-                  <ScoreListCarousel>
-                    {scoreList.map((score) => (
-                      <ScoreCard key={score.id} score={score} onDelete={() => refetch()} />
-                    ))}
-                  </ScoreListCarousel>
+                  {scoreList.length > 0 ? (
+                    <ScoreListCarousel>
+                      {scoreList.map((score) => (
+                        <ScoreCard key={score.id} score={score} onDelete={() => refetch()} />
+                      ))}
+                    </ScoreListCarousel>
+                  ) : (
+                    <p className="flex size-full items-center justify-center font-semibold text-blue-600">
+                      악보 추가 버튼을 눌러 악보를 추가해보세요.
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="flex h-[540px] flex-col items-center justify-center">

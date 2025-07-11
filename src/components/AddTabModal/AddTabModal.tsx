@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
-import { createScore } from "@/app/actions/score";
+import { createScore, deleteScore } from "@/app/actions/score";
 import { uploadFile } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";
@@ -65,34 +65,38 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
       lastPracticeDate: null,
     };
     // db row 추가
-
     const res = await createScore(data);
 
-    // // 악보 pdf 업로드
+    // 악보 pdf 업로드
     if (!res.data?.id) {
       throw new Error("score_id is undefined!!");
     }
     const scoreId = res.data.id;
     const pdfUrl = `/${userId}/${scoreId}/score.pdf`;
-    await uploadFile(pdfUrl, pdfFile);
+    try {
+      await uploadFile(pdfUrl, pdfFile);
 
-    // 음원분리
-    // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
-    if (process.env.NODE_ENV === "development") {
-      const videoId = rest.thumbnailUrl.match(/\/vi\/([^/]+)\//)?.[1];
-      if (!videoId) {
-        throw new Error("videoId is undefined!!");
+      // 음원분리
+      // 로컬 서버에서만 실행, aws 배포 후 프로덕션 적용 예정
+      if (process.env.NODE_ENV === "development") {
+        const videoId = rest.thumbnailUrl.match(/\/vi\/([^/]+)\//)?.[1];
+        if (!videoId) {
+          throw new Error("videoId is undefined!!");
+        }
+        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        await aiServerApi.get("/extract_audio", {
+          params: {
+            youtube_url: youtubeUrl,
+            user_id: userId,
+            score_id: scoreId,
+          },
+        });
       }
-      const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      await aiServerApi.get("/extract_audio", {
-        params: {
-          youtube_url: youtubeUrl,
-          user_id: userId,
-          score_id: scoreId,
-        },
-      });
+      return { title: formData.title, artist: formData.artist, id: scoreId };
+    } catch (e) {
+      await deleteScore(scoreId);
+      throw e;
     }
-    return { title: formData.title, artist: formData.artist, id: scoreId };
   };
 
   const { mutate, isPending } = useMutation({

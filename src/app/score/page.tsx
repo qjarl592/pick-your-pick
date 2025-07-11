@@ -83,15 +83,17 @@ export default function Page() {
             <div className="size-full">
               {scoreList ? (
                 <div className="h-[540px]">
+                  <AddTabModal onSubmitSuccess={() => refetch()}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      <PlusCircle className="text-blue-600" />
+                      악보 추가
+                    </Button>
+                  </AddTabModal>
                   <ScoreListCarousel>
-                    <AddTabModal onSubmitSuccess={() => refetch()}>
-                      <Card className="group relative flex h-60 w-44 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 transition-all hover:cursor-pointer hover:border-blue-400 hover:shadow-md">
-                        <div className="rounded-full bg-blue-100 p-4 transition-colors group-hover:bg-blue-200">
-                          <PlusCircle size={48} className="text-blue-600" />
-                        </div>
-                        <span className="font-medium text-blue-700">악보 추가</span>
-                      </Card>
-                    </AddTabModal>
                     {scoreList.map((score) => (
                       <ScoreCard key={score.id} score={score} onDelete={() => refetch()} />
                     ))}

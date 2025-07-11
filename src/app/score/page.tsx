@@ -85,14 +85,14 @@ export default function Page() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                  className="mb-2 flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                 >
                   <PlusCircle className="text-blue-600" />
                   악보 추가
                 </Button>
               </AddTabModal>
               {scoreList ? (
-                <div className="h-[540px]">
+                <div className="h-[580px]">
                   {scoreList.length > 0 ? (
                     <ScoreListCarousel>
                       {scoreList.map((score) => (
@@ -106,7 +106,7 @@ export default function Page() {
                   )}
                 </div>
               ) : (
-                <div className="flex h-[540px] flex-col items-center justify-center">
+                <div className="flex h-[580px] flex-col items-center justify-center">
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center">
                       <Loader2 className="size-12 animate-spin text-blue-600" />

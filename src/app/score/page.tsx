@@ -81,24 +81,32 @@ export default function Page() {
         >
           <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm transition-all duration-300 ease-in-out">
             <div className="size-full">
+              <AddTabModal onSubmitSuccess={() => refetch()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mb-2 flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  <PlusCircle className="text-blue-600" />
+                  악보 추가
+                </Button>
+              </AddTabModal>
               {scoreList ? (
-                <div className="h-[540px]">
-                  <ScoreListCarousel>
-                    <AddTabModal onSubmitSuccess={() => refetch()}>
-                      <Card className="group relative flex h-60 w-44 flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 transition-all hover:cursor-pointer hover:border-blue-400 hover:shadow-md">
-                        <div className="rounded-full bg-blue-100 p-4 transition-colors group-hover:bg-blue-200">
-                          <PlusCircle size={48} className="text-blue-600" />
-                        </div>
-                        <span className="font-medium text-blue-700">악보 추가</span>
-                      </Card>
-                    </AddTabModal>
-                    {scoreList.map((score) => (
-                      <ScoreCard key={score.id} score={score} onDelete={() => refetch()} />
-                    ))}
-                  </ScoreListCarousel>
+                <div className="h-[580px]">
+                  {scoreList.length > 0 ? (
+                    <ScoreListCarousel>
+                      {scoreList.map((score) => (
+                        <ScoreCard key={score.id} score={score} onDelete={() => refetch()} />
+                      ))}
+                    </ScoreListCarousel>
+                  ) : (
+                    <p className="flex size-full items-center justify-center font-semibold text-blue-600">
+                      악보 추가 버튼을 눌러 악보를 추가해보세요.
+                    </p>
+                  )}
                 </div>
               ) : (
-                <div className="flex h-[540px] flex-col items-center justify-center">
+                <div className="flex h-[580px] flex-col items-center justify-center">
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center">
                       <Loader2 className="size-12 animate-spin text-blue-600" />

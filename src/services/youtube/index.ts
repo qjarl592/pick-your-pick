@@ -9,7 +9,7 @@ export const getYoutubeSearch = async ({ queryKey }: QueryFunctionContext) => {
       key: process.env.NEXT_PUBLIC_YOUTUBE_KEY,
       part: "snippet",
       q: `${keyword} audio`,
-      maxResults: 3,
+      maxResults: 5,
       type: "video",
     },
   });

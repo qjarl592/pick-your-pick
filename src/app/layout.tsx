@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 
 import "./globals.css";
+import ConfirmProvider from "@/components/provider/ConfirmProvider";
 import QueryProvider from "@/components/provider/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -24,12 +25,14 @@ export default function RootLayout(props: Props) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <QueryProvider>
-            {children}
-            <Toaster position="top-right" />
-          </QueryProvider>
-        </AuthProvider>
+        <ConfirmProvider>
+          <AuthProvider>
+            <>
+              <QueryProvider>{children}</QueryProvider>
+              <Toaster position="top-right" />
+            </>
+          </AuthProvider>
+        </ConfirmProvider>
       </body>
     </html>
   );

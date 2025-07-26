@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteScore } from "@/app/actions/score";
+import { deleteOne } from "@/app/actions";
 import { useConfirm } from "@/store/confirmStore";
 
 import { Button } from "../ui/button";
@@ -18,8 +18,12 @@ export default function ScoreDeleteButton({ id, title, artist, onDelete }: Props
   const queryClient = useQueryClient();
   const { requestConfirm } = useConfirm();
 
+  const deleteScoreMutation = async (scoreId: string) => {
+    await deleteOne("score", scoreId);
+  };
+
   const { mutate } = useMutation({
-    mutationFn: (scoreId: string) => deleteScore(scoreId),
+    mutationFn: deleteScoreMutation,
     onSuccess: () => {
       toast.success("악보가 성공적으로 삭제됐습니다", {
         description: `${title} by ${artist}`,
@@ -51,7 +55,7 @@ export default function ScoreDeleteButton({ id, title, artist, onDelete }: Props
     <Button
       variant="ghost"
       size="sm"
-      className="absolute right-2 top-2 z-20 size-7 rounded-full bg-red-500 p-0 text-white opacity-0 shadow-lg transition-opacity duration-200 hover:bg-red-600 group-hover:opacity-100"
+      className="size-7 rounded-full bg-red-500 p-0 text-white opacity-0 shadow-lg transition-opacity duration-200 hover:bg-red-600 group-hover:opacity-100"
       onClick={handleClickDelete}
     >
       <Trash2 size={12} className="text-white" />

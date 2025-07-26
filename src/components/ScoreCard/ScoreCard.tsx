@@ -1,6 +1,6 @@
 import { Score } from "@prisma/client";
 import { motion } from "framer-motion";
-import { Play, Star, Music, Calendar, Clock } from "lucide-react";
+import { Star, Music, Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -8,6 +8,7 @@ import React from "react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 import ScoreDeleteButton from "./ScoreDeleteButton";
+import ScoreEditButton from "./ScoreEditButton";
 
 interface Props {
   score: Score;
@@ -75,8 +76,11 @@ export default function ScoreCard({ score, onDelete }: Props) {
             {daysDifference ? (daysDifference === 0 ? "오늘" : `${daysDifference}일 전`) : "미연습"}
           </div>
 
-          {/* 삭제 버튼 - hover 시에만 표시 */}
-          <ScoreDeleteButton id={id} title={title} artist={artist} onDelete={onDelete} />
+          {/* 수정, 삭제 버튼 - hover 시에만 표시 */}
+          <div className="absolute right-2 top-2 z-20 flex gap-1 ">
+            <ScoreEditButton score={score} onDelete={onDelete} />
+            <ScoreDeleteButton id={id} title={title} artist={artist} onDelete={onDelete} />
+          </div>
         </div>
 
         {/* 정보 섹션 */}
@@ -97,11 +101,8 @@ export default function ScoreCard({ score, onDelete }: Props) {
         </div>
 
         {/* 호버 오버레이 - 차콜 색상으로 변경 */}
-        <div className="z-5 absolute inset-0 flex items-center justify-center bg-gradient-to-t from-gray-900/95 to-gray-800/90 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-80">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-t from-gray-900/95 to-gray-800/90 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-80">
           <div className="flex flex-col items-center justify-center text-white">
-            <div className="mb-4 rounded-full bg-white p-3">
-              <Play className="text-gray-800" size={28} />
-            </div>
             <p className="line-clamp-2 max-w-36 px-2 text-center font-bold">{title}</p>
             <p className="max-w-36 truncate text-sm text-gray-300">{artist}</p>
             <div className="mt-3 rounded-full bg-white/20 px-3 py-1 text-xs">지금 연주하기</div>

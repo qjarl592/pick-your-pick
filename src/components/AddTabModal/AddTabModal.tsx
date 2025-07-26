@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";
 import { YoutubeSearchItem } from "@/type/youtube";
 
-import { TabForm, TabInputForm } from "./TabForm";
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
+import { AddTabForm, AddTabFormData } from "../TabForm";
 import {
   Dialog,
   DialogContent,
@@ -40,7 +40,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     formData,
     userId,
   }: {
-    formData: TabInputForm & { thumbnailUrl: string };
+    formData: AddTabFormData & { thumbnailUrl: string };
     userId: string;
   }) => {
     const { pdfFile, ...rest } = formData;
@@ -109,7 +109,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     },
   });
 
-  const handleSubmit = (formData: TabInputForm & { thumbnailUrl: string }) => {
+  const handleSubmit = (formData: AddTabFormData & { thumbnailUrl: string }) => {
     if (!session) return;
     mutate({ formData, userId: session.user.id });
   };
@@ -143,7 +143,12 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
               alt={selectedVideo.snippet.title}
               priority
             />
-            <TabForm selectedVideo={selectedVideo} onSubmit={handleSubmit} />
+            <AddTabForm
+              title={selectedVideo.snippet.title}
+              artist={selectedVideo.snippet.channelTitle}
+              thumbnailUrl={selectedVideo.snippet.thumbnails.medium.url}
+              onSubmit={handleSubmit}
+            />
           </>
         )}
       </DialogContent>

@@ -15,7 +15,7 @@ import { aiServerApi } from "@/services/axios";
 import { YoutubeSearchItem } from "@/type/youtube";
 
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
-import { AddTabForm, AddTabFormData } from "../TabForm";
+import { AddScoreForm, AddScoreFormData } from "../ScoreForm";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ interface Props {
   onSubmitSuccess: () => void;
 }
 
-export default function AddTabModal({ children, onSubmitSuccess }: Props) {
+export default function AddScoreModal({ children, onSubmitSuccess }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     formData,
     userId,
   }: {
-    formData: AddTabFormData & { thumbnailUrl: string };
+    formData: AddScoreFormData & { thumbnailUrl: string };
     userId: string;
   }) => {
     const { pdfFile, ...rest } = formData;
@@ -109,7 +109,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     },
   });
 
-  const handleSubmit = (formData: AddTabFormData & { thumbnailUrl: string }) => {
+  const handleSubmit = (formData: AddScoreFormData & { thumbnailUrl: string }) => {
     if (!session) return;
     mutate({ formData, userId: session.user.id });
   };
@@ -143,7 +143,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
               alt={selectedVideo.snippet.title}
               priority
             />
-            <AddTabForm
+            <AddScoreForm
               title={selectedVideo.snippet.title}
               artist={selectedVideo.snippet.channelTitle}
               thumbnailUrl={selectedVideo.snippet.thumbnails.medium.url}

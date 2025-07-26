@@ -1,7 +1,7 @@
 import { Score } from "@prisma/client";
 import { Settings } from "lucide-react";
 
-import EditModal from "../EditModal/EditModal";
+import EditScoreModal from "../EditScoreModal/EditScoreModal";
 import { Button } from "../ui/button";
 
 interface Props {
@@ -15,7 +15,7 @@ export default function ScoreEditButton({ score }: Props) {
   };
 
   return (
-    <EditModal score={score}>
+    <EditScoreModal score={score}>
       <Button
         variant="ghost"
         size="sm"
@@ -24,6 +24,6 @@ export default function ScoreEditButton({ score }: Props) {
       >
         <Settings size={12} className="text-white" />
       </Button>
-    </EditModal>
+    </EditScoreModal>
   );
 }

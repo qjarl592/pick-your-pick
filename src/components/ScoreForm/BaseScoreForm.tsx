@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-export interface BaseTabFormData {
+export interface BaseScoreFormData {
   title: string;
   artist: string;
   difficulty: number;
@@ -24,21 +24,21 @@ export interface BaseTabFormData {
 }
 
 interface Props {
-  schema: z.ZodSchema<BaseTabFormData>;
-  defaultValues: Partial<BaseTabFormData>;
-  onSubmit: (data: BaseTabFormData) => void;
+  schema: z.ZodSchema<BaseScoreFormData>;
+  defaultValues: Partial<BaseScoreFormData>;
+  onSubmit: (data: BaseScoreFormData) => void;
   submitButtonText: string;
   isPdfOptional?: boolean;
 }
 
-export function BaseTabForm({
+export function BaseScoreForm({
   schema,
   defaultValues,
   onSubmit,
   submitButtonText,
   isPdfOptional = false,
 }: Props) {
-  const form = useForm<BaseTabFormData>({
+  const form = useForm<BaseScoreFormData>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -46,7 +46,7 @@ export function BaseTabForm({
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const selectedPdfFile = form.watch("pdfFile");
 
-  const handleSubmit = (values: BaseTabFormData) => {
+  const handleSubmit = (values: BaseScoreFormData) => {
     onSubmit(values);
   };
 

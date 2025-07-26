@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { BaseTabForm, BaseTabFormData } from "./BaseTabForm";
+import { BaseScoreForm, BaseScoreFormData } from "./BaseScoreForm";
 
-const addTabSchema = z.object({
+const addScoreSchema = z.object({
   title: z.string().min(1, "제목을 입력해주세요"),
   artist: z.string().min(1, "아티스트 이름을 입력해주세요"),
   difficulty: z.number({ message: "난이도를 선택해주세요" }),
@@ -11,17 +11,17 @@ const addTabSchema = z.object({
     .refine((file) => file.type === "application/pdf", "PDF 파일만 업로드 가능합니다"),
 });
 
-export type AddTabFormData = z.infer<typeof addTabSchema>;
+export type AddScoreFormData = z.infer<typeof addScoreSchema>;
 
-interface AddTabFormProps {
+interface Props {
   title: string;
   artist: string;
   thumbnailUrl: string;
-  onSubmit: (data: AddTabFormData & { thumbnailUrl: string }) => void;
+  onSubmit: (data: AddScoreFormData & { thumbnailUrl: string }) => void;
 }
 
-export function AddTabForm({ title, artist, thumbnailUrl, onSubmit }: AddTabFormProps) {
-  const handleSubmit = (data: BaseTabFormData) => {
+export function AddScoreForm({ title, artist, thumbnailUrl, onSubmit }: Props) {
+  const handleSubmit = (data: BaseScoreFormData) => {
     onSubmit({
       ...data,
       thumbnailUrl,
@@ -30,8 +30,8 @@ export function AddTabForm({ title, artist, thumbnailUrl, onSubmit }: AddTabForm
   };
 
   return (
-    <BaseTabForm
-      schema={addTabSchema}
+    <BaseScoreForm
+      schema={addScoreSchema}
       defaultValues={{
         title,
         artist,

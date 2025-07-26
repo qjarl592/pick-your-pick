@@ -13,18 +13,18 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 
-import { EditTabForm, EditTabFormData } from "../TabForm";
+import { EditScoreForm, EditScoreFormData } from "../ScoreForm/EditScoreForm";
 
 interface Props {
   score: Score;
   children: ReactNode;
 }
 
-export default function EditModal({ score, children }: Props) {
+export default function EditScoreModal({ score, children }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const updateScoreMutation = async (formData: EditTabFormData) => {
+  const updateScoreMutation = async (formData: EditScoreFormData) => {
     const newScore = {
       ...score,
       title: formData.title,
@@ -54,7 +54,7 @@ export default function EditModal({ score, children }: Props) {
     },
   });
 
-  const handleSubmit = (formData: EditTabFormData & { thumbnailUrl: string }) => {
+  const handleSubmit = (formData: EditScoreFormData & { thumbnailUrl: string }) => {
     mutate({
       title: formData.title,
       artist: formData.artist,
@@ -78,7 +78,7 @@ export default function EditModal({ score, children }: Props) {
           <DialogTitle>악보 수정</DialogTitle>
           <DialogDescription>아래 양식을 작성해 악보 정보를 수정해 주세요.</DialogDescription>
         </DialogHeader>
-        <EditTabForm
+        <EditScoreForm
           title={score.title}
           artist={score.artist}
           difficulty={score.difficulty}

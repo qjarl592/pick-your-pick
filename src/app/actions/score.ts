@@ -74,6 +74,62 @@ export async function updateScore(id: string, data: Prisma.ScoreUpdateInput) {
   }
 }
 
+// Update Score with PDF replacement
+export async function updateScoreWithPdf(id: string, formData: FormData) {
+  try {
+    // 기존 스코어 정보 조회
+    const existingScore = await prisma.score.findUnique({
+      where: { id },
+    });
+
+    if (!existingScore || !existingScore.userId) {
+      return { error: "Score not found" };
+    }
+
+    const { userId } = existingScore;
+    const storageName = process.env.NEXT_PUBLIC_STORAGE_BUCKET as string;
+
+    // FormData에서 데이터 추출
+    const title = formData.get("title") as string;
+    const artist = formData.get("artist") as string;
+    const difficulty = parseInt(formData.get("difficulty") as string);
+    const pdfFile = formData.get("pdfFile") as File | null;
+
+    // PDF 파일이 새로 제공된 경우에만 Storage 작업 수행
+    if (pdfFile && pdfFile.size > 0) {
+      const pdfPath = `${userId}/${id}/score.pdf`;
+
+      // 1. 기존 PDF 삭제
+      await supabase.storage.from(storageName).remove([pdfPath]);
+
+      // 2. 새 PDF 업로드
+      const { error: uploadError } = await supabase.storage
+        .from(storageName)
+        .upload(pdfPath, pdfFile, { upsert: true });
+
+      if (uploadError) {
+        console.error("PDF upload failed:", uploadError);
+        return { error: "Failed to upload PDF" };
+      }
+    }
+
+    // 3. DB 업데이트
+    const score = await prisma.score.update({
+      where: { id },
+      data: {
+        title,
+        artist,
+        difficulty,
+      },
+    });
+
+    return { data: score };
+  } catch (error) {
+    console.error("Score update with PDF failed:", error);
+    return { error: "Failed to update score" };
+  }
+}
+
 // Storage 파일들 삭제 함수
 async function deleteScoreFromStorage(scoreId: string) {
   try {

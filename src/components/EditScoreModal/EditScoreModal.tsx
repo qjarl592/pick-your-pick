@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
-import { update } from "@/app/actions";
+import { updateWithPdf } from "@/app/actions";
 import {
   Dialog,
   DialogTrigger,
@@ -25,21 +25,34 @@ export default function EditScoreModal({ score, children }: Props) {
   const queryClient = useQueryClient();
 
   const updateScoreMutation = async (formData: EditScoreFormData) => {
-    const newScore = {
-      ...score,
-      title: formData.title,
-      artist: formData.artist,
-      difficulty: formData.difficulty,
-    };
-    await update("score", score.id, newScore);
-    return newScore;
+    // Server Actions에서 File 객체를 처리하려면 FormData를 사용해야 함
+    const form = new FormData();
+    form.append("title", formData.title);
+    form.append("artist", formData.artist);
+    form.append("difficulty", formData.difficulty.toString());
+
+    if (formData.pdfFile) {
+      form.append("pdfFile", formData.pdfFile);
+    }
+
+    const result = await updateWithPdf("score", score.id, form);
+
+    if (result.error) {
+      throw new Error(result.error);
+    }
+
+    if (!result.data) {
+      throw new Error("업데이트된 데이터를 받지 못했습니다");
+    }
+
+    return result.data;
   };
 
   const { mutate } = useMutation({
     mutationFn: updateScoreMutation,
-    onSuccess: ({ title, artist }) => {
+    onSuccess: (updatedScore) => {
       toast.success("악보가 성공적으로 수정됐습니다", {
-        description: `${title} by ${artist}`,
+        description: `${updatedScore.title} by ${updatedScore.artist}`,
       });
       queryClient.invalidateQueries({ queryKey: ["scores"] });
     },
@@ -63,7 +76,14 @@ export default function EditScoreModal({ score, children }: Props) {
     });
   };
 
-  if (!score.title || !score.artist || !score.difficulty || !score.thumbnailUrl) {
+  if (
+    !score.userId ||
+    !score.id ||
+    !score.title ||
+    !score.artist ||
+    !score.difficulty ||
+    !score.thumbnailUrl
+  ) {
     return null;
   }
 

@@ -6,6 +6,7 @@ import {
   getFirstScore,
   getScores,
   updateScore,
+  updateScoreWithPdf,
   deleteScore,
   deleteManyScores,
   getScore,
@@ -81,6 +82,16 @@ export async function update<T extends TableName>(table: T, id: string, data: Pr
   switch (table) {
     case "score":
       return updateScore(id, data as Prisma.ScoreUpdateInput);
+    default:
+      return { error: "Invalid table name" };
+  }
+}
+
+// Update with PDF
+export async function updateWithPdf<T extends TableName>(table: T, id: string, formData: FormData) {
+  switch (table) {
+    case "score":
+      return updateScoreWithPdf(id, formData);
     default:
       return { error: "Invalid table name" };
   }

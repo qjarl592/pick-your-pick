@@ -1,6 +1,7 @@
 import { EllipsisVertical } from "lucide-react";
 import React from "react";
 
+import AudioMixModal from "@/components/AudioMixModal/AudioMixModal";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,11 @@ export default function MenuBtn({ className }: Props) {
           <EllipsisVertical />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end">mix</PopoverContent>
+      <PopoverContent align="end">
+        <AudioMixModal>
+          <Button>mix</Button>
+        </AudioMixModal>
+      </PopoverContent>
     </Popover>
   );
 }

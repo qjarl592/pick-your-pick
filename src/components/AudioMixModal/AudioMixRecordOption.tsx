@@ -39,12 +39,15 @@ export default function AudioMixRecordOption({
 
   return (
     <div
-      className={buttonVariants({
-        variant: "outline",
-        className: cn("h-24 flex cursor-pointer w-full items-center justify-center gap-4", {
-          "border-2 border-blue-600": isSelected,
+      className={cn(
+        buttonVariants({
+          variant: "outline",
         }),
-      })}
+        "h-24 flex cursor-pointer w-full items-center justify-center gap-4",
+        {
+          "border-2 border-blue-600": isSelected,
+        }
+      )}
       tabIndex={0}
       onClick={() => onSelect(!isSelected)}
     >

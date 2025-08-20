@@ -7,6 +7,7 @@ interface AudioTrack {
   player: Player;
   isMuted: boolean;
   volume: number;
+  src: string;
 }
 
 type AudioTrackList = {
@@ -33,7 +34,7 @@ interface AudioStoreState {
 }
 
 interface AudioStoreAction {
-  initTracks: (urlList: { [key in AudioTrackId]: string }) => void;
+  initTracks: (urlList: { [key in AudioTrackId]: string }) => Promise<void>;
 
   play: () => void;
   pause: () => void;
@@ -108,6 +109,7 @@ export const useAudioStore = create<AudioStoreState & AudioStoreAction>((set, ge
         player,
         isMuted: false,
         volume: 50,
+        src: trackUrl,
       };
       return { ...acc, [trackId]: track };
     }, {}) as AudioTrackList;

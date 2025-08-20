@@ -54,6 +54,7 @@ export default function EditScoreModal({ score, children }: Props) {
       toast.success("악보가 성공적으로 수정됐습니다", {
         description: `${updatedScore.title} by ${updatedScore.artist}`,
       });
+      queryClient.setQueryData(["score", score.id], updatedScore);
       queryClient.invalidateQueries({ queryKey: ["scores"] });
     },
     onSettled: () => {

@@ -1,4 +1,4 @@
-import ScoreDataWrapper from "@/components/features/score/ScoreDataWrapper";
+import ScoreDataWrapper from "@/components/features/score/detail/viewer/ScoreDataWrapper";
 
 interface Props {
   params: { slug: string };

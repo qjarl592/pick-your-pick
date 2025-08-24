@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { Music, PlusCircle, Loader2, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
-import AddScoreModal from "@/components/AddScoreModal/AddScoreModal";
 import Logo from "@/components/common/Logo";
-import FilterWrap from "@/components/features/list/FilterWrap";
-import ScoreListCarousel from "@/components/features/list/ScoreListCarousel";
-import SearchBar from "@/components/features/list/SearchBar";
-import ScoreCard from "@/components/ScoreCard/ScoreCard";
+import ScoreCard from "@/components/features/score/list/card/ScoreCard";
+import FilterWrap from "@/components/features/score/list/filter/FilterWrap";
+import AddScoreModal from "@/components/features/score/list/form/AddScoreModal";
+import ScoreListCarousel from "@/components/features/score/list/ScoreListCarousel";
+import SearchBar from "@/components/features/score/list/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useScores } from "@/hooks/useStores/useStores";

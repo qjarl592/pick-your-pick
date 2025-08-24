@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import DifficultyFilter from "./DifficultyFilter";
 import RecordingFilter from "./RecordingFilter";
 import RefreshFilter from "./RefreshFilter";
-import SortSelector from "../SortSelector";
+import SortSelector from "./SortSelector";
 
 export default function FilterWrap() {
   return (

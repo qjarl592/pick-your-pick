@@ -23,7 +23,7 @@ import { aiServerApi } from "@/services/axios";
 import { YoutubeSearchItem } from "@/type/youtube";
 
 import { AddScoreForm, AddScoreFormData } from "./AddScoreForm";
-import YoutubeSearchWrapper from "../YoutubeSearchWrapper";
+import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
 
 interface Props {
   children: ReactNode;

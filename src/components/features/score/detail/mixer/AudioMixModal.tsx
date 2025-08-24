@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAudioMix } from "@/hooks/useAudioMix/useAudioMix";
+import { useAudioMix } from "@/hooks/useAudioMix";
 import { AudioTrackType } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 import { useAudioStore } from "@/store/audioStore";

@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useAudioRecorder } from "@/hooks/useAudioRecorder/useAudioRecorder";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useRecordStore } from "@/store/recordStore";
 
 import TracksContainer from "./TracksContainer";

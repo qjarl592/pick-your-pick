@@ -70,6 +70,6 @@
 
 @layer components {
   .at-cursor-beat {
-    @apply !bg-blue-500 !opacity-70 !w-1/2 !z-50;
+    @apply !z-50 !w-1/2 !bg-blue-500 !opacity-70;
   }
 }

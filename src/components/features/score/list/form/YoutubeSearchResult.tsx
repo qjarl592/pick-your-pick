@@ -56,7 +56,7 @@ export default function YoutubeSearchResult({ keyword, onSelectVideo }: Props) {
   if (data.length === 0) return <div>검색 결과가 없습니다.</div>;
 
   return (
-    <div className="mt-2 flex flex-col gap-2 rounded-md shadow-md ">
+    <div className="mt-2 flex flex-col gap-2 rounded-md shadow-md">
       {data.map((item: YoutubeSearchItem) => {
         const { snippet } = item;
 

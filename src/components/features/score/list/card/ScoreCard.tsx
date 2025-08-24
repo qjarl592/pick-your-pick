@@ -77,7 +77,7 @@ export default function ScoreCard({ score, onDelete }: Props) {
           </div>
 
           {/* 수정, 삭제 버튼 - hover 시에만 표시 */}
-          <div className="absolute right-2 top-2 z-20 flex gap-1 ">
+          <div className="absolute right-2 top-2 z-20 flex gap-1">
             <ScoreEditButton score={score} onDelete={onDelete} />
             <ScoreDeleteButton id={id} title={title} artist={artist} onDelete={onDelete} />
           </div>

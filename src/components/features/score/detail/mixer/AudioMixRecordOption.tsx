@@ -42,7 +42,7 @@ export default function AudioMixRecordOption({
         buttonVariants({
           variant: "outline",
         }),
-        "h-24 flex cursor-pointer w-full items-center justify-center gap-4",
+        "flex h-24 w-full cursor-pointer items-center justify-center gap-4",
         {
           "border-2 border-blue-600": isSelected,
         }
@@ -54,7 +54,7 @@ export default function AudioMixRecordOption({
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <span className="font-semibold">녹음 트랙</span>
-          <span className="text-xs text-muted-foreground ">{updatedAt}</span>
+          <span className="text-xs text-muted-foreground">{updatedAt}</span>
         </div>
         <div className="flex gap-1">
           {Array.from({ length: 5 })

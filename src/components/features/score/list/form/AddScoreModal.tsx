@@ -124,7 +124,7 @@ export default function AddScoreModal({ children, onSubmitSuccess }: Props) {
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        className={cn("flex min-h-[600px] max-h-[600px] flex-col gap-3 overflow-auto", { "z-10": isPending })}
+        className={cn("flex max-h-[600px] min-h-[600px] flex-col gap-3 overflow-auto", { "z-10": isPending })}
       >
         <DialogHeader className="w-full">
           <DialogTitle>악보 추가</DialogTitle>

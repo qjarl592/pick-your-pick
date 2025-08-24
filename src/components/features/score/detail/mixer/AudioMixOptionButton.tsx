@@ -14,7 +14,7 @@ interface Props {
 export default function AudioMixOptionButton({ type, isSelected, onSelect }: Props) {
   return (
     <Button
-      className={cn("w-full h-16 flex items-center justify-center gap-2", {
+      className={cn("flex h-16 w-full items-center justify-center gap-2", {
         "border-2 border-blue-600": isSelected,
       })}
       variant="outline"

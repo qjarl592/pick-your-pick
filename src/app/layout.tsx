@@ -3,11 +3,11 @@ import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 
 import "./globals.css";
-import ConfirmProvider from "@/components/provider/ConfirmProvider";
-import QueryProvider from "@/components/provider/QueryProvider";
+import ConfirmProvider from "@/components/providers/ConfirmProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-import AuthProvider from "../components/provider/AuthProvider";
+import AuthProvider from "../components/providers/AuthProvider";
 
 interface Props {
   children: ReactNode;

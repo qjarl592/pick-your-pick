@@ -22,7 +22,7 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
   const { data: session } = useSession();
 
   const { data, error, isLoading } = useQuery<Score, AxiosError>({
-    queryKey: ["score"],
+    queryKey: ["score", scoreId],
     queryFn: async () => {
       const res = await api.get<Score>(`/score/${scoreId}`);
       return res.data;
@@ -49,12 +49,12 @@ export default function ScoreDataWrapper({ scoreId }: Props) {
 
   const userId = session?.user?.id;
 
-  if (!data || !userId) {
+  if (!data || !userId || !data.updatedAt) {
     return null;
   }
 
   // PDF URL 생성
-  const pdfUrl = getScoreUrl(userId, scoreId);
+  const pdfUrl = getScoreUrl(userId, scoreId, data.updatedAt);
 
   return (
     <div>

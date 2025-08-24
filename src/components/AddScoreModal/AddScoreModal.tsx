@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";
 import { YoutubeSearchItem } from "@/type/youtube";
 
-import { TabForm, TabInputForm } from "./TabForm";
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";
+import { AddScoreForm, AddScoreFormData } from "../ScoreForm";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ interface Props {
   onSubmitSuccess: () => void;
 }
 
-export default function AddTabModal({ children, onSubmitSuccess }: Props) {
+export default function AddScoreModal({ children, onSubmitSuccess }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     formData,
     userId,
   }: {
-    formData: TabInputForm & { thumbnailUrl: string };
+    formData: AddScoreFormData & { thumbnailUrl: string };
     userId: string;
   }) => {
     const { pdfFile, ...rest } = formData;
@@ -89,7 +89,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     mutationFn: createScoreMutation,
     onSuccess: ({ title, artist, id }) => {
       onSubmitSuccess();
-      toast.success("악보가 성공적으로 추가됬습니다!", {
+      toast.success("악보가 성공적으로 추가됐습니다", {
         description: `${title} by ${artist}`,
         action: {
           label: "바로가기",
@@ -109,7 +109,7 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
     },
   });
 
-  const handleSubmit = (formData: TabInputForm & { thumbnailUrl: string }) => {
+  const handleSubmit = (formData: AddScoreFormData & { thumbnailUrl: string }) => {
     if (!session) return;
     mutate({ formData, userId: session.user.id });
   };
@@ -143,7 +143,12 @@ export default function AddTabModal({ children, onSubmitSuccess }: Props) {
               alt={selectedVideo.snippet.title}
               priority
             />
-            <TabForm selectedVideo={selectedVideo} onSubmit={handleSubmit} />
+            <AddScoreForm
+              title={selectedVideo.snippet.title}
+              artist={selectedVideo.snippet.channelTitle}
+              thumbnailUrl={selectedVideo.snippet.thumbnails.medium.url}
+              onSubmit={handleSubmit}
+            />
           </>
         )}
       </DialogContent>

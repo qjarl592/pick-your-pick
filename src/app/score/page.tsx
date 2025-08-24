@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { Music, PlusCircle, Loader2, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
-import AddTabModal from "@/components/AddTabModal/AddTabModal";
+import AddScoreModal from "@/components/AddScoreModal/AddScoreModal";
 import Logo from "@/components/common/Logo";
 import FilterWrap from "@/components/features/list/FilterWrap";
-import ScoreCard from "@/components/features/list/ScoreCard";
 import ScoreListCarousel from "@/components/features/list/ScoreListCarousel";
 import SearchBar from "@/components/features/list/SearchBar";
+import ScoreCard from "@/components/ScoreCard/ScoreCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useScores } from "@/hooks/useStores/useStores";
@@ -81,7 +81,7 @@ export default function Page() {
         >
           <Card className="rounded-xl border border-blue-100 bg-white/80 p-8 shadow-xl backdrop-blur-sm transition-all duration-300 ease-in-out">
             <div className="size-full">
-              <AddTabModal onSubmitSuccess={() => refetch()}>
+              <AddScoreModal onSubmitSuccess={() => refetch()}>
                 <Button
                   variant="outline"
                   size="sm"
@@ -90,7 +90,7 @@ export default function Page() {
                   <PlusCircle className="text-blue-600" />
                   악보 추가
                 </Button>
-              </AddTabModal>
+              </AddScoreModal>
               {scoreList ? (
                 <div className="h-[580px]">
                   {scoreList.length > 0 ? (

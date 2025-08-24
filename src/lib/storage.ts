@@ -24,8 +24,13 @@ function getAudioUrl(userId: string, scoreId: string, trackType: AudioTrackType)
 /**
  * 악보 PDF URL 생성
  */
-export function getScoreUrl(userId: string, scoreId: string): string {
-  return getStorageUrl(userId, scoreId, "score.pdf");
+export function getScoreUrl(userId: string, scoreId: string, updatedAt: Date): string {
+  const dateObj = typeof updatedAt === "string" ? new Date(updatedAt) : updatedAt;
+  const timestamp = dateObj.getTime();
+
+  const url = `${WORKER_URL}/${userId}/${scoreId}/score.pdf?updated=${timestamp}`;
+
+  return url;
 }
 
 /**

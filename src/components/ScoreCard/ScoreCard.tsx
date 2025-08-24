@@ -1,13 +1,14 @@
 import { Score } from "@prisma/client";
 import { motion } from "framer-motion";
-import { Play, Star, Music, Calendar, Clock, Trash2 } from "lucide-react";
+import { Star, Music, Calendar, Clock } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { deleteScore } from "@/app/actions/score";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+
+import ScoreDeleteButton from "./ScoreDeleteButton";
+import ScoreEditButton from "./ScoreEditButton";
 
 interface Props {
   score: Score;
@@ -24,27 +25,6 @@ export default function ScoreCard({ score, onDelete }: Props) {
 
   const handleClick = () => {
     router.push(`/score/${id}`);
-  };
-
-  const handleClickDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const confirmed = window.confirm(
-      `"${title}" 악보를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없으며, 관련된 모든 파일이 삭제됩니다.`
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteScore(id);
-
-      alert(`"${title}" 악보가 성공적으로 삭제되었습니다.`);
-
-      // 삭제 성공 후 쿼리 초기화
-      onDelete();
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("악보 삭제 중 오류가 발생했습니다. 다시 시도해주세요.");
-    }
   };
 
   const lastPractice = lastPracticeDate && new Date(lastPracticeDate);
@@ -96,15 +76,11 @@ export default function ScoreCard({ score, onDelete }: Props) {
             {daysDifference ? (daysDifference === 0 ? "오늘" : `${daysDifference}일 전`) : "미연습"}
           </div>
 
-          {/* 삭제 버튼 - hover 시에만 표시 */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute right-2 top-2 z-20 size-7 rounded-full bg-red-500 p-0 text-white opacity-0 shadow-lg transition-opacity duration-200 hover:bg-red-600 group-hover:opacity-100"
-            onClick={handleClickDelete}
-          >
-            <Trash2 size={12} className="text-white" />
-          </Button>
+          {/* 수정, 삭제 버튼 - hover 시에만 표시 */}
+          <div className="absolute right-2 top-2 z-20 flex gap-1 ">
+            <ScoreEditButton score={score} onDelete={onDelete} />
+            <ScoreDeleteButton id={id} title={title} artist={artist} onDelete={onDelete} />
+          </div>
         </div>
 
         {/* 정보 섹션 */}
@@ -125,11 +101,8 @@ export default function ScoreCard({ score, onDelete }: Props) {
         </div>
 
         {/* 호버 오버레이 - 차콜 색상으로 변경 */}
-        <div className="z-5 absolute inset-0 flex items-center justify-center bg-gradient-to-t from-gray-900/95 to-gray-800/90 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-80">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gradient-to-t from-gray-900/95 to-gray-800/90 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-80">
           <div className="flex flex-col items-center justify-center text-white">
-            <div className="mb-4 rounded-full bg-white p-3">
-              <Play className="text-gray-800" size={28} />
-            </div>
             <p className="line-clamp-2 max-w-36 px-2 text-center font-bold">{title}</p>
             <p className="max-w-36 truncate text-sm text-gray-300">{artist}</p>
             <div className="mt-3 rounded-full bg-white/20 px-3 py-1 text-xs">지금 연주하기</div>

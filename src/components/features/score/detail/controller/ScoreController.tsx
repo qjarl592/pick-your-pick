@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { Player } from "tone";
 
-import { usePdfScore } from "@/hooks/usePdfScore/usePdfScore";
+import { usePdfScore } from "@/hooks/usePdfScore";
 import { getAllAudioUrls } from "@/lib/storage";
 import { useAudioStore } from "@/store/audioStore";
 

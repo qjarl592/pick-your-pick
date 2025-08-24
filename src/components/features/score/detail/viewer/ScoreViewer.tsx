@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
 import "pdfjs-dist/webpack";
-import { usePdfScore } from "@/hooks/usePdfScore/usePdfScore";
+import { usePdfScore } from "@/hooks/usePdfScore";
 
 import ScoreController from "../controller/ScoreController";
 

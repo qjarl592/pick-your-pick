@@ -1,5 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
+import { toast } from "sonner";
 import { Player } from "tone";
 
 import { usePdfScore } from "@/hooks/usePdfScore";
@@ -28,23 +31,40 @@ export default function ScoreController({ pdfScore }: Props) {
   const { moveNext, movePrev } = pdfScore;
   const { initTracks } = useAudioStore();
   const { data: session } = useSession();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const userId = session?.user?.id;
+  const scoreId = pathname.split("/").pop();
+
+  const { error } = useQuery({
+    queryKey: ["initTracks", userId, scoreId],
+    queryFn: async ({ queryKey }) => {
+      const [_, userId, scoreId] = queryKey;
+      if (!scoreId || !userId) {
+        throw new Error("Invalid userId or scoreId!");
+      }
+      const audioUrls = getAllAudioUrls(userId, scoreId);
+      await initTracks(audioUrls);
+      console.log("success");
+      return true;
+    },
+    enabled: !!scoreId && !!userId,
+    retry: false,
+  });
 
   useEffect(() => {
-    // URL에서 scoreId 추출
-    const pathname = window.location.pathname;
-    const scoreId = pathname.split("/").pop();
-
-    const userId = session?.user?.id;
-
-    if (!scoreId || !userId) {
-      return;
+    if (error) {
+      toast.error("음원를 불러오는데 실패했습니다.", {
+        description: "문제가 반복되면 관리자에게 문의해주세요.",
+      });
+      router.push("/score");
     }
+  }, [error, router]);
 
-    // 개발환경에서도 실제 Storage 사용 (테스트용)
-    const audioUrls = getAllAudioUrls(userId, scoreId);
-
-    initTracks(audioUrls);
-  }, [initTracks, session?.user?.id]);
+  if (error) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-0 left-0 z-50 flex w-full items-center gap-2 bg-white/80 p-4">

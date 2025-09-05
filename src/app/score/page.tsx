@@ -12,7 +12,7 @@ import ScoreListCarousel from "@/components/features/score/list/ScoreListCarouse
 import SearchBar from "@/components/features/score/list/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useScores } from "@/hooks/useStores";
+import { useScores } from "@/hooks/useScores";
 
 export default function Page() {
   const { data: session, status: sessionStatus } = useSession();

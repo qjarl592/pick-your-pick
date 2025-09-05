@@ -46,7 +46,6 @@ export default function ScoreController({ pdfScore }: Props) {
       }
       const audioUrls = getAllAudioUrls(userId, scoreId);
       await initTracks(audioUrls);
-      console.log("success");
       return true;
     },
     enabled: !!scoreId && !!userId,

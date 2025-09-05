@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { deleteOne } from "@/app/actions";
 import { Button } from "@/components/ui/button";
+import { deleteOne } from "@/lib/actions";
 import { useConfirm } from "@/store/confirmStore";
 
 interface Props {

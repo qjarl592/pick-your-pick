@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
-import { updateWithPdf } from "@/app/actions";
 import {
   Dialog,
   DialogTrigger,
@@ -12,6 +11,7 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { updateWithPdf } from "@/lib/actions";
 
 import { EditScoreForm, EditScoreFormData } from "./EditScoreForm";
 

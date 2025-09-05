@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getYoutubeSearch } from "@/services/youtube";
-import { YoutubeSearchItem } from "@/type/youtube";
+import { YoutubeSearchItem } from "@/types/youtube";
 
 interface Props {
   keyword: string;

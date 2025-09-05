@@ -84,12 +84,6 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       const mic = new Tone.UserMedia();
       await mic.open();
 
-      // if (selectedDevice) {
-      //   await mic.open({ deviceId: selectedDevice });
-      // } else {
-      //   await mic.open();
-      // }
-
       // 마이크를 레코더에 연결
       mic.connect(recorderRef.current!);
       micRef.current = mic;

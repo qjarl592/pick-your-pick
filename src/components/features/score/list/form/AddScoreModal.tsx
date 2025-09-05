@@ -1,12 +1,4 @@
 import { Prisma } from "@prisma/client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-} from "@radix-ui/react-dialog";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -16,7 +8,15 @@ import React, { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
 import { createScore, deleteScore } from "@/app/actions/score";
-import { DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { uploadFile } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";

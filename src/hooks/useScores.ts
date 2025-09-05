@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getMany } from "@/app/actions";
+import { getMany } from "@/lib/actions";
 import { ScoreSortOption, SortOrder, useScoreFilterStore } from "@/store/scoreFilterStore";
 
 export function useScores(userId: string) {

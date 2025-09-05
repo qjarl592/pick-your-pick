@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import useDebounce from "@/hooks/useDebounce";
-import { YoutubeSearchItem } from "@/type/youtube";
+import { YoutubeSearchItem } from "@/types/youtube";
 
 import YoutubeSearchResult from "./YoutubeSearchResult";
 

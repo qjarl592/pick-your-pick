@@ -1,6 +1,6 @@
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-import { TabApiResponse, TabInfoType } from "@/type/score";
+import { TabApiResponse, TabInfoType } from "@/types/score";
 
 import { api } from "../axios";
 

@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import React, { ReactNode, useState } from "react";
 import { toast } from "sonner";
 
-import { createScore, deleteScore } from "@/app/actions/score";
 import {
   Dialog,
   DialogContent,
@@ -17,10 +16,11 @@ import {
   DialogTrigger,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { createScore, deleteScore } from "@/lib/actions/score";
 import { uploadFile } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
 import { aiServerApi } from "@/services/axios";
-import { YoutubeSearchItem } from "@/type/youtube";
+import { YoutubeSearchItem } from "@/types/youtube";
 
 import { AddScoreForm, AddScoreFormData } from "./AddScoreForm";
 import YoutubeSearchWrapper from "./YoutubeSearchWrapper";

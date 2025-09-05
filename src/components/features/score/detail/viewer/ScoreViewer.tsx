@@ -1,9 +1,10 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-
 import "pdfjs-dist/webpack";
+import { toast } from "sonner";
+
 import { usePdfScore } from "@/hooks/usePdfScore";
 
 import ScoreController from "../controller/ScoreController";
@@ -18,9 +19,17 @@ export default function ScoreViewer({ pdfUrl }: Props) {
   const [totalPages, setTotalPages] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const pdfScore = usePdfScore(containerRef);
+  const router = useRouter();
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setTotalPages(numPages);
+  };
+
+  const onDocumentLoadError = () => {
+    toast.error("악보를 불러오는데 실패했습니다.", {
+      description: "문제가 반복되면 관리자에게 문의해주세요.",
+    });
+    router.push("/score");
   };
 
   return (
@@ -35,7 +44,12 @@ export default function ScoreViewer({ pdfUrl }: Props) {
             margin: pdfScore.scale <= 1 ? "0 auto" : "0",
           }}
         >
-          <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} className="w-full">
+          <Document
+            file={pdfUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            className="w-full"
+            onLoadError={onDocumentLoadError}
+          >
             {Array.from({ length: totalPages }).map((_, index) => (
               <div key={`page_${index + 1}`} className="w-full">
                 <Page
